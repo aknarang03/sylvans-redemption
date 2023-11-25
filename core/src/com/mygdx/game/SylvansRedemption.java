@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 
-
+// structure right now might be messed up
 public class SylvansRedemption extends Game {
 	SpriteBatch batch;
 	Texture img;
@@ -17,14 +17,16 @@ public class SylvansRedemption extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		// construct levels
+		// CONSTRUCT LEVELS
 		//img = new Texture("badlogic.jpg");
 	}
 
+	// don't know yet how level rendering will work..
+	// level has a render method but how do I make it so that only the current one renders
 	@Override
 	public void render () {
 		/*Every frame:
-		* Process input (processInput()) -> acts on currentInhabitedEntity;
+		* Process input (processInput()) -> acts on currentInhabitedEntity
 		* Update entities -> for each entity that isnt inhabited or player, update it
 		* Resolve any collisions -> box2d, maybe call this in level? depends how you structure it
 		* Draw -> self explanatory*/

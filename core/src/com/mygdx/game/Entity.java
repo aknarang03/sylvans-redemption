@@ -1,9 +1,6 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-
-import java.awt.event.KeyEvent;
 
 public abstract class Entity implements InputProcessor {
 
@@ -50,4 +47,5 @@ public abstract class Entity implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+
 }
