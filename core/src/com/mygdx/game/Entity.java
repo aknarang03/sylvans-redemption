@@ -1,16 +1,20 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 
-public abstract class Entity implements InputProcessor {
+// should it extend sprite??
+public abstract class Entity extends Sprite implements InputProcessor {
+
+    public Entity() {
+
+    }
 
     // implementation of these will differ based on the entity
     @Override
     public abstract boolean keyDown(int keycode);
     @Override
     public abstract boolean keyUp(int keycode);
-
-
 
 
 

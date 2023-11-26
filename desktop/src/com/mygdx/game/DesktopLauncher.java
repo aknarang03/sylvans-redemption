@@ -9,6 +9,6 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("Sylvan's Redemption");
-		new Lwjgl3Application(new SylvansRedemption(), config);
+		new Lwjgl3Application(new SylvanGame(), config);
 	}
 }
