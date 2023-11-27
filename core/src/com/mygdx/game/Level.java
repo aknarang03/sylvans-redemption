@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.Entities.Sylvan;
 
 public class Level implements Screen {
 
@@ -56,24 +57,28 @@ public class Level implements Screen {
 
         debugRenderer = new Box2DDebugRenderer();
 
-        camera = new OrthographicCamera();
+        camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapFilename);
-        renderer = new OrthogonalTiledMapRenderer(map,1 / SylvanGame.PPM);
+        renderer = new OrthogonalTiledMapRenderer(map,1 / SylvanGame.PPM); // TRY EDITING
 
         camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight()/2, 0);
 
         Vector2 gravity = new Vector2(0,-10);
         world = new World(gravity,true);
 
-        world.setContactListener(contactListener);
         contactListener = new GameContactListener();
+        world.setContactListener(contactListener);
 
         this.enemies = enemies;
         createStructure();
 
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     // create the level structure in box2d
@@ -94,7 +99,7 @@ public class Level implements Screen {
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
             body = world.createBody(bodyDef);
-            shape.setAsBox((rectangle.getWidth()/ 2) / SylvanGame.PPM, (rectangle.getHeight() / 2) / SylvanGame.PPM);
+            shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
             fixtureDef.shape = shape;
             fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
             body.createFixture(fixtureDef);
@@ -115,11 +120,12 @@ public class Level implements Screen {
         //System.out.println("level render");
         //renderer.setView(camera);
         //camera.update();
-        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(SylvanGame.PPM, SylvanGame.PPM, 0);
-        debugRenderer.render(world,debugMatrix);
 
+        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
+        debugRenderer.render(world,camera.combined);
 
-        // ADD CODE TO ATTACH CAMERA TO CURRENTLY INHABITED ENTITY BODY
+        // CODE TO ATTACH CAMERA TO CURRENTLY INHABITED ENTITY BODY
+        //camera.position.set(game.getCurrentInhabitedEntity().getBody().getPosition().x, 0, 0);
 
         renderer.setView(camera);
         camera.update();
