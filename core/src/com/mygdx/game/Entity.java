@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 // should it extend sprite??
@@ -17,6 +19,8 @@ public abstract class Entity extends Sprite implements InputProcessor {
     protected Vector2 initialPosition;
     protected BodyDef bodyDef;
     protected Body body;
+    PolygonShape shape;
+    FixtureDef fixtureDef;
     protected World world;
 
     protected boolean possessed;
@@ -38,6 +42,13 @@ public abstract class Entity extends Sprite implements InputProcessor {
         bodyDef.position.set(initialPosition);
         body = world.createBody(bodyDef);
         body.setFixedRotation(true);
+        shape = new PolygonShape();
+        shape.setAsBox(0.35f,0.35f); // temp values; this will be sprite.getWidth() and sprite.getHeight()
+        fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0.01f;
+        body.createFixture(fixtureDef);
+        System.out.println(body.getPosition());
     }
 
     public Body getBody() {

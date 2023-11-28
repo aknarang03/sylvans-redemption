@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Entities.Sylvan;
@@ -28,16 +29,20 @@ public class SylvanGame extends Game {
 	// Levels
 	Level prototypeLevel;
 
+	Sylvan sylvan; // enemies will be in Level, maybe Sylvan should also be?? probably
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		// CONSTRUCT LEVELS
 		createLevels();
 		setCurrentLevel(prototypeLevel);
-		Sylvan sylvan = new Sylvan(this); // body isn't showing up, unsure if position is off or if body construction isn't working
+		createEntities();
 	}
 
 	public void createLevels() {
+
+		// this seems messy??
 
 		int numEnemies;
 
@@ -46,7 +51,11 @@ public class SylvanGame extends Game {
 		Array<Entity> enemies = new Array<Entity>(numEnemies);
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
 		prototypeLevel = new Level(this, enemies,prototypeMapFilename);
+	}
 
+	public void createEntities() { // this has to be called after the world is created
+		Vector2 sylvanPos = new Vector2(1,1.7f);
+		sylvan = new Sylvan(this,sylvanPos); // body isn't showing up, unsure if position is off or if body construction isn't working
 	}
 
 	public void setCurrentLevel(Level level) {
@@ -82,6 +91,7 @@ public class SylvanGame extends Game {
 		else { System.out.println("NULL");} // does the same as super.render()
 		//super.render(); // calls current screen's (Level's) render method
 		// (if that doesn't work for some reason, level will handle player movement instead)
+		System.out.println(sylvan.body.getPosition());
 	}
 	
 	@Override

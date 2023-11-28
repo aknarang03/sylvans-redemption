@@ -130,6 +130,7 @@ public class Level implements Screen {
         renderer.setView(camera);
         camera.update();
 
+        world.step(1f / 60f, 6, 2); // physics step
         renderer.render();
 
     }

@@ -8,9 +8,9 @@ public class Sylvan extends Entity {
 
 
 
-    public Sylvan(SylvanGame game) {
+    public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game); // set the game
-        initialPosition = new Vector2(2,20);
+        initialPosition = initPos;
         initBody();
         body.setUserData("Sylvan");
     }
