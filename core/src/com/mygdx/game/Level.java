@@ -128,8 +128,8 @@ public class Level implements Screen {
         debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
         debugRenderer.render(world,camera.combined);
 
-        // CODE TO ATTACH CAMERA TO CURRENTLY INHABITED ENTITY BODY
-        //camera.position.set(game.getCurrentInhabitedEntity().getBody().getPosition().x, 0, 0);
+        // attach camera to current inhabited entity
+        camera.position.set(game.getCurrentInhabitedEntity().getBody().getPosition().x, game.getCurrentInhabitedEntity().getBody().getPosition().y, 0);
 
         renderer.setView(camera);
         camera.update();
