@@ -9,34 +9,35 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-// should it extend sprite??
 public abstract class Entity extends Sprite implements InputProcessor {
 
     // vars for sprite (there will be more in each entity)
+    // NOTHING HERE YET
 
     // vars for body
-    SylvanGame game;
-    protected Vector2 initialPosition;
+    SylvanGame game; // need game reference to get world to draw body, etc
+    protected Vector2 initialPosition; // where the Entity will spawn when level is started
     protected BodyDef bodyDef;
     protected Body body;
     PolygonShape shape;
     FixtureDef fixtureDef;
-    protected World world;
-
+    protected World world; // reference to the world
     protected boolean possessed;
 
-
+    // this constructor should be called in every entity constructor to init game and world. need this to make initBody() work
     public Entity(SylvanGame game) {
         this.game = game;
+        world = game.currentLevel.getWorld();
     }
 
+    // will be used to change the Entity that is moved by the player later on
     public void setPossessed(boolean possessed) {
         this.possessed = possessed;
     }
 
+    // initialize the Entity body variables
     public void initBody() {
         System.out.println("init body");
-        world = game.currentLevel.getWorld();
         bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(initialPosition);
@@ -55,16 +56,12 @@ public abstract class Entity extends Sprite implements InputProcessor {
         return body;
     }
 
-    // implementation of these will differ based on the entity
+    // implementation of these will differ based on the entity since each of their movements will differ
     @Override
     public abstract boolean keyDown(int keycode);
     @Override
     public abstract boolean keyUp(int keycode);
     public abstract void initSprite();
-
-
-
-
 
 
 

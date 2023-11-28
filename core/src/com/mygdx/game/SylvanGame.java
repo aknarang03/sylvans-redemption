@@ -55,7 +55,7 @@ public class SylvanGame extends Game {
 
 	public void createEntities() { // this has to be called after the world is created
 		Vector2 sylvanPos = new Vector2(1,1.7f);
-		sylvan = new Sylvan(this,sylvanPos); // body isn't showing up, unsure if position is off or if body construction isn't working
+		sylvan = new Sylvan(this,sylvanPos);
 	}
 
 	public void setCurrentLevel(Level level) {
