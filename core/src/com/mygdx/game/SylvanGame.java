@@ -39,7 +39,7 @@ public class SylvanGame extends Game {
 		// CONSTRUCT LEVELS
 		createLevels();
 		setCurrentLevel(prototypeLevel);
-		createEntities();
+		currentLevel.createEntityBodies();
 	}
 
 	public void createLevels() {
@@ -53,14 +53,20 @@ public class SylvanGame extends Game {
 		numEnemies = 2;
 		Array<Entity> enemies = new Array<Entity>(numEnemies);
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
-		prototypeLevel = new Level(this, enemies,prototypeMapFilename);
+		String backgroundImgFilename = "..."; // PUT A FILE
+		prototypeLevel = new Level(this, enemies,prototypeMapFilename, backgroundImgFilename);
+		createEntities(currentLevel, enemies); // currently the parameters do nothing
 
 	}
 
-	public void createEntities() { // this has to be called after the world is created, otherwise it won't work
+	// BODIES ARE CREATED IN LEVEL CLASS
+	public void createEntities(Level currentLevel, Array<Entity> enemies) { // this has to be called after the world is created, otherwise it won't work
+		// trying to call it in Level right now
+
 		Vector2 sylvanPos = new Vector2(1,1.7f);
 		sylvan = new Sylvan(this,sylvanPos);
-		// will also loop thru currentLevel.enemies and create them using each of their constructors
+		currentInhabitedEntity = sylvan; // on level creation
+
 	}
 
 	public void setCurrentLevel(Level level) {
@@ -97,7 +103,8 @@ public class SylvanGame extends Game {
 		//super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
 		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
 
-		//System.out.println(sylvan.body.getPosition());
+		//System.out.println(currentInhabitedEntity.body.getPosition());
+
 	}
 	
 	@Override

@@ -27,7 +27,6 @@ public abstract class Entity extends Sprite implements InputProcessor {
     // this constructor should be called in every entity constructor to init game and world. need this to make initBody() work
     public Entity(SylvanGame game) {
         this.game = game;
-        world = game.currentLevel.getWorld();
     }
 
     // will be used to change the Entity that is moved by the player later on
@@ -37,6 +36,7 @@ public abstract class Entity extends Sprite implements InputProcessor {
 
     // initialize the Entity body variables
     public void initBody() {
+        world = game.currentLevel.getWorld();
         System.out.println("init body");
         bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;

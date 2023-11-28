@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -45,9 +47,11 @@ public class Level implements Screen {
     private Viewport viewport;
 
     private Music music;
+    private Texture backgroundImage;
+    private Sprite backgroundSprite;
 
     // constructor
-    public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename) {
+    public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename, String backgroundImgFilename) {
 
         // init HUD
 
@@ -71,8 +75,13 @@ public class Level implements Screen {
         world.setContactListener(contactListener);
 
         this.enemies = enemies;
+
         createStructure();
 
+    }
+
+    public void createEntityBodies() {
+        game.sylvan.initBody();
     }
 
     public World getWorld() {

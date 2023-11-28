@@ -6,13 +6,10 @@ import com.mygdx.game.SylvanGame;
 
 public class Sylvan extends Entity {
 
-
-
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game); // set the game
         initialPosition = initPos;
-        initBody();
-        body.setUserData("Sylvan");
+
     }
 
     @Override
