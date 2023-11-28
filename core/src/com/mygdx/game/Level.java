@@ -24,15 +24,13 @@ public class Level implements Screen {
 
     private Box2DDebugRenderer debugRenderer;
     Matrix4 debugMatrix;
-
-    //private Hud hud; // make Hud class
+    //private Hud hud; // make Hud class to show the top left interface as seen in game sketch
 
     final SylvanGame game;
-
     private World world;
     private GameContactListener contactListener;
 
-    private Array<Entity> enemies;
+    private Array<Entity> enemies; // this will hold the enemies for each level to be drawn
 
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -93,6 +91,7 @@ public class Level implements Screen {
         System.out.println(map.getLayers().getCount());
         System.out.println(map.getLayers().get(1).getName());
 
+        // uses the ground object layer in tmx file to draw the boxes in the correct places
         for (MapObject mapObject : map.getLayers().get("Ground Objects").getObjects().getByType(RectangleMapObject.class)) {
             System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
@@ -112,14 +111,10 @@ public class Level implements Screen {
 
     }
 
-    // FIX VIEWPORT
-
     @Override
-    public void render(float delta) {
+    public void render(float delta) { // called in SylvanGame.render()
 
         //System.out.println("level render");
-        //renderer.setView(camera);
-        //camera.update();
 
         debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
         debugRenderer.render(world,camera.combined);
@@ -131,12 +126,12 @@ public class Level implements Screen {
         camera.update();
 
         world.step(1f / 60f, 6, 2); // physics step
-        renderer.render();
+        renderer.render(); // this is the map renderer
 
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(int width, int height) { // handles window resize
         viewport.update(width,height,true);
     }
 
@@ -156,7 +151,7 @@ public class Level implements Screen {
     }
 
     @Override
-    public void dispose() {
+    public void dispose() { // IMPLEMENT
 
     }
 

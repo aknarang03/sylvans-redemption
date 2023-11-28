@@ -12,6 +12,8 @@ import com.mygdx.game.Entities.Sylvan;
 public class SylvanGame extends Game {
 
 	public static final float PPM = 64; // Pixels Per Meter
+
+	// initial screen width and height upon run
 	public static final int SCREEN_WIDTH = 400;
 	public static final int SCREEN_HEIGHT = 208;
 
@@ -42,7 +44,8 @@ public class SylvanGame extends Game {
 
 	public void createLevels() {
 
-		// this seems messy??
+		// this seems messy?? but for now this is where every level is created
+		// perhaps will save them in an array so that it's easier to switch levels
 
 		int numEnemies;
 
@@ -51,11 +54,13 @@ public class SylvanGame extends Game {
 		Array<Entity> enemies = new Array<Entity>(numEnemies);
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
 		prototypeLevel = new Level(this, enemies,prototypeMapFilename);
+
 	}
 
-	public void createEntities() { // this has to be called after the world is created
+	public void createEntities() { // this has to be called after the world is created, otherwise it won't work
 		Vector2 sylvanPos = new Vector2(1,1.7f);
 		sylvan = new Sylvan(this,sylvanPos);
+		// will also loop thru currentLevel.enemies and create them using each of their constructors
 	}
 
 	public void setCurrentLevel(Level level) {
@@ -64,13 +69,13 @@ public class SylvanGame extends Game {
 	}
 
 	public Entity getCurrentInhabitedEntity() {
-		// this will be used to set camera to position
+		// this will be used to set camera to position (since it shouldn't center on Sylvan if player is now ex. a Bat)
 		return currentInhabitedEntity;
 	}
 
 	public SylvanGame getGame() {
 		return this;
-	}
+	} // return a reference to itself
 
 	@Override
 	public void render () {
@@ -87,16 +92,17 @@ public class SylvanGame extends Game {
 		* Draw -> self explanatory*/
 
 		// render player movement in here, then call:
-		if (currentLevel!= null) { currentLevel.render(dt); }
-		else { System.out.println("NULL");} // does the same as super.render()
-		//super.render(); // calls current screen's (Level's) render method
-		// (if that doesn't work for some reason, level will handle player movement instead)
-		System.out.println(sylvan.body.getPosition());
+		if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
+		else { System.out.println("LEVEL NULL");}
+		//super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
+		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
+
+		//System.out.println(sylvan.body.getPosition());
 	}
 	
 	@Override
-	public void dispose () {
+	public void dispose () { // IMPLEMENT
 		batch.dispose();
-		// dispose of textures?
+		// dispose of textures too?
 	}
 }
