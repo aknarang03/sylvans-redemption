@@ -1,0 +1,12 @@
+standpossess.png
+size:256,128
+repeat:none
+standpossess
+index:0
+bounds:2,2,64,64
+standpossess
+index:1
+bounds:68,2,64,64
+standpossess
+index:2
+bounds:134,2,64,64

@@ -1,0 +1,12 @@
+glidepossess.png
+size:256,128
+repeat:none
+glidepossess
+index:0
+bounds:2,2,64,64
+glidepossess
+index:1
+bounds:68,2,64,64
+glidepossess
+index:2
+bounds:134,2,64,64
