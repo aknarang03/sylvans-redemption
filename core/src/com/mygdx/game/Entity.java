@@ -1,7 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -9,14 +12,17 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import java.util.HashMap;
+
 public abstract class Entity extends Sprite implements InputProcessor {
 
-    public enum State {WALK, JUMP, GLIDE, FALL, DEAD}; // these may change
+    protected enum State {WALK, JUMP, GLIDE, FALL, DEAD}; // these may change
     public State currentState;
     public State previousState;
 
     // vars for sprite (there will be more in each entity)
-    // NOTHING HERE YET
+    protected HashMap<String, Animation<TextureRegion>> animations = new HashMap();
+    protected TextureAtlas atlas;
 
     // vars for body
     SylvanGame game; // need game reference to get world to draw body, etc
@@ -67,7 +73,6 @@ public abstract class Entity extends Sprite implements InputProcessor {
     @Override
     public abstract boolean keyUp(int keycode);
     public abstract void initSprite();
-
 
 
     // JUNK
