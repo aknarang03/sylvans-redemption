@@ -11,6 +11,10 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class Entity extends Sprite implements InputProcessor {
 
+    public enum State {WALK, JUMP, GLIDE, FALL, DEAD}; // these may change
+    public State currentState;
+    public State previousState;
+
     // vars for sprite (there will be more in each entity)
     // NOTHING HERE YET
 
@@ -48,6 +52,7 @@ public abstract class Entity extends Sprite implements InputProcessor {
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.01f;
+        fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
         body.createFixture(fixtureDef);
         System.out.println(body.getPosition());
     }
