@@ -67,6 +67,7 @@ public abstract class Entity extends Sprite {
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
+        //fixtureDef.friction = 0;
         fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
 
         body.createFixture(fixtureDef);
@@ -86,7 +87,22 @@ public abstract class Entity extends Sprite {
     public abstract void initSprite();
     public abstract void updateFrame(float time, float dt);
 
-    public State getState() { // don't use?
+
+    // THIS IS NOT GETTING THE CORRECT STATE
+    public State getState() {
+        if((body.getLinearVelocity().y > 0 && currentState == State.JUMP) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP))
+            return State.JUMP;
+            //if negative in Y-Axis knight is falling
+        else if(body.getLinearVelocity().y < 0 && body.getLinearVelocity().y != 0)
+            return State.FALL;
+            //if knight is positive or negative in the X axis he is running
+        else if(body.getLinearVelocity().x != 0)
+            return State.WALK;
+            //if none of these return then he must be standing
+        else
+            System.out.println("idle");
+            return State.IDLE;
+        /*
         if (body.getLinearVelocity().y != 0 && (currentState == State.JUMP || previousState == State.JUMP))
             return State.JUMP; // do I need those checks for jump state??
         else if (body.getLinearVelocity().y == 0 && previousState == State.FALL)
@@ -97,6 +113,8 @@ public abstract class Entity extends Sprite {
             return State.WALK;
         else
             return State.IDLE;
+
+         */
     }
 
     public float getStateTimer() {

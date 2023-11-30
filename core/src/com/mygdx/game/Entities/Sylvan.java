@@ -40,22 +40,28 @@ public class Sylvan extends Entity {
     public void move(Control control) {
 
         currentState = getState();
+        System.out.println(currentState);
 
         float vy = body.getLinearVelocity().y;
         //System.out.println(Math.abs(vy));
 
-        // This also allows wall climbing.. probably have a jump boolean or something
-        if (Math.abs(vy) < .01f) {
+        // currentState != State.JUMP makes it so that you can't wall climb
+        if (Math.abs(vy) < .01f && currentState != State.JUMP) {
             switch (control) {
+                case UP:
+                    if ( currentState != State.JUMP && previousState != State.FALL ) {
+                        //body.setLinearVelocity(0, 0);
+                        body.applyForceToCenter(0f, 1f, true);
+                        currentState = State.JUMP;
+                    }
+                    break;
                 case LEFT:
                     body.setLinearVelocity(-1f, 0);
                     break;
                 case RIGHT:
                     body.setLinearVelocity(1f, 0);
                     break;
-                case UP:
-                    body.applyForceToCenter(0f, 1f, true);
-                    break;
+
             }
         }
 
@@ -172,12 +178,16 @@ public class Sylvan extends Entity {
             stateTimer = 0;
         }
 
+        previousState = currentState;
+
         setRegion(frame);
         // idk if this set position is right
         //setPosition(body.getPosition().x - getWidth(), body.getPosition().y - getHeight());
-        setPosition((body.getPosition().x * SylvanGame.PPM) - getWidth() / 2, (body.getPosition().y * SylvanGame.PPM) - getHeight() / 2);
+        //setPosition((body.getPosition().x * SylvanGame.PPM) - getWidth() / 2, (body.getPosition().y * SylvanGame.PPM) - getHeight() / 2);
 
 
     }
+
+
 
 }
