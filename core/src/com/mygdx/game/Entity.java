@@ -14,9 +14,9 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import java.util.HashMap;
 
-public abstract class Entity extends Sprite implements InputProcessor {
+public abstract class Entity extends Sprite {
 
-    protected enum State {WALK, JUMP, GLIDE, FALL, DEAD}; // these may change
+    protected enum State {IDLE, WALK, JUMP, GLIDE, FALL, LAND, POSSESS, DEAD}; // these may change
     public State currentState;
     public State previousState;
 
@@ -33,10 +33,15 @@ public abstract class Entity extends Sprite implements InputProcessor {
     FixtureDef fixtureDef;
     protected World world; // reference to the world
     protected boolean possessed;
+    protected boolean left;
+    protected float stateTimer;
 
     // this constructor should be called in every entity constructor to init game and world. need this to make initBody() work
     public Entity(SylvanGame game) {
         this.game = game;
+        stateTimer = 0;
+        currentState = State.IDLE;
+        left = false;
     }
 
     // will be used to change the Entity that is moved by the player later on
@@ -51,15 +56,21 @@ public abstract class Entity extends Sprite implements InputProcessor {
         bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(initialPosition);
+        //bodyDef.position.set((getX() + getWidth() / 2) / SylvanGame.PPM,
+                //(getY() + getHeight() / 2) / SylvanGame.PPM);
         body = world.createBody(bodyDef);
         body.setFixedRotation(true);
         shape = new PolygonShape();
-        shape.setAsBox(0.35f,0.35f); // temp values; this will be sprite.getWidth() and sprite.getHeight()
+        shape.setAsBox(0.3f,0.3f); // temp values
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.01f;
+        fixtureDef.friction = 0.5f;
         fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
+
         body.createFixture(fixtureDef);
+        //body.setUserData(this);
+        shape.dispose();
         System.out.println(body.getPosition());
     }
 
@@ -67,42 +78,28 @@ public abstract class Entity extends Sprite implements InputProcessor {
         return body;
     }
 
+
+
     // implementation of these will differ based on the entity since each of their movements will differ
-    @Override
-    public abstract boolean keyDown(int keycode);
-    @Override
-    public abstract boolean keyUp(int keycode);
+    public abstract void move(Control control);
     public abstract void initSprite();
+    public abstract void updateFrame(float time, float dt);
 
+    public State getState() { // don't use?
+        if (body.getLinearVelocity().y != 0 && (currentState == State.JUMP || previousState == State.JUMP))
+            return State.JUMP; // do I need those checks for jump state??
+        else if (body.getLinearVelocity().y == 0 && previousState == State.FALL)
+            return State.LAND;
+        else if (body.getLinearVelocity().y < 0)
+            return State.FALL;
+        else if (body.getLinearVelocity().x != 0)
+            return State.WALK;
+        else
+            return State.IDLE;
+    }
 
-    // JUNK
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-    @Override
-    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
+    public float getStateTimer() {
+        return stateTimer;
     }
 
 }
