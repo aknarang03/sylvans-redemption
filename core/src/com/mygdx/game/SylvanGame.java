@@ -73,6 +73,7 @@ public class SylvanGame extends Game {
 		Vector2 sylvanPos = new Vector2(1,1.7f);
 		sylvan = new Sylvan(this,sylvanPos);
 		sylvan.setPosition(1,1.7f);
+		//sylvan.setOrigin(sylvan.getWidth()/2, sylvan.getHeight()/2);
 		changeCurrentInhabitedEntity(sylvan); // on level creation
 
 	}
@@ -117,11 +118,14 @@ public class SylvanGame extends Game {
 
 		float dt = Gdx.graphics.getDeltaTime();
 
+		// me trying to figure out the weird sprite rendering
 		System.out.println("Sprite: " + sylvan.getX());
 		System.out.println("Body: " + sylvan.body.getPosition().x);
-
-		sylvan.setPosition((sylvan.body.getPosition().x * SylvanGame.PPM) - sylvan.getWidth() / 2,
-				(sylvan.body.getPosition().y * SylvanGame.PPM) - sylvan.getHeight() / 2);
+		// WHEN I SET PROJECTION MATRIX, SPRITE DISAPPEARS BUT POSITIONS SHOW THE SAME
+		//sylvan.setPosition(sylvan.body.getPosition().x, sylvan.body.getPosition().y);
+		//sylvan.setCenter(sylvan.body.getPosition().x, sylvan.body.getPosition().y);
+		sylvan.setPosition((sylvan.body.getPosition().x * SylvanGame.PPM) - sylvan.getWidth() / 2, (sylvan.body.getPosition().y * SylvanGame.PPM) - sylvan.getHeight() / 2);
+		//batch.setProjectionMatrix(currentLevel.camera.combined);
 
 		/*Every frame:
 		* Process input (processInput()) -> acts on currentInhabitedEntity

@@ -44,7 +44,7 @@ public class Level implements Screen {
     private FixtureDef fixtureDef;
     private Body body;
 
-    private OrthographicCamera camera;
+    public OrthographicCamera camera;
     private Viewport viewport;
 
     private Music music;
