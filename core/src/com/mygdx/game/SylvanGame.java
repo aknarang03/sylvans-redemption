@@ -2,12 +2,15 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Entities.Sylvan;
+
+import java.awt.Color;
 
 public class SylvanGame extends Game {
 
@@ -38,8 +41,12 @@ public class SylvanGame extends Game {
 		batch = new SpriteBatch();
 		// CONSTRUCT LEVELS
 		createLevels();
-		setCurrentLevel(prototypeLevel);
-		currentLevel.createEntityBodies();
+		pickLevel(prototypeLevel);
+	}
+
+	public void pickLevel(Level level) {
+		setCurrentLevel(level);
+		level.createEntityBodies();
 	}
 
 	public void createLevels() {
@@ -61,17 +68,24 @@ public class SylvanGame extends Game {
 
 	// BODIES ARE CREATED IN LEVEL CLASS
 	public void createEntities(Level currentLevel, Array<Entity> enemies) { // this has to be called after the world is created, otherwise it won't work
-		// trying to call it in Level right now
+		// this should probably somehow be moved to level..
 
 		Vector2 sylvanPos = new Vector2(1,1.7f);
 		sylvan = new Sylvan(this,sylvanPos);
-		currentInhabitedEntity = sylvan; // on level creation
+		sylvan.setPosition(1,1.7f);
+		changeCurrentInhabitedEntity(sylvan); // on level creation
 
 	}
 
 	public void setCurrentLevel(Level level) {
 		this.currentLevel = level;
 		this.setScreen(level);
+	}
+
+	public void changeCurrentInhabitedEntity(Entity entity) {
+		if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false; }
+		currentInhabitedEntity = entity;
+		entity.possessed = true;
 	}
 
 	public Entity getCurrentInhabitedEntity() {
@@ -83,13 +97,28 @@ public class SylvanGame extends Game {
 		return this;
 	} // return a reference to itself
 
+	public void processInput() {
+
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+			currentInhabitedEntity.move(Control.RIGHT);
+		} if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+			currentInhabitedEntity.move(Control.LEFT);
+		} if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+			currentInhabitedEntity.move(Control.UP);
+		}
+
+	}
+
 	@Override
 	public void render () {
 
-		Gdx.gl.glClearColor(0.8f, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		float dt = Gdx.graphics.getDeltaTime();
+
+		// me trying to figure out the weird sprite rendering
+		System.out.println("Sprite: " + sylvan.getX());
+		System.out.println("Body: " + sylvan.body.getPosition().x);
+
+		sylvan.setPosition((sylvan.body.getPosition().x * SylvanGame.PPM) - sylvan.getWidth() / 2, (sylvan.body.getPosition().y * SylvanGame.PPM) - sylvan.getHeight() / 2);
 
 		/*Every frame:
 		* Process input (processInput()) -> acts on currentInhabitedEntity
@@ -97,13 +126,24 @@ public class SylvanGame extends Game {
 		* Resolve any collisions -> box2d, maybe call this in level? depends how you structure it
 		* Draw -> self explanatory*/
 
+
+		processInput();
+		currentInhabitedEntity.updateFrame(currentInhabitedEntity.getStateTimer(),dt);
+		currentLevel.camera.update();
+		batch.setProjectionMatrix(currentLevel.camera.combined); // if I uncomment this he completely disappears
+		Gdx.gl.glClearColor(0,0,0,1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.begin();
+		currentInhabitedEntity.draw(batch);
+		batch.end();
+
+
 		// render player movement in here, then call:
 		if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
 		else { System.out.println("LEVEL NULL");}
+
 		//super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
 		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
-
-		//System.out.println(currentInhabitedEntity.body.getPosition());
 
 	}
 	

@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -43,7 +44,7 @@ public class Level implements Screen {
     private FixtureDef fixtureDef;
     private Body body;
 
-    private OrthographicCamera camera;
+    public OrthographicCamera camera;
     private Viewport viewport;
 
     private Music music;
@@ -60,11 +61,13 @@ public class Level implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
+        //camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        // something wrong with the camera idk??
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapFilename);
-        renderer = new OrthogonalTiledMapRenderer(map,1 / SylvanGame.PPM); // TRY EDITING
+        renderer = new OrthogonalTiledMapRenderer(map,1/SylvanGame.PPM);
 
         camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight()/2, 0);
 
@@ -123,13 +126,11 @@ public class Level implements Screen {
     @Override
     public void render(float delta) { // called in SylvanGame.render()
 
-        //System.out.println("level render");
-
         debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
         debugRenderer.render(world,camera.combined);
 
-        // CODE TO ATTACH CAMERA TO CURRENTLY INHABITED ENTITY BODY
-        //camera.position.set(game.getCurrentInhabitedEntity().getBody().getPosition().x, 0, 0);
+        // attach camera to current inhabited entity
+        camera.position.set(game.getCurrentInhabitedEntity().getBody().getPosition().x, game.getCurrentInhabitedEntity().getBody().getPosition().y, 0);
 
         renderer.setView(camera);
         camera.update();

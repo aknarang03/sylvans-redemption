@@ -2,6 +2,8 @@ package com.mygdx.game.Entities;
 
 // Flying Enemy
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
@@ -18,19 +20,17 @@ public class Bat extends Entity {
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        if (!possessed) { return false; }
-        return false;
+    public void move(Control control) {
+
     }
 
-    @Override
-    public boolean keyUp(int keycode) {
-        if (!possessed) { return false; }
-        return false;
-    }
     @Override
     public void initSprite() {
 
+    }
+
+    @Override
+    public void updateFrame(float time, float dt) {
     }
 
 }
