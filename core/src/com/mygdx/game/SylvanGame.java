@@ -73,7 +73,6 @@ public class SylvanGame extends Game {
 		Vector2 sylvanPos = new Vector2(1,1.7f);
 		sylvan = new Sylvan(this,sylvanPos);
 		sylvan.setPosition(1,1.7f);
-		//sylvan.setOrigin(sylvan.getWidth()/2, sylvan.getHeight()/2);
 		changeCurrentInhabitedEntity(sylvan); // on level creation
 
 	}
@@ -113,19 +112,13 @@ public class SylvanGame extends Game {
 	@Override
 	public void render () {
 
-		Gdx.gl.glClearColor(0,0,0,1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		float dt = Gdx.graphics.getDeltaTime();
 
 		// me trying to figure out the weird sprite rendering
 		System.out.println("Sprite: " + sylvan.getX());
 		System.out.println("Body: " + sylvan.body.getPosition().x);
-		// WHEN I SET PROJECTION MATRIX, SPRITE DISAPPEARS BUT POSITIONS SHOW THE SAME
-		//sylvan.setPosition(sylvan.body.getPosition().x, sylvan.body.getPosition().y);
-		//sylvan.setCenter(sylvan.body.getPosition().x, sylvan.body.getPosition().y);
+
 		sylvan.setPosition((sylvan.body.getPosition().x * SylvanGame.PPM) - sylvan.getWidth() / 2, (sylvan.body.getPosition().y * SylvanGame.PPM) - sylvan.getHeight() / 2);
-		//batch.setProjectionMatrix(currentLevel.camera.combined);
 
 		/*Every frame:
 		* Process input (processInput()) -> acts on currentInhabitedEntity
@@ -133,11 +126,17 @@ public class SylvanGame extends Game {
 		* Resolve any collisions -> box2d, maybe call this in level? depends how you structure it
 		* Draw -> self explanatory*/
 
+
 		processInput();
 		currentInhabitedEntity.updateFrame(currentInhabitedEntity.getStateTimer(),dt);
+		currentLevel.camera.update();
+		batch.setProjectionMatrix(currentLevel.camera.combined); // if I uncomment this he completely disappears
+		Gdx.gl.glClearColor(0,0,0,1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		currentInhabitedEntity.draw(batch);
 		batch.end();
+
 
 		// render player movement in here, then call:
 		if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
@@ -145,7 +144,6 @@ public class SylvanGame extends Game {
 
 		//super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
 		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
-		//System.out.println(currentInhabitedEntity.body.getPosition());
 
 	}
 	
