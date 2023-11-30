@@ -72,6 +72,7 @@ public class SylvanGame extends Game {
 
 		Vector2 sylvanPos = new Vector2(1,1.7f);
 		sylvan = new Sylvan(this,sylvanPos);
+		sylvan.setPosition(1,1.7f);
 		changeCurrentInhabitedEntity(sylvan); // on level creation
 
 	}
@@ -116,6 +117,12 @@ public class SylvanGame extends Game {
 
 		float dt = Gdx.graphics.getDeltaTime();
 
+		System.out.println("Sprite: " + sylvan.getX());
+		System.out.println("Body: " + sylvan.body.getPosition().x);
+
+		sylvan.setPosition((sylvan.body.getPosition().x * SylvanGame.PPM) - sylvan.getWidth() / 2,
+				(sylvan.body.getPosition().y * SylvanGame.PPM) - sylvan.getHeight() / 2);
+
 		/*Every frame:
 		* Process input (processInput()) -> acts on currentInhabitedEntity
 		* Update entities -> for each entity that isnt inhabited or player, update it
@@ -125,16 +132,15 @@ public class SylvanGame extends Game {
 		processInput();
 		currentInhabitedEntity.updateFrame(currentInhabitedEntity.getStateTimer(),dt);
 		batch.begin();
-		//batch.draw(currentInhabitedEntity, currentInhabitedEntity.body.getPosition().x  - 0.5f, currentInhabitedEntity.body.getPosition().y -0.5f, 1f, 1f);
 		currentInhabitedEntity.draw(batch);
 		batch.end();
 
 		// render player movement in here, then call:
 		if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
 		else { System.out.println("LEVEL NULL");}
+
 		//super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
 		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
-
 		//System.out.println(currentInhabitedEntity.body.getPosition());
 
 	}

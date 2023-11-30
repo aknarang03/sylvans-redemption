@@ -92,6 +92,8 @@ public class Sylvan extends Entity {
     @Override
     public void initSprite() {
 
+        System.out.println("sprite init");
+
         atlas = new TextureAtlas(Gdx.files.internal("sylvan/sylvan.atlas"));
 
         idleFrames = atlas.findRegions("idle");
@@ -118,17 +120,20 @@ public class Sylvan extends Entity {
         animations.put("glidepossess",glidepossess);
         animations.put("standpossess",standpossess);
 
-        setBounds(1, 1.7f, idleFrames.get(0).getRegionWidth()/2, idleFrames.get(0).getRegionHeight()/2);
+
+
         setRegion(idleFrames.get(0));
+        setScale(1.3f);
+        //setSize(getWidth() / SylvanGame.PPM, getHeight() / SylvanGame.PPM);
+        setBounds(0,0, idleFrames.get(0).getRegionWidth(), idleFrames.get(0).getRegionHeight());
 
     }
 
     @Override
     public void updateFrame(float timeElapsed, float dt) { // this was TextureRegion getFrame()
 
-        //System.out.println("update frame");
-
         TextureRegion frame;
+        previousState = currentState;
         currentState = getState();
 
         switch (currentState) {
@@ -152,6 +157,7 @@ public class Sylvan extends Entity {
         }
 
         // flip frame if it's facing the wrong way
+        // doesn't work
         if ((body.getLinearVelocity().x < 0 && !frame.isFlipX()) || (body.getLinearVelocity().x > 0 && frame.isFlipX())) {
             frame.flip(true, false);
         }
@@ -162,7 +168,6 @@ public class Sylvan extends Entity {
             stateTimer = 0;
         }
 
-        previousState = currentState;
         setRegion(frame);
 
     }

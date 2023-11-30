@@ -51,27 +51,27 @@ public abstract class Entity extends Sprite {
 
     // initialize the Entity body variables
     public void initBody() {
+
         world = game.currentLevel.getWorld();
         System.out.println("init body");
         bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(initialPosition);
-        //bodyDef.position.set((getX() + getWidth() / 2) / SylvanGame.PPM,
-                //(getY() + getHeight() / 2) / SylvanGame.PPM);
+        //bodyDef.position.set(initialPosition);
+        bodyDef.position.set((this.getX() + this.getWidth() / 2) / SylvanGame.PPM, (this.getY() + this.getHeight() / 2) / SylvanGame.PPM);
         body = world.createBody(bodyDef);
         body.setFixedRotation(true);
         shape = new PolygonShape();
         shape.setAsBox(0.3f,0.3f); // temp values
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.density = 0.01f;
+        fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
         fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
 
         body.createFixture(fixtureDef);
         //body.setUserData(this);
         shape.dispose();
-        System.out.println(body.getPosition());
+        //System.out.println(body.getPosition());
     }
 
     public Body getBody() {
