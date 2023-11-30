@@ -159,7 +159,7 @@ public class Level implements Screen {
 
     public void update(float delta) {
         processInput();
-        world.step(1/7f,6,2);
+        world.step(1/60f,6,2);
         // this will loop thru all entities to update frame
         currentInhabitedEntity.updateFrame(timeElapsed,delta);
         camera.update();
@@ -175,6 +175,8 @@ public class Level implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
+
+        camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0);
 
         debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0); // this may be the issue and PPM?
         debugRenderer.render(world,camera.combined);
