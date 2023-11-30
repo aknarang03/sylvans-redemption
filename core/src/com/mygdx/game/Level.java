@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -32,7 +33,6 @@ public class Level implements Screen {
     final SylvanGame game;
     private World world;
     private GameContactListener contactListener;
-
     private Array<Entity> enemies; // this will hold the enemies for each level to be drawn
 
     private TiledMap map;
@@ -50,6 +50,10 @@ public class Level implements Screen {
     private Music music;
     private Texture backgroundImage;
     private Sprite backgroundSprite;
+
+    Sylvan sylvan;
+    Entity currentInhabitedEntity;
+    private float timeElapsed;
 
     // constructor
     public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename, String backgroundImgFilename) {
@@ -78,17 +82,35 @@ public class Level implements Screen {
         world.setContactListener(contactListener);
 
         this.enemies = enemies;
+        Entity currentInhabitedEntity; // keep track of who player is possessing
 
         createStructure();
 
     }
 
-    public void createEntityBodies() {
-        game.sylvan.initBody();
+    public void createEntityBodies() { // called in game when level picked
+        // will loop thru to create enemy bodies also
+        sylvan.initBody();
+        changeCurrentInhabitedEntity(sylvan);
+    }
+
+    public void changeCurrentInhabitedEntity(Entity entity) {
+        if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false; }
+        currentInhabitedEntity = entity;
+        entity.possessed = true;
     }
 
     public World getWorld() {
         return world;
+    }
+
+    public void createEntities() { // this has to be called after the world is created, otherwise it won't work
+
+        Vector2 sylvanPos = new Vector2(1,1.7f);
+        sylvan = new Sylvan(game,sylvanPos);
+        sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
+        changeCurrentInhabitedEntity(sylvan); // on level creation
+
     }
 
     // create the level structure in box2d
@@ -123,21 +145,48 @@ public class Level implements Screen {
 
     }
 
+    public void processInput() {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+            currentInhabitedEntity.move(Control.RIGHT);
+        } if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+            currentInhabitedEntity.move(Control.LEFT);
+        } if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+            currentInhabitedEntity.move(Control.UP);
+        }
+
+    }
+
+    public void update(float delta) {
+        processInput();
+        world.step(1/7f,6,2);
+        // this will loop thru all entities to update frame
+        currentInhabitedEntity.updateFrame(timeElapsed,delta);
+        camera.update();
+        renderer.setView(camera);
+    }
+
     @Override
     public void render(float delta) { // called in SylvanGame.render()
 
-        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
+        update(delta);
+
+        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        renderer.render();
+
+        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0); // this may be the issue and PPM?
         debugRenderer.render(world,camera.combined);
 
-        // attach camera to current inhabited entity
-        camera.position.set(game.getCurrentInhabitedEntity().getBody().getPosition().x, game.getCurrentInhabitedEntity().getBody().getPosition().y, 0);
+        game.batch.setProjectionMatrix(camera.combined); // if I uncomment this he completely disappears
 
-        renderer.setView(camera);
-        camera.update();
+        game.batch.begin();
+        // this will draw all entities
+        currentInhabitedEntity.draw(game.batch);
+        game.batch.end();
 
-        world.step(1f / 60f, 6, 2); // physics step
-        renderer.render(); // this is the map renderer
-
+        timeElapsed += delta;
     }
 
     @Override

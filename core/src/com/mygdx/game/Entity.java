@@ -49,6 +49,7 @@ public abstract class Entity extends Sprite {
         this.possessed = possessed;
     }
 
+
     // initialize the Entity body variables
     public void initBody() {
 
