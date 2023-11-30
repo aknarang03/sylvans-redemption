@@ -29,12 +29,9 @@ public class SylvanGame extends Game {
 	public SpriteBatch batch;
 
 	Level currentLevel; // keep track of current level
-	Entity currentInhabitedEntity; // keep track of who player is possessing
 
 	// Levels
 	Level prototypeLevel;
-
-	Sylvan sylvan; // enemies will be in Level, maybe Sylvan should also be?? probably
 
 	@Override
 	public void create () {
@@ -46,6 +43,7 @@ public class SylvanGame extends Game {
 
 	public void pickLevel(Level level) {
 		setCurrentLevel(level);
+		level.createEntities();
 		level.createEntityBodies();
 	}
 
@@ -58,67 +56,40 @@ public class SylvanGame extends Game {
 
 		// PROTOTYPE LEVEL
 		numEnemies = 2;
-		Array<Entity> enemies = new Array<Entity>(numEnemies);
+		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
+		// put enemies in array
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
 		String backgroundImgFilename = "..."; // PUT A FILE
-		prototypeLevel = new Level(this, enemies,prototypeMapFilename, backgroundImgFilename);
-		createEntities(currentLevel, enemies); // currently the parameters do nothing
+		prototypeLevel = new Level(this, prototypeEnemies, prototypeMapFilename, backgroundImgFilename);
 
 	}
 
 	// BODIES ARE CREATED IN LEVEL CLASS
+	/*
 	public void createEntities(Level currentLevel, Array<Entity> enemies) { // this has to be called after the world is created, otherwise it won't work
 		// this should probably somehow be moved to level..
 
 		Vector2 sylvanPos = new Vector2(1,1.7f);
 		sylvan = new Sylvan(this,sylvanPos);
-		sylvan.setPosition(1,1.7f);
+		sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
 		changeCurrentInhabitedEntity(sylvan); // on level creation
 
 	}
+	 */
 
 	public void setCurrentLevel(Level level) {
 		this.currentLevel = level;
 		this.setScreen(level);
 	}
 
-	public void changeCurrentInhabitedEntity(Entity entity) {
-		if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false; }
-		currentInhabitedEntity = entity;
-		entity.possessed = true;
-	}
-
-	public Entity getCurrentInhabitedEntity() {
-		// this will be used to set camera to position (since it shouldn't center on Sylvan if player is now ex. a Bat)
-		return currentInhabitedEntity;
-	}
-
 	public SylvanGame getGame() {
 		return this;
 	} // return a reference to itself
 
-	public void processInput() {
-
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			currentInhabitedEntity.move(Control.RIGHT);
-		} if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			currentInhabitedEntity.move(Control.LEFT);
-		} if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-			currentInhabitedEntity.move(Control.UP);
-		}
-
-	}
-
 	@Override
 	public void render () {
 
-		float dt = Gdx.graphics.getDeltaTime();
-
-		// me trying to figure out the weird sprite rendering
-		System.out.println("Sprite: " + sylvan.getX());
-		System.out.println("Body: " + sylvan.body.getPosition().x);
-
-		sylvan.setPosition((sylvan.body.getPosition().x * SylvanGame.PPM) - sylvan.getWidth() / 2, (sylvan.body.getPosition().y * SylvanGame.PPM) - sylvan.getHeight() / 2);
+		//float dt = Gdx.graphics.getDeltaTime();
 
 		/*Every frame:
 		* Process input (processInput()) -> acts on currentInhabitedEntity
@@ -126,23 +97,11 @@ public class SylvanGame extends Game {
 		* Resolve any collisions -> box2d, maybe call this in level? depends how you structure it
 		* Draw -> self explanatory*/
 
-
-		processInput();
-		currentInhabitedEntity.updateFrame(currentInhabitedEntity.getStateTimer(),dt);
-		currentLevel.camera.update();
-		batch.setProjectionMatrix(currentLevel.camera.combined); // if I uncomment this he completely disappears
-		Gdx.gl.glClearColor(0,0,0,1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		currentInhabitedEntity.draw(batch);
-		batch.end();
-
-
 		// render player movement in here, then call:
-		if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
-		else { System.out.println("LEVEL NULL");}
+		//if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
+		//else { System.out.println("LEVEL NULL");}
 
-		//super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
+		super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
 		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
 
 	}

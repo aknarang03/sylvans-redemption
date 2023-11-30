@@ -125,7 +125,7 @@ public class Sylvan extends Entity {
 
         setRegion(idleFrames.get(0));
         //setScale(1.3f);
-        //setSize(getWidth() / SylvanGame.PPM, getHeight() / SylvanGame.PPM);
+        setSize(getWidth() / SylvanGame.PPM, getHeight() / SylvanGame.PPM);
         setBounds(0,0, idleFrames.get(0).getRegionWidth(), idleFrames.get(0).getRegionHeight());
         //setBounds(0,0, 0.5f, 0.5f);
         // NOTE: bounds seems to change whether he flickers onto screen or not
@@ -172,6 +172,10 @@ public class Sylvan extends Entity {
         }
 
         setRegion(frame);
+        // idk if this set position is right
+        //setPosition(body.getPosition().x - getWidth(), body.getPosition().y - getHeight());
+        setPosition((body.getPosition().x * SylvanGame.PPM) - getWidth() / 2, (body.getPosition().y * SylvanGame.PPM) - getHeight() / 2);
+
 
     }
 
