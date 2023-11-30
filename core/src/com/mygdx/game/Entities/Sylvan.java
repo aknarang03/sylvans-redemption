@@ -43,6 +43,7 @@ public class Sylvan extends Entity {
 
         float vy = body.getLinearVelocity().y;
 
+        // This also allows wall climbing.. probably have a jump boolean or something
         if (Math.abs(vy) < .01f) {
             switch (control) {
                 case LEFT:

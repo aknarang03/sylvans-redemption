@@ -67,7 +67,7 @@ public class Level implements Screen {
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapFilename);
-        renderer = new OrthogonalTiledMapRenderer(map,1 / SylvanGame.PPM); // TRY EDITING
+        renderer = new OrthogonalTiledMapRenderer(map,1/SylvanGame.PPM);
 
         camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight()/2, 0);
 
