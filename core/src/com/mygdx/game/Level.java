@@ -154,8 +154,10 @@ public class Level implements Screen {
         processInput();
         //currentInhabitedEntity.setPosition(body.getPosition().x - currentInhabitedEntity.getWidth()*1.5f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight()/1.1f);
         currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * 0.45f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * 0.3f, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
+        // unless I fix this to be more precise we may have to move the arbitrary values to be constants in each Entity class so that we can do this update function on any entity
+        // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
         world.step(1/60f,6,2);
-        // this will loop thru all entities to update frame
+        // this function will loop thru all entities to update frame
         currentInhabitedEntity.updateFrame(timeElapsed,delta);
         camera.update();
         renderer.setView(camera);
