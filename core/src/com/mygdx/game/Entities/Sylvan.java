@@ -69,6 +69,7 @@ public class Sylvan extends Entity {
         animations.put("standpossess",standpossess);
 
         setBounds(0,0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
+        setScale(0.9f);
         setRegion(idleFrames.get(0));
 
     }

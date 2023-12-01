@@ -152,7 +152,8 @@ public class Level implements Screen {
 
     public void update(float delta) {
         processInput();
-        currentInhabitedEntity.setPosition(body.getPosition().x - currentInhabitedEntity.getWidth()*1.5f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight()/1.1f);
+        //currentInhabitedEntity.setPosition(body.getPosition().x - currentInhabitedEntity.getWidth()*1.5f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight()/1.1f);
+        currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * 0.45f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * 0.3f, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
         world.step(1/60f,6,2);
         // this will loop thru all entities to update frame
         currentInhabitedEntity.updateFrame(timeElapsed,delta);
