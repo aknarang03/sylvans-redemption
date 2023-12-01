@@ -31,9 +31,10 @@ public abstract class Entity extends Sprite {
     PolygonShape shape;
     FixtureDef fixtureDef;
     protected World world; // reference to the world
-    protected boolean possessed;
     protected boolean left;
     protected float stateTimer;
+    protected boolean possessed;
+
 
     // this constructor should be called in every entity constructor to init game and world. need this to make initBody() work
     public Entity(SylvanGame game) {
@@ -59,7 +60,8 @@ public abstract class Entity extends Sprite {
 
         body.setFixedRotation(true);
         shape = new PolygonShape();
-        shape.setAsBox(0.3f,0.3f); // temp values
+        //shape.setAsBox(0.3f,0.3f); // temp values
+        shape.setAsBox(getWidth()/3.8f,getHeight()/3.1f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
@@ -76,8 +78,6 @@ public abstract class Entity extends Sprite {
     public Body getBody() {
         return body;
     }
-
-
 
     // implementation of these will differ based on the entity since each of their movements will differ
     public abstract void move(Control control);

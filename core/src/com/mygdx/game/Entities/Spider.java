@@ -1,20 +1,12 @@
 package com.mygdx.game.Entities;
-
-// Flying Enemy
-
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
-public class Bat extends Entity {
+public class Spider extends Entity {
 
-    public Bat(SylvanGame game) {
+    public Spider(SylvanGame game) {
         super(game);
-    }
-
-    public void setPossessed(boolean possessed) {
-        this.possessed = possessed;
     }
 
     @Override
@@ -29,6 +21,6 @@ public class Bat extends Entity {
 
     @Override
     public void updateFrame(float time, float dt) {
-    }
 
+    }
 }

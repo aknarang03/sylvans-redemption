@@ -30,7 +30,7 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
-        super(game); // set the game
+        super(game);
         initialPosition = initPos;
         initSprite();
         initBody();
@@ -69,7 +69,7 @@ public class Sylvan extends Entity {
         animations.put("standpossess",standpossess);
 
         setBounds(0,0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
-        setScale(0.9f);
+        setScale(0.7f);
         setRegion(idleFrames.get(0));
 
     }
@@ -86,7 +86,7 @@ public class Sylvan extends Entity {
         if (Math.abs(vy) < .01f && currentState != State.JUMP) {
             switch (control) {
                 case UP:
-                    if ( currentState != State.JUMP && previousState != State.FALL ) {
+                    if (previousState != State.FALL ) {
                         body.applyForceToCenter(0f, 1f, true);
                         currentState = State.JUMP;
                     }
@@ -97,10 +97,8 @@ public class Sylvan extends Entity {
                 case RIGHT:
                     body.setLinearVelocity(1f, 0);
                     break;
-
             }
         }
-
     }
 
     @Override

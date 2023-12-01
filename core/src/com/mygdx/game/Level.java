@@ -59,36 +59,38 @@ public class Level implements Screen {
     // constructor
     public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename, String backgroundImgFilename) {
 
-        // init HUD
+        // init HUD here
 
         this.game = game;
-
         debugRenderer = new Box2DDebugRenderer();
 
+        // init camera and viewport
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
 
+        // load the map
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapFilename);
         renderer = new OrthogonalTiledMapRenderer(map,1/SylvanGame.PPM);
 
-        camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight()/2, 0);
+        //camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight()/2, 0);
 
+        // set up world
         Vector2 gravity = new Vector2(0,-10);
         world = new World(gravity,true);
 
+        // set up contact listener
         contactListener = new GameContactListener();
         world.setContactListener(contactListener);
 
-        this.enemies = enemies;
-        //Entity currentInhabitedEntity; // keep track of who player is possessing
+        this.enemies = enemies; // init enemies array
 
-        createStructure();
+        createStructure(); // build level in box2d
 
     }
 
-    public void changeCurrentInhabitedEntity(Entity entity) {
-        if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false; }
+    public void changeCurrentInhabitedEntity(Entity entity) { // call when player is now a different body
+        if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false;}
         currentInhabitedEntity = entity;
         entity.possessed = true;
     }
@@ -97,16 +99,15 @@ public class Level implements Screen {
         return world;
     }
 
-    public void createEntities() { // this has to be called after the world is created, otherwise it won't work
-
+    public void createEntities() { // construct each entity
+        // will loop thru enemies array
         Vector2 sylvanPos = new Vector2(1,1.7f);
         sylvan = new Sylvan(game,sylvanPos);
         //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
         changeCurrentInhabitedEntity(sylvan); // on level creation
-
     }
 
-    // create the level structure in box2d
+    // build level in box2d
     public void createStructure() {
 
         bodyDef = new BodyDef();
@@ -142,10 +143,15 @@ public class Level implements Screen {
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             currentInhabitedEntity.move(Control.RIGHT);
-        } if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             currentInhabitedEntity.move(Control.LEFT);
-        } if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             currentInhabitedEntity.move(Control.UP);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT) || Gdx.input.isKeyPressed(Input.Keys.E)) {
+            currentInhabitedEntity.move(Control.POSSESS);
         }
 
     }
@@ -153,7 +159,7 @@ public class Level implements Screen {
     public void update(float delta) {
         processInput();
         //currentInhabitedEntity.setPosition(body.getPosition().x - currentInhabitedEntity.getWidth()*1.5f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight()/1.1f);
-        currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * 0.45f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * 0.3f, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
+        currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * 0.36f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * 0.33f, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
         // unless I fix this to be more precise we may have to move the arbitrary values to be constants in each Entity class so that we can do this update function on any entity
         // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
         world.step(1/60f,6,2);
