@@ -10,6 +10,11 @@ public class Spider extends Entity {
     }
 
     @Override
+    public void initBody() {
+
+    }
+
+    @Override
     public void move(Control control) {
 
     }

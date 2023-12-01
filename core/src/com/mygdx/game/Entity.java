@@ -15,6 +15,10 @@ import java.util.HashMap;
 
 public abstract class Entity extends Sprite {
 
+    // used to set position
+    public float WIDTH_MULTIPLYER;
+    public float HEIGHT_MULTIPLYER;
+
     protected enum State {IDLE, WALK, JUMP, GLIDE, FALL, LAND, POSSESS, DEAD}; // these may change
     public State currentState;
     public State previousState;
@@ -24,12 +28,12 @@ public abstract class Entity extends Sprite {
     protected TextureAtlas atlas;
 
     // vars for body
-    SylvanGame game; // need game reference to get world to draw body, etc
+    protected SylvanGame game; // need game reference to get world to draw body, etc
     protected Vector2 initialPosition; // where the Entity will spawn when level is started
     protected BodyDef bodyDef;
     protected Body body;
-    PolygonShape shape;
-    FixtureDef fixtureDef;
+    protected PolygonShape shape;
+    protected FixtureDef fixtureDef;
     protected World world; // reference to the world
     protected boolean left;
     protected float stateTimer;
@@ -46,35 +50,7 @@ public abstract class Entity extends Sprite {
 
 
     // initialize the Entity body variables
-    public void initBody() {
-
-        world = game.currentLevel.getWorld();
-        System.out.println("init body");
-
-        bodyDef = new BodyDef();
-        setPosition(5/SylvanGame.PPM, 5/SylvanGame.PPM);
-        System.out.println(getX());
-        bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bodyDef);
-
-        body.setFixedRotation(true);
-        shape = new PolygonShape();
-        //shape.setAsBox(0.3f,0.3f); // temp values
-        shape.setAsBox(getWidth()/3.8f,getHeight()/3.1f);
-        fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 0.009f;
-        fixtureDef.friction = 0.5f;
-        //fixtureDef.friction = 0;
-        fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
-
-        body.createFixture(fixtureDef);
-        //body.setUserData(this);
-        shape.dispose();
-        //System.out.println(body.getPosition());
-    }
-
+    public abstract void initBody();
     public Body getBody() {
         return body;
     }

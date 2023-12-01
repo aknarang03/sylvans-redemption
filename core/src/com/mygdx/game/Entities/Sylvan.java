@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
@@ -35,6 +38,37 @@ public class Sylvan extends Entity {
         initSprite();
         initBody();
         System.out.println("width:" + this.getWidth());
+        WIDTH_MULTIPLYER = 0.36f;
+        HEIGHT_MULTIPLYER = 0.33f;
+    }
+
+    public void initBody() {
+
+        world = game.currentLevel.getWorld();
+        System.out.println("init body");
+
+        bodyDef = new BodyDef();
+        setPosition(5/SylvanGame.PPM, 5/SylvanGame.PPM);
+        System.out.println(getX());
+        bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        body = world.createBody(bodyDef);
+
+        body.setFixedRotation(true);
+        shape = new PolygonShape();
+        //shape.setAsBox(0.3f,0.3f); // temp values
+        shape.setAsBox(getWidth()/3.8f,getHeight()/3.1f);
+        fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0.009f;
+        fixtureDef.friction = 0.5f;
+        //fixtureDef.friction = 0;
+        fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
+
+        body.createFixture(fixtureDef);
+        //body.setUserData(this);
+        shape.dispose();
+        //System.out.println(body.getPosition());
     }
 
     @Override

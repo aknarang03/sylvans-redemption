@@ -13,6 +13,11 @@ public class Bat extends Entity {
         super(game);
     }
 
+    @Override
+    public void initBody() {
+
+    }
+
     public void setPossessed(boolean possessed) {
         this.possessed = possessed;
     }

@@ -20,7 +20,7 @@ public class SylvanGame extends Game {
 
 	public SpriteBatch batch;
 
-	Level currentLevel; // keep track of current level
+	public Level currentLevel; // keep track of current level
 
 	// Levels
 	Level prototypeLevel;

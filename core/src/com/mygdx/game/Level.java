@@ -159,7 +159,7 @@ public class Level implements Screen {
     public void update(float delta) {
         processInput();
         //currentInhabitedEntity.setPosition(body.getPosition().x - currentInhabitedEntity.getWidth()*1.5f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight()/1.1f);
-        currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * 0.36f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * 0.33f, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
+        currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * currentInhabitedEntity.WIDTH_MULTIPLYER, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * currentInhabitedEntity.HEIGHT_MULTIPLYER, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
         // unless I fix this to be more precise we may have to move the arbitrary values to be constants in each Entity class so that we can do this update function on any entity
         // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
         world.step(1/60f,6,2);
