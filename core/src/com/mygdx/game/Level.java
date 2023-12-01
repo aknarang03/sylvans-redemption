@@ -28,6 +28,7 @@ public class Level implements Screen {
 
     private Box2DDebugRenderer debugRenderer;
     Matrix4 debugMatrix;
+
     //private Hud hud; // make Hud class to show the top left interface as seen in game sketch
 
     final SylvanGame game;
@@ -65,8 +66,6 @@ public class Level implements Screen {
         debugRenderer = new Box2DDebugRenderer();
 
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
-        //camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        // something wrong with the camera idk??
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
 
         mapLoader = new TmxMapLoader();
@@ -82,16 +81,10 @@ public class Level implements Screen {
         world.setContactListener(contactListener);
 
         this.enemies = enemies;
-        Entity currentInhabitedEntity; // keep track of who player is possessing
+        //Entity currentInhabitedEntity; // keep track of who player is possessing
 
         createStructure();
 
-    }
-
-    public void createEntityBodies() { // called in game when level picked
-        // will loop thru to create enemy bodies also
-        sylvan.initBody();
-        changeCurrentInhabitedEntity(sylvan);
     }
 
     public void changeCurrentInhabitedEntity(Entity entity) {
@@ -108,7 +101,7 @@ public class Level implements Screen {
 
         Vector2 sylvanPos = new Vector2(1,1.7f);
         sylvan = new Sylvan(game,sylvanPos);
-        sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
+        //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
         changeCurrentInhabitedEntity(sylvan); // on level creation
 
     }
@@ -159,6 +152,7 @@ public class Level implements Screen {
 
     public void update(float delta) {
         processInput();
+        currentInhabitedEntity.setPosition(body.getPosition().x - currentInhabitedEntity.getWidth()*1.5f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight()/1.1f);
         world.step(1/60f,6,2);
         // this will loop thru all entities to update frame
         currentInhabitedEntity.updateFrame(timeElapsed,delta);
@@ -178,10 +172,10 @@ public class Level implements Screen {
 
         camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0);
 
-        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0); // this may be the issue and PPM?
+        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
         debugRenderer.render(world,camera.combined);
 
-        game.batch.setProjectionMatrix(camera.combined); // if I uncomment this he completely disappears
+        game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
         // this will draw all entities

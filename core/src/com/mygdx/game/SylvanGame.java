@@ -1,16 +1,8 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.game.Entities.Sylvan;
-
-import java.awt.Color;
 
 public class SylvanGame extends Game {
 
@@ -36,15 +28,16 @@ public class SylvanGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+
 		// CONSTRUCT LEVELS
 		createLevels();
+
 		pickLevel(prototypeLevel);
 	}
 
 	public void pickLevel(Level level) {
 		setCurrentLevel(level);
 		level.createEntities();
-		level.createEntityBodies();
 	}
 
 	public void createLevels() {
@@ -64,19 +57,6 @@ public class SylvanGame extends Game {
 
 	}
 
-	// BODIES ARE CREATED IN LEVEL CLASS
-	/*
-	public void createEntities(Level currentLevel, Array<Entity> enemies) { // this has to be called after the world is created, otherwise it won't work
-		// this should probably somehow be moved to level..
-
-		Vector2 sylvanPos = new Vector2(1,1.7f);
-		sylvan = new Sylvan(this,sylvanPos);
-		sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
-		changeCurrentInhabitedEntity(sylvan); // on level creation
-
-	}
-	 */
-
 	public void setCurrentLevel(Level level) {
 		this.currentLevel = level;
 		this.setScreen(level);
@@ -88,22 +68,7 @@ public class SylvanGame extends Game {
 
 	@Override
 	public void render () {
-
-		//float dt = Gdx.graphics.getDeltaTime();
-
-		/*Every frame:
-		* Process input (processInput()) -> acts on currentInhabitedEntity
-		* Update entities -> for each entity that isnt inhabited or player, update it
-		* Resolve any collisions -> box2d, maybe call this in level? depends how you structure it
-		* Draw -> self explanatory*/
-
-		// render player movement in here, then call:
-		//if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
-		//else { System.out.println("LEVEL NULL");}
-
-		super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
-		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
-
+		super.render(); // calls current screen's (Level's) render method
 	}
 	
 	@Override

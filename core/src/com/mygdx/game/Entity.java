@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -44,22 +43,20 @@ public abstract class Entity extends Sprite {
         left = false;
     }
 
-    // will be used to change the Entity that is moved by the player later on
-    public void setPossessed(boolean possessed) {
-        this.possessed = possessed;
-    }
-
 
     // initialize the Entity body variables
     public void initBody() {
 
         world = game.currentLevel.getWorld();
         System.out.println("init body");
+
         bodyDef = new BodyDef();
+        setPosition(5/SylvanGame.PPM, 5/SylvanGame.PPM);
+        System.out.println(getX());
+        bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        //bodyDef.position.set(initialPosition);
-        bodyDef.position.set((this.getX() + this.getWidth() / 2) / SylvanGame.PPM, (this.getY() + this.getHeight() / 2) / SylvanGame.PPM);
         body = world.createBody(bodyDef);
+
         body.setFixedRotation(true);
         shape = new PolygonShape();
         shape.setAsBox(0.3f,0.3f); // temp values
@@ -86,23 +83,16 @@ public abstract class Entity extends Sprite {
     public abstract void move(Control control);
     public abstract void initSprite();
     public abstract void updateFrame(float time, float dt);
+    // will be used to change the Entity that is moved by the player later on
+
+    public void setPossessed(boolean possessed) {
+        this.possessed = possessed;
+    }
 
 
     // THIS IS NOT GETTING THE CORRECT STATE
     public State getState() {
-        if((body.getLinearVelocity().y > 0 && currentState == State.JUMP) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP))
-            return State.JUMP;
-            //if negative in Y-Axis knight is falling
-        else if(body.getLinearVelocity().y < 0 && body.getLinearVelocity().y != 0)
-            return State.FALL;
-            //if knight is positive or negative in the X axis he is running
-        else if(body.getLinearVelocity().x != 0)
-            return State.WALK;
-            //if none of these return then he must be standing
-        else
-            System.out.println("idle");
-            return State.IDLE;
-        /*
+
         if (body.getLinearVelocity().y != 0 && (currentState == State.JUMP || previousState == State.JUMP))
             return State.JUMP; // do I need those checks for jump state??
         else if (body.getLinearVelocity().y == 0 && previousState == State.FALL)
@@ -112,9 +102,9 @@ public abstract class Entity extends Sprite {
         else if (body.getLinearVelocity().x != 0)
             return State.WALK;
         else
+            System.out.println("idle");
             return State.IDLE;
 
-         */
     }
 
     public float getStateTimer() {

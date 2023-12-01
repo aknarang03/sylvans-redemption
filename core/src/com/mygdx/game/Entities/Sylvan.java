@@ -33,68 +33,8 @@ public class Sylvan extends Entity {
         super(game); // set the game
         initialPosition = initPos;
         initSprite();
+        initBody();
         System.out.println("width:" + this.getWidth());
-    }
-
-    @Override
-    public void move(Control control) {
-
-        currentState = getState();
-        System.out.println(currentState);
-
-        float vy = body.getLinearVelocity().y;
-        //System.out.println(Math.abs(vy));
-
-        // currentState != State.JUMP makes it so that you can't wall climb
-        if (Math.abs(vy) < .01f && currentState != State.JUMP) {
-            switch (control) {
-                case UP:
-                    if ( currentState != State.JUMP && previousState != State.FALL ) {
-                        //body.setLinearVelocity(0, 0);
-                        body.applyForceToCenter(0f, 1f, true);
-                        currentState = State.JUMP;
-                    }
-                    break;
-                case LEFT:
-                    body.setLinearVelocity(-1f, 0);
-                    break;
-                case RIGHT:
-                    body.setLinearVelocity(1f, 0);
-                    break;
-
-            }
-        }
-
-        /*
-        if (Math.abs(vy) < .01f ) { // not currently jumping
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-                body.setLinearVelocity(1f, 0);
-            } if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-                body.setLinearVelocity(-1f, 0);;
-            } if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-                //if (currentState != State.JUMP && currentState != State.FALL)
-                body.applyForceToCenter(0f, 1f, true);
-            }
-        }
-        */
-
-
-
-        /*
-        // this allowed wall climbing; keep code for the climbing enemy.
-        float f = body.getLinearVelocity().y;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            body.setLinearVelocity(1f, f);
-        } if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            body.setLinearVelocity(-1f, f);;
-        } if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            if (currentState != State.JUMP && currentState != State.FALL)
-                body.applyForceToCenter(0f, 1f, true);
-        } //else if (keycode == Input.Keys.SHIFT_RIGHT || keycode == Input.Keys.E) {
-            // THIS WILL HAVE POSSESS CODE / CALL A POSSESS FUNCTION
-        //}
-         */
-
     }
 
     @Override
@@ -128,14 +68,37 @@ public class Sylvan extends Entity {
         animations.put("glidepossess",glidepossess);
         animations.put("standpossess",standpossess);
 
-
-
+        setBounds(0,0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
         setRegion(idleFrames.get(0));
-        //setScale(1.3f);
-        setSize(getWidth() / SylvanGame.PPM, getHeight() / SylvanGame.PPM);
-        setBounds(0,0, idleFrames.get(0).getRegionWidth(), idleFrames.get(0).getRegionHeight());
-        //setBounds(0,0, 0.5f, 0.5f);
-        // NOTE: bounds seems to change whether he flickers onto screen or not
+
+    }
+
+    @Override
+    public void move(Control control) {
+
+        currentState = getState();
+        System.out.println(currentState);
+
+        float vy = body.getLinearVelocity().y;
+
+        // NOTE: currentState != State.JUMP makes it so that you can't wall climb
+        if (Math.abs(vy) < .01f && currentState != State.JUMP) {
+            switch (control) {
+                case UP:
+                    if ( currentState != State.JUMP && previousState != State.FALL ) {
+                        body.applyForceToCenter(0f, 1f, true);
+                        currentState = State.JUMP;
+                    }
+                    break;
+                case LEFT:
+                    body.setLinearVelocity(-1f, 0);
+                    break;
+                case RIGHT:
+                    body.setLinearVelocity(1f, 0);
+                    break;
+
+            }
+        }
 
     }
 
@@ -181,13 +144,7 @@ public class Sylvan extends Entity {
         previousState = currentState;
 
         setRegion(frame);
-        // idk if this set position is right
-        //setPosition(body.getPosition().x - getWidth(), body.getPosition().y - getHeight());
-        //setPosition((body.getPosition().x * SylvanGame.PPM) - getWidth() / 2, (body.getPosition().y * SylvanGame.PPM) - getHeight() / 2);
-
 
     }
-
-
 
 }
