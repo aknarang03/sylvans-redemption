@@ -162,6 +162,9 @@ public class Level implements Screen {
     }
 
     public void update(float delta) {
+
+        System.out.println(currentInhabitedEntity.currentState);
+
         processInput();
         //currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * currentInhabitedEntity.WIDTH_MULTIPLYER, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * currentInhabitedEntity.HEIGHT_MULTIPLYER, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLYER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLYER, sylvan.getWidth(), sylvan.getHeight());

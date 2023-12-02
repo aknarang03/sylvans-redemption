@@ -21,7 +21,6 @@ public abstract class Entity extends Sprite {
 
     protected enum State {IDLE, WALK, JUMP, GLIDE, FALL, LAND, POSSESS, DEAD}; // these may change
     public State currentState;
-    public State previousState;
 
     // vars for sprite (there will be more in each entity)
     protected HashMap<String, Animation<TextureRegion>> animations = new HashMap();
@@ -70,7 +69,54 @@ public abstract class Entity extends Sprite {
     // THIS IS NOT GETTING THE CORRECT STATE
     public State getState() {
 
-        if (body.getLinearVelocity().y != 0 && (currentState == State.JUMP || previousState == State.JUMP))
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
+
+        switch (currentState) {
+
+            case IDLE: {
+                if (vy > 0) { // if you press jump while idling
+                    return State.JUMP;
+                } else if (Math.abs(vx) > .01f) {
+                    return State.WALK;
+                }
+                return State.IDLE;
+            }
+
+            case WALK: {
+                if (vy > 0) {
+                    return State.JUMP;
+                } else if (Math.abs(vx) <= .01f) {
+                    return State.IDLE;
+                }
+                return State.WALK;
+            }
+
+            case JUMP: {
+                if (vy <= 0) {
+                    return State.FALL;
+                }
+                return State.JUMP;
+            }
+
+            case FALL: {
+                if (vy == 0) {
+                    return State.LAND;
+                }
+                return State.FALL;
+            }
+
+            case LAND: {
+                return State.IDLE;
+            }
+
+            default:
+                return State.IDLE;
+
+        }
+
+        /*
+        if (body.getLinearVelocity().y > 0) //  && (currentState == State.JUMP || previousState == State.JUMP)
             return State.JUMP; // do I need those checks for jump state??
         else if (body.getLinearVelocity().y == 0 && previousState == State.FALL)
             return State.LAND;
@@ -81,7 +127,7 @@ public abstract class Entity extends Sprite {
         else
             //System.out.println("idle");
             return State.IDLE;
-
+    */
     }
 
     public float getStateTimer() {

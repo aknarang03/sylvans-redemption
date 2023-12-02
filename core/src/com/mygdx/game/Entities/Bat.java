@@ -67,17 +67,15 @@ public class Bat extends Entity {
 
     @Override
     public void move(Control control) {
-        currentState = getState();
         //System.out.println(currentState);
 
         float vy = body.getLinearVelocity().y;
-        //float vx = body.getLinearVelocity().x;
 
         switch (control) {
             case UP:
                 if (vy <= 0) {
                     body.applyForceToCenter(0f, 0.5f, true);
-                    currentState = State.JUMP;
+                    //currentState = State.JUMP;
                 }
                 break;
             case LEFT:
@@ -87,6 +85,7 @@ public class Bat extends Entity {
                 body.setLinearVelocity(1f, vy);
                 break;
         }
+
     }
 
     @Override
@@ -113,8 +112,6 @@ public class Bat extends Entity {
     public void updateFrame(float timeElapsed, float dt) {
 
         TextureRegion frame;
-        previousState = currentState;
-        currentState = getState();
 
         switch (currentState) {
 
@@ -133,13 +130,13 @@ public class Bat extends Entity {
             frame.flip(true, false);
         }
 
-        if (currentState == previousState) { // state has not changed
+        /*
+        if (currentState == getState()) { // state has not changed
             stateTimer = stateTimer + dt;
         } else {
             stateTimer = 0;
         }
-
-        previousState = currentState;
+         */
 
         setRegion(frame);
     }

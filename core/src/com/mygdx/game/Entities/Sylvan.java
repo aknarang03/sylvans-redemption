@@ -41,6 +41,7 @@ public class Sylvan extends Entity {
         //System.out.println("width:" + this.getWidth());
         WIDTH_MULTIPLYER = 0.36f;
         HEIGHT_MULTIPLYER = 0.33f;
+        //currentState = State.IDLE;
     }
 
     public void initBody() {
@@ -113,18 +114,19 @@ public class Sylvan extends Entity {
     @Override
     public void move(Control control) {
 
-        currentState = getState();
-        System.out.println(currentState);
+        //currentState = getState();
 
+        float vx = body.getLinearVelocity().x;
         float vy = body.getLinearVelocity().y;
 
         // NOTE: currentState != State.JUMP makes it so that you can't wall climb
-        if (Math.abs(vy) < .01f && currentState != State.JUMP) {
+        if (Math.abs(vy) < .01f) {
             switch (control) {
                 case UP:
-                    if (previousState != State.FALL ) {
-                        body.applyForceToCenter(0f, 1f, true);
-                        currentState = State.JUMP;
+                    if (currentState != State.FALL && currentState != State.JUMP) {
+                        //body.applyForceToCenter(0f, 1f, true);
+                        body.setLinearVelocity(vx,5f);
+                        //currentState = State.JUMP;
                     }
                     break;
                 case LEFT:
@@ -144,8 +146,15 @@ public class Sylvan extends Entity {
     public void updateFrame(float timeElapsed, float dt) { // this was TextureRegion getFrame()
 
         TextureRegion frame;
-        previousState = currentState;
-        currentState = getState();
+        //currentState = getState();
+        final State newState = getState();
+
+        if (currentState == newState) { // state has not changed
+            stateTimer = stateTimer + dt;
+        } else {
+            stateTimer = 0;
+        }
+        currentState = newState;
 
         switch (currentState) {
 
@@ -173,13 +182,10 @@ public class Sylvan extends Entity {
             frame.flip(true, false);
         }
 
-        if (currentState == previousState) { // state has not changed
-            stateTimer = stateTimer + dt;
-        } else {
-            stateTimer = 0;
-        }
+        /*
 
-        previousState = currentState;
+        */
+
 
         setRegion(frame);
 
