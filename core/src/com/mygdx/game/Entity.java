@@ -38,6 +38,7 @@ public abstract class Entity extends Sprite {
     protected boolean left;
     protected float stateTimer;
     protected boolean possessed;
+    protected String name;
 
 
     // this constructor should be called in every entity constructor to init game and world. need this to make initBody() work

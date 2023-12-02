@@ -25,6 +25,7 @@ public class Bat extends Entity {
 
     public Bat(SylvanGame game, Vector2 initPos) {
         super(game);
+        name = "Bat";
         initSprite();
         initBody();
         initialPosition = initPos;
@@ -70,24 +71,22 @@ public class Bat extends Entity {
         //System.out.println(currentState);
 
         float vy = body.getLinearVelocity().y;
-        float vx = body.getLinearVelocity().x;
+        //float vx = body.getLinearVelocity().x;
 
-        //if (vy < 0) {
-            switch (control) {
-                case UP:
-                    if (vy <= 0) {
-                        body.applyForceToCenter(0f, 0.5f, true);
-                        currentState = State.JUMP;
-                    }
-                    break;
-                case LEFT:
-                    body.setLinearVelocity(-1f, vy);
-                    break;
-                case RIGHT:
-                    body.setLinearVelocity(1f, vy);
-                    break;
-            }
-       // }
+        switch (control) {
+            case UP:
+                if (vy <= 0) {
+                    body.applyForceToCenter(0f, 0.5f, true);
+                    currentState = State.JUMP;
+                }
+                break;
+            case LEFT:
+                body.setLinearVelocity(-1f, vy);
+                break;
+            case RIGHT:
+                body.setLinearVelocity(1f, vy);
+                break;
+        }
     }
 
     @Override

@@ -36,6 +36,7 @@ public class Level implements Screen {
     private World world;
     private GameContactListener contactListener;
     private Array<Entity> enemies; // this will hold the enemies for each level to be drawn
+    public Array<Vector2> distances; // tracks distances between currentEntity and each enemy
 
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -57,6 +58,7 @@ public class Level implements Screen {
     Bat bat; // temporary for prototype
     Entity currentInhabitedEntity;
     private float timeElapsed;
+
 
     // constructor
     public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename, String backgroundImgFilename) {
@@ -107,7 +109,7 @@ public class Level implements Screen {
         //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
         sylvan = new Sylvan(game,sylvanPos);
         bat = new Bat(game,new Vector2(2,2));
-        changeCurrentInhabitedEntity(bat); // on level creation
+        changeCurrentInhabitedEntity(sylvan); // on level creation
     }
 
     // build level in box2d
@@ -165,6 +167,16 @@ public class Level implements Screen {
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLYER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLYER, sylvan.getWidth(), sylvan.getHeight());
         bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLYER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLYER, bat.getWidth(), bat.getHeight());
 
+        // UPDATE DISTANCES ARRAY
+        /*
+        TEMP CODE FOR PROTOTYPE
+        if (sylvan.possessed) { // if player is currently not possessing anyone
+            double distance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
+            if (distance <= 3) {
+                // HIGHLIGHT THE BAT
+            }
+        }
+        */
 
         // unless I fix this to be more precise we may have to move the arbitrary values to be constants in each Entity class so that we can do this update function on any entity
         // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
@@ -200,6 +212,19 @@ public class Level implements Screen {
         game.batch.end();
 
         timeElapsed += delta;
+    }
+
+    public void possess() {
+        if (sylvan.possessed) { // if player is currently not possessing anyone
+            double distance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
+            if (distance <= 3) {
+                changeCurrentInhabitedEntity(bat);
+            }
+        }
+    }
+
+    public double getDistance(Vector2 entity1, Vector2 entity2){
+        return Math.sqrt(Math.pow((entity2.x - entity1.x), 2) + Math.pow((entity2.y - entity1.y), 2));
     }
 
     @Override

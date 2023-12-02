@@ -34,6 +34,7 @@ public class Sylvan extends Entity {
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game);
+        name = "Sylvan";
         initialPosition = initPos;
         initSprite();
         initBody();
@@ -131,6 +132,9 @@ public class Sylvan extends Entity {
                     break;
                 case RIGHT:
                     body.setLinearVelocity(1f, 0);
+                    break;
+                case POSSESS:
+                    game.currentLevel.possess();
                     break;
             }
         }
