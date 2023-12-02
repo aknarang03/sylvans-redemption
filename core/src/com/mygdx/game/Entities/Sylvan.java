@@ -37,7 +37,7 @@ public class Sylvan extends Entity {
         initialPosition = initPos;
         initSprite();
         initBody();
-        System.out.println("width:" + this.getWidth());
+        //System.out.println("width:" + this.getWidth());
         WIDTH_MULTIPLYER = 0.36f;
         HEIGHT_MULTIPLYER = 0.33f;
     }
@@ -50,7 +50,7 @@ public class Sylvan extends Entity {
         bodyDef = new BodyDef();
         setPosition(5/SylvanGame.PPM, 5/SylvanGame.PPM);
         System.out.println(getX());
-        bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
+        bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2); // when I remove the 5+ he falls
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
 
@@ -103,6 +103,7 @@ public class Sylvan extends Entity {
         animations.put("standpossess",standpossess);
 
         setBounds(0,0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
+        // maybe this is wrong?
         setScale(0.7f);
         setRegion(idleFrames.get(0));
 

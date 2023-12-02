@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.Entities.Bat;
 import com.mygdx.game.Entities.Sylvan;
 
 public class Level implements Screen {
@@ -53,6 +54,7 @@ public class Level implements Screen {
     private Sprite backgroundSprite;
 
     Sylvan sylvan;
+    Bat bat; // temporary for prototype
     Entity currentInhabitedEntity;
     private float timeElapsed;
 
@@ -102,9 +104,10 @@ public class Level implements Screen {
     public void createEntities() { // construct each entity
         // will loop thru enemies array
         Vector2 sylvanPos = new Vector2(1,1.7f);
-        sylvan = new Sylvan(game,sylvanPos);
         //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
-        changeCurrentInhabitedEntity(sylvan); // on level creation
+        sylvan = new Sylvan(game,sylvanPos);
+        bat = new Bat(game,new Vector2(2,2));
+        changeCurrentInhabitedEntity(bat); // on level creation
     }
 
     // build level in box2d
@@ -158,13 +161,17 @@ public class Level implements Screen {
 
     public void update(float delta) {
         processInput();
-        //currentInhabitedEntity.setPosition(body.getPosition().x - currentInhabitedEntity.getWidth()*1.5f, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight()/1.1f);
-        currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * currentInhabitedEntity.WIDTH_MULTIPLYER, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * currentInhabitedEntity.HEIGHT_MULTIPLYER, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
+        //currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * currentInhabitedEntity.WIDTH_MULTIPLYER, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * currentInhabitedEntity.HEIGHT_MULTIPLYER, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
+        sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLYER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLYER, sylvan.getWidth(), sylvan.getHeight());
+        bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLYER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLYER, bat.getWidth(), bat.getHeight());
+
+
         // unless I fix this to be more precise we may have to move the arbitrary values to be constants in each Entity class so that we can do this update function on any entity
         // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
         world.step(1/60f,6,2);
         // this function will loop thru all entities to update frame
-        currentInhabitedEntity.updateFrame(timeElapsed,delta);
+        sylvan.updateFrame(timeElapsed,delta);
+        bat.updateFrame(timeElapsed,delta);
         camera.update();
         renderer.setView(camera);
     }
@@ -187,8 +194,9 @@ public class Level implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        // this will draw all entities
-        currentInhabitedEntity.draw(game.batch);
+        // this will draw all entities by looping thru array
+        sylvan.draw(game.batch);
+        bat.draw(game.batch);
         game.batch.end();
 
         timeElapsed += delta;

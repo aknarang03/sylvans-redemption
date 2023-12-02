@@ -1,4 +1,7 @@
 package com.mygdx.game.Entities;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
