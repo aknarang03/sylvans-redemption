@@ -28,7 +28,12 @@ public class Spider extends Entity {
     }
 
     @Override
-    public void updateFrame(float time, float dt) {
+    public void update(float time, float dt) {
 
+    }
+
+    @Override
+    public State getState() {
+        return null;
     }
 }

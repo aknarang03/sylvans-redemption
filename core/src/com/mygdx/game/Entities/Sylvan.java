@@ -50,16 +50,16 @@ public class Sylvan extends Entity {
         System.out.println("init body");
 
         bodyDef = new BodyDef();
-        setPosition(5/SylvanGame.PPM, 5/SylvanGame.PPM);
+        setPosition(5 / SylvanGame.PPM, 5 / SylvanGame.PPM);
         System.out.println(getX());
-        bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2); // when I remove the 5+ he falls
+        bodyDef.position.set(5 + getWidth() / 2, 5 + getHeight() / 2); // when I remove the 5+ he falls
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
 
         body.setFixedRotation(true);
         shape = new PolygonShape();
         //shape.setAsBox(0.3f,0.3f); // temp values
-        shape.setAsBox(getWidth()/3.8f,getHeight()/3.1f);
+        shape.setAsBox(getWidth() / 3.8f, getHeight() / 3.1f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
@@ -88,23 +88,23 @@ public class Sylvan extends Entity {
         glidepossessFrames = atlas.findRegions("glidepossess");
         standpossessFrames = atlas.findRegions("standpossess");
 
-        idle = new Animation<TextureRegion>(1/9f, idleFrames);
-        walk = new Animation<TextureRegion>(1/9f, walkFrames);
-        jump = new Animation<TextureRegion>(1/9f, jumpFrames);
-        glide = new Animation<TextureRegion>(1/9f, glideFrames);
-        land = new Animation<TextureRegion>(1/9f, landFrames);
-        glidepossess = new Animation<TextureRegion>(1/9f, glidepossessFrames);
-        standpossess = new Animation<TextureRegion>(1/9f, standpossessFrames);
+        idle = new Animation<TextureRegion>(1 / 9f, idleFrames);
+        walk = new Animation<TextureRegion>(1 / 9f, walkFrames);
+        jump = new Animation<TextureRegion>(1 / 9f, jumpFrames);
+        glide = new Animation<TextureRegion>(1 / 9f, glideFrames);
+        land = new Animation<TextureRegion>(1 / 9f, landFrames);
+        glidepossess = new Animation<TextureRegion>(1 / 9f, glidepossessFrames);
+        standpossess = new Animation<TextureRegion>(1 / 9f, standpossessFrames);
 
-        animations.put("idle",idle);
-        animations.put("walk",walk);
-        animations.put("jump",jump);
-        animations.put("glide",glide);
-        animations.put("land",land);
-        animations.put("glidepossess",glidepossess);
-        animations.put("standpossess",standpossess);
+        animations.put("idle", idle);
+        animations.put("walk", walk);
+        animations.put("jump", jump);
+        animations.put("glide", glide);
+        animations.put("land", land);
+        animations.put("glidepossess", glidepossess);
+        animations.put("standpossess", standpossess);
 
-        setBounds(0,0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
+        setBounds(0, 0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
         // maybe this is wrong?
         setScale(0.7f);
         setRegion(idleFrames.get(0));
@@ -116,8 +116,8 @@ public class Sylvan extends Entity {
 
         //currentState = getState();
 
-        float vx = body.getLinearVelocity().x;
-        float vy = body.getLinearVelocity().y;
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
 
         // NOTE: currentState != State.JUMP makes it so that you can't wall climb
         if (Math.abs(vy) < .01f) {
@@ -125,7 +125,7 @@ public class Sylvan extends Entity {
                 case UP:
                     if (currentState != State.FALL && currentState != State.JUMP) {
                         //body.applyForceToCenter(0f, 1f, true);
-                        body.setLinearVelocity(vx,5f);
+                        body.setLinearVelocity(vx, 5f);
                         //currentState = State.JUMP;
                     }
                     break;
@@ -143,7 +143,7 @@ public class Sylvan extends Entity {
     }
 
     @Override
-    public void updateFrame(float timeElapsed, float dt) { // this was TextureRegion getFrame()
+    public void update(float timeElapsed, float dt) { // this was TextureRegion getFrame()
 
         TextureRegion frame;
         //currentState = getState();
@@ -154,15 +154,17 @@ public class Sylvan extends Entity {
         } else {
             stateTimer = 0;
         }
+
         currentState = newState;
 
         switch (currentState) {
 
             case JUMP:
-                frame = (animations.get("jump").getKeyFrame(timeElapsed, false));
+                frame = (animations.get("jump").getKeyFrame(timeElapsed, true));
                 break;
             case FALL:
-                frame = (animations.get("glide").getKeyFrame(timeElapsed,false));
+                frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
+                // fall has same animation as glide intentionally
                 break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
@@ -178,17 +180,67 @@ public class Sylvan extends Entity {
 
         // flip frame if it's facing the wrong way
         // doesn't work
-        if ((body.getLinearVelocity().x < 0 && !frame.isFlipX()) || (body.getLinearVelocity().x > 0 && frame.isFlipX())) {
-            frame.flip(true, false);
-        }
+        float vx = body.getLinearVelocity().x;
+        boolean flipped = frame.isFlipX();
 
         /*
-
-        */
-
+        if ((vx < 0 && !flipped) || (vx > 0 && flipped)) {
+            frame.flip(true, false);
+        }
+         */
 
         setRegion(frame);
 
     }
 
+
+
+    @Override
+    public State getState() {
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
+
+        switch (currentState) {
+
+            case IDLE: {
+                if (vy > 0) { // if you press jump while idling
+                    return State.JUMP;
+                } else if (Math.abs(vx) > .01f) {
+                    return State.WALK;
+                }
+                return State.IDLE;
+            }
+
+            case WALK: {
+                if (vy > 0) {
+                    return State.JUMP;
+                } else if (Math.abs(vx) <= .01f) {
+                    return State.IDLE;
+                }
+                return State.WALK;
+            }
+
+            case JUMP: {
+                if (vy <= 0) {
+                    return State.FALL;
+                }
+                return State.JUMP;
+            }
+
+            case FALL: {
+                if (vy == 0) {
+                    return State.LAND;
+                }
+                return State.FALL;
+            }
+
+            case LAND: {
+                return State.IDLE;
+            }
+
+            default:
+                return State.IDLE;
+        }
+
+    }
 }

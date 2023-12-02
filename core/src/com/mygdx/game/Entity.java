@@ -58,7 +58,7 @@ public abstract class Entity extends Sprite {
     // implementation of these will differ based on the entity since each of their movements will differ
     public abstract void move(Control control);
     public abstract void initSprite();
-    public abstract void updateFrame(float time, float dt);
+    public abstract void update(float time, float dt);
     // will be used to change the Entity that is moved by the player later on
 
     public void setPossessed(boolean possessed) {
@@ -67,68 +67,7 @@ public abstract class Entity extends Sprite {
 
 
     // THIS IS NOT GETTING THE CORRECT STATE
-    public State getState() {
-
-        final float vx = body.getLinearVelocity().x;
-        final float vy = body.getLinearVelocity().y;
-
-        switch (currentState) {
-
-            case IDLE: {
-                if (vy > 0) { // if you press jump while idling
-                    return State.JUMP;
-                } else if (Math.abs(vx) > .01f) {
-                    return State.WALK;
-                }
-                return State.IDLE;
-            }
-
-            case WALK: {
-                if (vy > 0) {
-                    return State.JUMP;
-                } else if (Math.abs(vx) <= .01f) {
-                    return State.IDLE;
-                }
-                return State.WALK;
-            }
-
-            case JUMP: {
-                if (vy <= 0) {
-                    return State.FALL;
-                }
-                return State.JUMP;
-            }
-
-            case FALL: {
-                if (vy == 0) {
-                    return State.LAND;
-                }
-                return State.FALL;
-            }
-
-            case LAND: {
-                return State.IDLE;
-            }
-
-            default:
-                return State.IDLE;
-
-        }
-
-        /*
-        if (body.getLinearVelocity().y > 0) //  && (currentState == State.JUMP || previousState == State.JUMP)
-            return State.JUMP; // do I need those checks for jump state??
-        else if (body.getLinearVelocity().y == 0 && previousState == State.FALL)
-            return State.LAND;
-        else if (body.getLinearVelocity().y < 0)
-            return State.FALL;
-        else if (body.getLinearVelocity().x != 0)
-            return State.WALK;
-        else
-            //System.out.println("idle");
-            return State.IDLE;
-    */
-    }
+    public abstract State getState();
 
     public float getStateTimer() {
         return stateTimer;

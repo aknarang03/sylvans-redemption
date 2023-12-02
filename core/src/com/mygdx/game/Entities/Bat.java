@@ -66,16 +66,66 @@ public class Bat extends Entity {
     }
 
     @Override
+    public State getState() {
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
+
+        switch (currentState) {
+
+            case IDLE: {
+                if (vy > 0) { // if you press jump while idling
+                    return State.JUMP;
+                } else if (Math.abs(vx) > .01f) {
+                    return State.WALK;
+                }
+                return State.IDLE;
+            }
+
+            case WALK: {
+                if (vy > 0) {
+                    return State.JUMP;
+                } else if (Math.abs(vx) <= .01f) {
+                    return State.IDLE;
+                }
+                return State.WALK;
+            }
+
+            case JUMP: {
+                if (vy <= 0) {
+                    return State.FALL;
+                }
+                return State.JUMP;
+            }
+
+            case FALL: {
+                if (vy == 0) {
+                    return State.LAND;
+                } else if (vy > 0) {
+                    return State.JUMP; // since bat can jump in midair
+                }
+                return State.FALL;
+            }
+
+            case LAND: {
+                return State.IDLE;
+            }
+
+            default:
+                return State.IDLE;
+        }
+    }
+
+    @Override
     public void move(Control control) {
         //System.out.println(currentState);
 
-        float vy = body.getLinearVelocity().y;
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
 
         switch (control) {
             case UP:
                 if (vy <= 0) {
-                    body.applyForceToCenter(0f, 0.5f, true);
-                    //currentState = State.JUMP;
+                    body.setLinearVelocity(vx,3f);
                 }
                 break;
             case LEFT:
@@ -109,34 +159,33 @@ public class Bat extends Entity {
     }
 
     @Override
-    public void updateFrame(float timeElapsed, float dt) {
+    public void update(float timeElapsed, float dt) {
 
         TextureRegion frame;
 
-        switch (currentState) {
+        final State newState = getState();
 
+        if (currentState == newState) { // state has not changed
+            stateTimer = stateTimer + dt;
+        } else {
+            stateTimer = 0;
+        }
+
+        currentState = newState;
+
+        switch (currentState) {
             case JUMP:
                 frame = (animations.get("fly").getKeyFrame(timeElapsed, true));
                 break;
             default:
                 frame = (animations.get("fly").getKeyFrame(timeElapsed, true));
                 break;
-
         }
 
         // flip frame if it's facing the wrong way
-        // doesn't work
         if ((body.getLinearVelocity().x < 0 && frame.isFlipX()) || (body.getLinearVelocity().x > 0 && !frame.isFlipX())) {
             frame.flip(true, false);
         }
-
-        /*
-        if (currentState == getState()) { // state has not changed
-            stateTimer = stateTimer + dt;
-        } else {
-            stateTimer = 0;
-        }
-         */
 
         setRegion(frame);
     }

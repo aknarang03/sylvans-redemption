@@ -185,8 +185,8 @@ public class Level implements Screen {
         // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
         world.step(1/60f,6,2);
         // this function will loop thru all entities to update frame
-        sylvan.updateFrame(timeElapsed,delta);
-        bat.updateFrame(timeElapsed,delta);
+        sylvan.update(timeElapsed,delta);
+        bat.update(timeElapsed,delta);
         camera.update();
         renderer.setView(camera);
     }
