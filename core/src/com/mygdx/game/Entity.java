@@ -79,7 +79,7 @@ public abstract class Entity extends Sprite {
         else if (body.getLinearVelocity().x != 0)
             return State.WALK;
         else
-            System.out.println("idle");
+            //System.out.println("idle");
             return State.IDLE;
 
     }

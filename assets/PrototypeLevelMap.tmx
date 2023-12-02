@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="29">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="37">
  <tileset firstgid="1" source="PrototypeTiles.tsx"/>
  <imagelayer id="4" name="Background" visible="0" offsetx="0" offsety="-160">
   <image source="background.png" width="1440" height="480"/>
@@ -35,5 +35,8 @@
   <object id="24" x="208" y="144" width="64" height="16"/>
   <object id="27" x="0" y="0" width="32" height="256"/>
   <object id="28" x="448" y="0" width="32" height="256"/>
+  <object id="34" x="0" y="-48" width="480"/>
+  <object id="35" x="480" y="-48" height="48"/>
+  <object id="36" x="0" y="-48" height="48"/>
  </objectgroup>
 </map>

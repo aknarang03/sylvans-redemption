@@ -150,19 +150,19 @@ public class Sylvan extends Entity {
         switch (currentState) {
 
             case JUMP:
-                frame = (animations.get("jump").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("jump").getKeyFrame(timeElapsed, false));
                 break;
             case FALL:
-                frame = (animations.get("glide").getKeyFrame(timeElapsed,true));
+                frame = (animations.get("glide").getKeyFrame(timeElapsed,false));
                 break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                 break;
             case LAND:
-                frame = (animations.get("land").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("land").getKeyFrame(timeElapsed, false));
                 break;
             default:
-                frame = (animations.get("idle").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
                 break;
 
         }
