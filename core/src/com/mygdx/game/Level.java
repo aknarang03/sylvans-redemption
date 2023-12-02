@@ -207,7 +207,9 @@ public class Level implements Screen {
 
         game.batch.begin();
         // this will draw all entities by looping thru array
-        sylvan.draw(game.batch);
+        if (sylvan.possessed) {
+            sylvan.draw(game.batch);
+        }
         bat.draw(game.batch);
         game.batch.end();
 
