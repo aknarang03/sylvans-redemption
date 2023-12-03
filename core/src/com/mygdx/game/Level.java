@@ -169,24 +169,12 @@ public class Level implements Screen {
 
     public void update(float delta) {
 
-        //System.out.println(currentInhabitedEntity.currentState);
-
         processInput();
-        //currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * currentInhabitedEntity.WIDTH_MULTIPLYER, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * currentInhabitedEntity.HEIGHT_MULTIPLYER, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
 
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLYER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLYER, sylvan.getWidth(), sylvan.getHeight());
         bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLYER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLYER, bat.getWidth(), bat.getHeight());
 
         // UPDATE DISTANCES ARRAY
-        /*
-        TEMP CODE FOR PROTOTYPE
-        if (sylvan.possessed) { // if player is currently not possessing anyone
-            double distance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
-            if (distance <= 3) {
-                // HIGHLIGHT THE BAT
-            }
-        }
-        */
 
         if (!sylvan.possessed) {
             possessTimer += delta;
@@ -198,8 +186,6 @@ public class Level implements Screen {
             possessTimer = 0;
         }
 
-        // unless I fix this to be more precise we may have to move the arbitrary values to be constants in each Entity class so that we can do this update function on any entity
-        // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
         world.step(1/60f,6,2);
         // this function will loop thru all entities to update frame
         sylvan.update(timeElapsed,delta);
