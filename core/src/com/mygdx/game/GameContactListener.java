@@ -39,9 +39,9 @@ public class GameContactListener implements ContactListener {
             final float NEG_FORCE = -1;
 
             if (left) {
-                sylvan.getBody().applyForceToCenter(FORCE,0,true);
+                sylvan.getBody().applyForceToCenter(0.8f,0,true);
             } if (right) {
-                sylvan.getBody().applyForceToCenter(NEG_FORCE,0,true);
+                sylvan.getBody().applyForceToCenter(-0.8f,0,true);
             } if (up) {
                 sylvan.getBody().applyForceToCenter(0,NEG_FORCE,true);
             } if (down) {
