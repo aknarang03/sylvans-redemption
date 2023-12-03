@@ -23,6 +23,10 @@ public class Bat extends Entity {
     private Array<TextureAtlas.AtlasRegion> attackFrames;
     private Array<TextureAtlas.AtlasRegion> flyFrames;
 
+    // vars for "AI" movement
+    private float moveTimer = 0;
+    boolean left = true;
+
     public Bat(SylvanGame game, Vector2 initPos) {
         super(game);
         name = "Bat";
@@ -33,6 +37,21 @@ public class Bat extends Entity {
         // have not changed these yet
         WIDTH_MULTIPLYER = 0.36f;
         HEIGHT_MULTIPLYER = 0.33f;
+    }
+
+    @Override
+    public void aiMove(float dt) {
+        System.out.println(left);
+        moveTimer += dt;
+        if (moveTimer >= 3) {
+            left = !left;
+            moveTimer = 0;
+        }
+        if (left) {
+            body.setLinearVelocity(-1,0); // move left
+        } else {
+            body.setLinearVelocity(1,0); // move right
+        }
     }
 
     @Override
@@ -166,6 +185,8 @@ public class Bat extends Entity {
 
     }
 
+
+
     @Override
     public void update(float timeElapsed, float dt) {
 
@@ -196,6 +217,10 @@ public class Bat extends Entity {
         }
 
         setRegion(frame);
+
+        if (!possessed) { // if this is being called in wrong spot I can call above and do return; in aiMove()
+            aiMove(dt);
+        }
     }
 
 }

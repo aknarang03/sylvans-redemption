@@ -191,7 +191,7 @@ public class Level implements Screen {
         if (!sylvan.possessed) {
             possessTimer += delta;
         }
-        if (possessTimer >= 5) {
+        if (possessTimer >= 5) { // later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
             Vector2 pos = currentInhabitedEntity.getBody().getPosition();
             changeCurrentInhabitedEntity(sylvan);
             sylvan.body.setTransform(pos.x,pos.y,0);

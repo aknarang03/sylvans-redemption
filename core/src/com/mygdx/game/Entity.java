@@ -19,6 +19,9 @@ public abstract class Entity extends Sprite {
     public float WIDTH_MULTIPLYER;
     public float HEIGHT_MULTIPLYER;
 
+    // for enemies when they aren't possessed
+    public abstract void aiMove(float dt);
+
     protected enum State {IDLE, WALK, JUMP, GLIDE, FALL, LAND, POSSESS, DEAD}; // these may change
     public State currentState;
 

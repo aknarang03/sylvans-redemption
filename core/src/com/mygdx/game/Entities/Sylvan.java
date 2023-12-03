@@ -44,6 +44,9 @@ public class Sylvan extends Entity {
         //currentState = State.IDLE;
     }
 
+    @Override
+    public void aiMove(float dt) {} // this will never be called on sylvan
+
     public void initBody() {
 
         world = game.currentLevel.getWorld();
@@ -91,7 +94,7 @@ public class Sylvan extends Entity {
 
         idle = new Animation<TextureRegion>(1 / 9f, idleFrames);
         walk = new Animation<TextureRegion>(1 / 9f, walkFrames);
-        jump = new Animation<TextureRegion>(1 / 9f, jumpFrames);
+        jump = new Animation<TextureRegion>(1 / 5f, jumpFrames);
         glide = new Animation<TextureRegion>(1 / 9f, glideFrames);
         land = new Animation<TextureRegion>(1 / 9f, landFrames);
         glidepossess = new Animation<TextureRegion>(1 / 9f, glidepossessFrames);

@@ -8,6 +8,11 @@ import com.mygdx.game.SylvanGame;
 
 public class Spider extends Entity {
 
+    @Override
+    public void aiMove(float dt) {
+
+    }
+
     public Spider(SylvanGame game) {
         super(game);
     }
