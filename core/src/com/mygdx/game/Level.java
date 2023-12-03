@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Entities.Bat;
+import com.mygdx.game.Entities.Spider;
 import com.mygdx.game.Entities.Sylvan;
 
 public class Level implements Screen {
@@ -56,6 +57,7 @@ public class Level implements Screen {
 
     Sylvan sylvan;
     Bat bat; // temporary for prototype
+    Spider spider; // temporary for prototype
     Entity currentInhabitedEntity;
     private float timeElapsed;
     private float possessTimer; // how long sylvan has possessed an enemy
@@ -115,6 +117,7 @@ public class Level implements Screen {
         //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
         sylvan = new Sylvan(game,sylvanPos);
         bat = new Bat(game,new Vector2(0,2));
+        spider = new Spider(game,new Vector2(0,3));
         changeCurrentInhabitedEntity(sylvan); // on level creation
     }
 
@@ -141,6 +144,7 @@ public class Level implements Screen {
             fixtureDef.shape = shape;
             fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
             body.createFixture(fixtureDef);
+            body.setUserData("ground");
         }
 
     }
@@ -173,6 +177,7 @@ public class Level implements Screen {
 
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLYER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLYER, sylvan.getWidth(), sylvan.getHeight());
         bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLYER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLYER, bat.getWidth(), bat.getHeight());
+        spider.setBounds(spider.body.getPosition().x - spider.getWidth() * spider.WIDTH_MULTIPLYER, spider.body.getPosition().y - spider.getHeight() * spider.HEIGHT_MULTIPLYER, spider.getWidth(), spider.getHeight());
 
         // UPDATE DISTANCES ARRAY
 
@@ -190,6 +195,7 @@ public class Level implements Screen {
         // this function will loop thru all entities to update frame
         sylvan.update(timeElapsed,delta);
         bat.update(timeElapsed,delta);
+        spider.update(timeElapsed,delta);
         camera.update();
         renderer.setView(camera);
     }
@@ -225,9 +231,13 @@ public class Level implements Screen {
 
     public void possess() {
         if (sylvan.possessed) { // if player is currently not possessing anyone
-            double distance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
-            if (distance <= 2.5) { // if the possess is valid
+            double batDistance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
+            double spiderDistance = getDistance(sylvan.body.getPosition(),spider.body.getPosition());
+            if (batDistance <= 1.5) { // if the possess is valid
                 changeCurrentInhabitedEntity(bat); // temporary
+                sylvan.body.setTransform(disappearPos,0);
+            } else if (spiderDistance <= 1.5) {
+                changeCurrentInhabitedEntity(spider); // temporary
                 sylvan.body.setTransform(disappearPos,0);
             }
         }

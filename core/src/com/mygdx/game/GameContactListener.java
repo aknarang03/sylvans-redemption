@@ -6,11 +6,17 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
-// NOT IMPLEMENTED YET
+// PLAN TO PREVENT WALL JUMP
+// make a constructor that takes in sylvan
+// store it
+// make map wall object layer
+// build walls seperately in the level and set user data to "wall"
+// in move() remove the abs check
+// do something in here to check if sylvan is hitting the wall
+// if so send some boolean? back to sylvan
+// use that to check in "fall" if he's hitting a wall and if he is dont allow jump
 
 public class GameContactListener implements ContactListener {
-
-
 
     @Override
     public void beginContact(Contact contact) {

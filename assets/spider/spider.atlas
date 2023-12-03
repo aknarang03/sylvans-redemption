@@ -19,7 +19,7 @@ spiderjump
 bounds:240,2,32,32
 spiderjump
 bounds:274,2,32,32
-spiderwalk
+spideridle
 bounds:308,2,32,32
 spiderwalk
 bounds:342,2,32,32

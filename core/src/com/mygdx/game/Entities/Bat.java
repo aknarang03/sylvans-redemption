@@ -60,7 +60,6 @@ public class Bat extends Entity {
         System.out.println("init body");
 
         bodyDef = new BodyDef();
-        setPosition(1/SylvanGame.PPM, 1/SylvanGame.PPM); // for testing try hardcoding if it doesn't work
         System.out.println(getX());
         //bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
         bodyDef.position.set(5,1);

@@ -32,6 +32,8 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> glidepossessFrames;
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
+    Vector2 maxPoint;
+
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game);
         name = "Sylvan";
@@ -53,9 +55,9 @@ public class Sylvan extends Entity {
         System.out.println("init body");
 
         bodyDef = new BodyDef();
-        setPosition(5 / SylvanGame.PPM, 5 / SylvanGame.PPM);
         System.out.println(getX());
         bodyDef.position.set(5 + getWidth() / 2, 5 + getHeight() / 2); // when I remove the 5+ he falls
+        maxPoint = new Vector2(5 + getWidth() / 2, 5 + getHeight() / 2);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("sylvan");
@@ -124,20 +126,20 @@ public class Sylvan extends Entity {
         final float vy = body.getLinearVelocity().y;
 
         // NOTE: currentState != State.JUMP makes it so that you can't wall climb
-        if (Math.abs(vy) < .01f) {
+        if (Math.abs(vy) < .01f) { // right now this disables possess from the air but I will be removing this check when I fix the wall climbing thing
             switch (control) {
                 case UP:
-                    if (currentState != State.FALL && currentState != State.JUMP) {
+                    if (currentState != State.FALL && currentState != State.JUMP && Math.abs(vy) < .01f) {
                         //body.applyForceToCenter(0f, 1f, true);
                         body.setLinearVelocity(vx, 5f);
                         //currentState = State.JUMP;
                     }
                     break;
                 case LEFT:
-                    body.setLinearVelocity(-1f, 0);
+                    body.setLinearVelocity(-1f, vy);
                     break;
                 case RIGHT:
-                    body.setLinearVelocity(1f, 0);
+                    body.setLinearVelocity(1f, vy);
                     break;
                 case POSSESS:
                     game.currentLevel.possess();
@@ -160,6 +162,7 @@ public class Sylvan extends Entity {
         }
 
         currentState = newState;
+        System.out.println(currentState);
 
         switch (currentState) {
 
@@ -198,6 +201,7 @@ public class Sylvan extends Entity {
 
     @Override
     public State getState() {
+
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
