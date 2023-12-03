@@ -224,6 +224,7 @@ public class Level implements Screen {
             //game.batch.draw(sylvan,flip ? sylvan.getX()+sylvan.getWidth() : sylvan.getX(), sylvan.getY(), flip ? -sylvan.getWidth() : sylvan.getWidth(), sylvan.getHeight());
         }
         bat.draw(game.batch);
+        spider.draw(game.batch);
         game.batch.end();
 
         timeElapsed += delta;

@@ -132,7 +132,7 @@ public class Spider extends Entity {
         animations.put("idle",idle);
 
         setBounds(0,0, walkFrames.get(0).getRegionWidth() / SylvanGame.PPM, walkFrames.get(0).getRegionHeight() / SylvanGame.PPM);
-        setScale(0.7f);
+        setScale(1f);
         setRegion(walkFrames.get(0));
 
     }
@@ -157,16 +157,14 @@ public class Spider extends Entity {
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                 break;
             case FALL:
-                frame = (animations.get("fall").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("fall").getKeyFrame(timeElapsed, false));
                 break;
             case JUMP:
-                frame = (animations.get("jump").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("jump").getKeyFrame(timeElapsed, false));
                 break;
             case IDLE:
-                frame = (animations.get("idle").getKeyFrame(timeElapsed, true));
-                break;
             default:
-                frame = (animations.get("idle").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
                 break;
         }
 
