@@ -114,7 +114,7 @@ public class Level implements Screen {
         Vector2 sylvanPos = new Vector2(1,1.7f);
         //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
         sylvan = new Sylvan(game,sylvanPos);
-        bat = new Bat(game,new Vector2(2,2));
+        bat = new Bat(game,new Vector2(0,2));
         changeCurrentInhabitedEntity(sylvan); // on level creation
     }
 

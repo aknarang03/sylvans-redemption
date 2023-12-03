@@ -41,7 +41,6 @@ public class Bat extends Entity {
 
     @Override
     public void aiMove(float dt) {
-        System.out.println(left);
         moveTimer += dt;
         if (moveTimer >= 3) {
             left = !left;
@@ -63,7 +62,8 @@ public class Bat extends Entity {
         bodyDef = new BodyDef();
         setPosition(1/SylvanGame.PPM, 1/SylvanGame.PPM); // for testing try hardcoding if it doesn't work
         System.out.println(getX());
-        bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
+        //bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
+        bodyDef.position.set(5,1);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("bat"); // this may not work when there's a bunch of bats
