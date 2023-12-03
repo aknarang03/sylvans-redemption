@@ -15,6 +15,7 @@ public class Spider extends Entity {
     @Override
     public void initBody() {
 
+        // set body user data to "spider"
     }
 
     @Override
@@ -36,4 +37,11 @@ public class Spider extends Entity {
     public State getState() {
         return null;
     }
+
+    /*
+    @Override
+    public boolean shouldFlip() {
+        return false;
+    }
+     */
 }

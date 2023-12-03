@@ -73,4 +73,6 @@ public abstract class Entity extends Sprite {
         return stateTimer;
     }
 
+    //public abstract boolean shouldFlip();
+
 }

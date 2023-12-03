@@ -47,10 +47,11 @@ public class Bat extends Entity {
         bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
+        body.setUserData("bat"); // this may not work when there's a bunch of bats
 
         body.setFixedRotation(true);
         shape = new PolygonShape();
-        shape.setAsBox(getWidth()/2,getHeight()/2);
+        shape.setAsBox(getWidth()/2.5f,getHeight()/2.5f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
@@ -114,6 +115,13 @@ public class Bat extends Entity {
                 return State.IDLE;
         }
     }
+
+    /*
+    @Override
+    public boolean shouldFlip() {
+        return false;
+    }
+     */
 
     @Override
     public void move(Control control) {

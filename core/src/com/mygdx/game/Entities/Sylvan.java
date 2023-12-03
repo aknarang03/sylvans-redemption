@@ -55,6 +55,7 @@ public class Sylvan extends Entity {
         bodyDef.position.set(5 + getWidth() / 2, 5 + getHeight() / 2); // when I remove the 5+ he falls
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
+        body.setUserData("sylvan");
 
         body.setFixedRotation(true);
         shape = new PolygonShape();
@@ -175,25 +176,22 @@ public class Sylvan extends Entity {
             default:
                 frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
                 break;
-
         }
 
-        // flip frame if it's facing the wrong way
-        // doesn't work
-        float vx = body.getLinearVelocity().x;
-        boolean flipped = frame.isFlipX();
-
-        /*
-        if ((vx < 0 && !flipped) || (vx > 0 && flipped)) {
+        if ((body.getLinearVelocity().x < 0 && !frame.isFlipX()) || (body.getLinearVelocity().x > 0 && frame.isFlipX())) {
             frame.flip(true, false);
         }
-         */
 
         setRegion(frame);
 
     }
 
-
+    /*
+    public boolean shouldFlip() {
+        float vx = body.getLinearVelocity().x;
+        return vx < 0;
+    }
+     */
 
     @Override
     public State getState() {

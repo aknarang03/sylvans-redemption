@@ -58,12 +58,17 @@ public class Level implements Screen {
     Bat bat; // temporary for prototype
     Entity currentInhabitedEntity;
     private float timeElapsed;
+    private float possessTimer; // how long sylvan has possessed an enemy
+
+    private Vector2 disappearPos; // send sylvan's body here during possession
 
 
     // constructor
     public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename, String backgroundImgFilename) {
 
         // init HUD here
+
+        possessTimer = 0;
 
         this.game = game;
         debugRenderer = new Box2DDebugRenderer();
@@ -91,6 +96,7 @@ public class Level implements Screen {
 
         createStructure(); // build level in box2d
 
+        disappearPos = new Vector2(100,100);
     }
 
     public void changeCurrentInhabitedEntity(Entity entity) { // call when player is now a different body
@@ -163,10 +169,11 @@ public class Level implements Screen {
 
     public void update(float delta) {
 
-        System.out.println(currentInhabitedEntity.currentState);
+        //System.out.println(currentInhabitedEntity.currentState);
 
         processInput();
         //currentInhabitedEntity.setBounds(currentInhabitedEntity.body.getPosition().x - currentInhabitedEntity.getWidth() * currentInhabitedEntity.WIDTH_MULTIPLYER, currentInhabitedEntity.body.getPosition().y - currentInhabitedEntity.getHeight() * currentInhabitedEntity.HEIGHT_MULTIPLYER, currentInhabitedEntity.getWidth(), currentInhabitedEntity.getHeight());
+
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLYER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLYER, sylvan.getWidth(), sylvan.getHeight());
         bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLYER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLYER, bat.getWidth(), bat.getHeight());
 
@@ -180,6 +187,16 @@ public class Level implements Screen {
             }
         }
         */
+
+        if (!sylvan.possessed) {
+            possessTimer += delta;
+        }
+        if (possessTimer >= 5) {
+            Vector2 pos = currentInhabitedEntity.getBody().getPosition();
+            changeCurrentInhabitedEntity(sylvan);
+            sylvan.body.setTransform(pos.x,pos.y,0);
+            possessTimer = 0;
+        }
 
         // unless I fix this to be more precise we may have to move the arbitrary values to be constants in each Entity class so that we can do this update function on any entity
         // either that or do checks for what type of entity it is and then use the multiplication values accordingly.
@@ -212,6 +229,7 @@ public class Level implements Screen {
         // this will draw all entities by looping thru array
         if (sylvan.possessed) {
             sylvan.draw(game.batch);
+            //game.batch.draw(sylvan,flip ? sylvan.getX()+sylvan.getWidth() : sylvan.getX(), sylvan.getY(), flip ? -sylvan.getWidth() : sylvan.getWidth(), sylvan.getHeight());
         }
         bat.draw(game.batch);
         game.batch.end();
@@ -222,8 +240,9 @@ public class Level implements Screen {
     public void possess() {
         if (sylvan.possessed) { // if player is currently not possessing anyone
             double distance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
-            if (distance <= 3) {
-                changeCurrentInhabitedEntity(bat);
+            if (distance <= 3) { // if the possess is valid
+                changeCurrentInhabitedEntity(bat); // temporary
+                sylvan.body.setTransform(disappearPos,0);
             }
         }
     }
