@@ -30,17 +30,27 @@ public class GameContactListener implements ContactListener {
             boolean up = (vely > 0);
             boolean down = (vely < 0);
 
-            final float FORCE = 1f;
-            final float NEG_FORCE = -1;
+            final float FORCEUP = 1f;
+            final float FORCEDOWN = -1;
+            final float FORCERIGHT = 0.8f;
+            final float FORCELEFT = -0.8f;
 
-            if (left) {
-                sylvan.getBody().applyForceToCenter(0.8f,0,true);
-            } if (right) {
-                sylvan.getBody().applyForceToCenter(-0.8f,0,true);
-            } if (up) {
-                sylvan.getBody().applyForceToCenter(0,NEG_FORCE,true);
-            } if (down) {
-                sylvan.getBody().applyForceToCenter(0,FORCE,true);
+            if (left && up) {
+                sylvan.getBody().applyForceToCenter(FORCERIGHT,FORCEDOWN,true);
+            } else if (right && up) {
+                sylvan.getBody().applyForceToCenter(FORCELEFT,FORCEDOWN,true);
+            } else if (up) {
+                sylvan.getBody().applyForceToCenter(0,FORCEDOWN,true);
+            } else if (left && down) {
+                sylvan.getBody().applyForceToCenter(FORCERIGHT,FORCEUP,true);
+            } else if (right && down) {
+                sylvan.getBody().applyForceToCenter(FORCELEFT,FORCEUP,true);
+            } else if (down) {
+                sylvan.getBody().applyForceToCenter(0,FORCEUP,true);
+            } else if (left) {
+                sylvan.getBody().applyForceToCenter(FORCERIGHT,0,true);
+            } else if (right) {
+                sylvan.getBody().applyForceToCenter(FORCELEFT,0,true);
             }
 
             // he will take damage here too
