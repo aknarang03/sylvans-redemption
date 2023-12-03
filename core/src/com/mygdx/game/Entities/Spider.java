@@ -186,6 +186,10 @@ public class Spider extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
+        if (!possessed) {
+            return State.WALK;
+        }
+
         switch (currentState) {
 
             case IDLE: {

@@ -162,7 +162,6 @@ public class Sylvan extends Entity {
         }
 
         currentState = newState;
-        System.out.println(currentState);
 
         switch (currentState) {
 
