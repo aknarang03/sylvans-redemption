@@ -194,7 +194,7 @@ public class Level implements Screen {
         if (possessTimer >= 5) { // later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
             Vector2 pos = currentInhabitedEntity.getBody().getPosition();
             changeCurrentInhabitedEntity(sylvan);
-            sylvan.body.setTransform(pos.x,pos.y,0);
+            sylvan.body.setTransform(pos.x,pos.y+1,0);
             possessTimer = 0;
         }
 
@@ -240,7 +240,7 @@ public class Level implements Screen {
     public void possess() {
         if (sylvan.possessed) { // if player is currently not possessing anyone
             double distance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
-            if (distance <= 3) { // if the possess is valid
+            if (distance <= 2.5) { // if the possess is valid
                 changeCurrentInhabitedEntity(bat); // temporary
                 sylvan.body.setTransform(disappearPos,0);
             }
