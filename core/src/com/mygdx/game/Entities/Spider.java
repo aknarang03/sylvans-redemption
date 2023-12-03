@@ -101,9 +101,11 @@ public class Spider extends Entity {
                 break;
             case LEFT:
                 body.setLinearVelocity(-1f, vy);
+                left = true;
                 break;
             case RIGHT:
                 body.setLinearVelocity(1f, vy);
+                left = false;
                 break;
             case POSSESS:
                 game.currentLevel.possess();
@@ -171,7 +173,7 @@ public class Spider extends Entity {
 
         // flip frame if it's facing the wrong way
 
-        if ((body.getLinearVelocity().x < 0 && frame.isFlipX()) || (body.getLinearVelocity().x > 0 && !frame.isFlipX())) {
+        if ((left && frame.isFlipX()) || (!left && !frame.isFlipX())) {
             frame.flip(true, false);
         }
 
