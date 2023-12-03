@@ -56,7 +56,7 @@ public class Sylvan extends Entity {
 
         bodyDef = new BodyDef();
         System.out.println(getX());
-        bodyDef.position.set(5 + getWidth() / 2, 5 + getHeight() / 2); // when I remove the 5+ he falls
+        bodyDef.position.set(5 + getWidth() / 2, 2 + getHeight() / 2); // when I remove the 5+ he falls
         maxPoint = new Vector2(5 + getWidth() / 2, 5 + getHeight() / 2);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
@@ -221,6 +221,9 @@ public class Sylvan extends Entity {
                     return State.JUMP;
                 } else if (Math.abs(vx) <= .01f) {
                     return State.IDLE;
+                }
+                else if (vy < 0) {
+                    return State.FALL;
                 }
                 return State.WALK;
             }
