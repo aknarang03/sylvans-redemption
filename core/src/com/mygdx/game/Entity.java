@@ -48,7 +48,6 @@ public abstract class Entity extends Sprite {
         this.game = game;
         stateTimer = 0;
         currentState = State.IDLE;
-        left = false;
     }
 
 

@@ -37,6 +37,7 @@ public class Bat extends Entity {
         // have not changed these yet
         WIDTH_MULTIPLYER = 0.36f;
         HEIGHT_MULTIPLYER = 0.33f;
+        left = true;
     }
 
     @Override

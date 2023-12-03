@@ -53,6 +53,7 @@ public class Spider extends Entity {
         // have not changed these yet
         WIDTH_MULTIPLYER = 0.36f;
         HEIGHT_MULTIPLYER = 0.33f;
+        left = true;
     }
 
     @Override
@@ -169,6 +170,7 @@ public class Spider extends Entity {
         }
 
         // flip frame if it's facing the wrong way
+
         if ((body.getLinearVelocity().x < 0 && frame.isFlipX()) || (body.getLinearVelocity().x > 0 && !frame.isFlipX())) {
             frame.flip(true, false);
         }

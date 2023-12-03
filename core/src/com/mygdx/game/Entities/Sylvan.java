@@ -43,6 +43,7 @@ public class Sylvan extends Entity {
         //System.out.println("width:" + this.getWidth());
         WIDTH_MULTIPLYER = 0.36f;
         HEIGHT_MULTIPLYER = 0.33f;
+        left = false;
         //currentState = State.IDLE;
     }
 
@@ -137,9 +138,11 @@ public class Sylvan extends Entity {
                     break;
                 case LEFT:
                     body.setLinearVelocity(-1f, vy);
+                    left = true;
                     break;
                 case RIGHT:
                     body.setLinearVelocity(1f, vy);
+                    left = false;
                     break;
                 case POSSESS:
                     game.currentLevel.possess();
@@ -183,10 +186,16 @@ public class Sylvan extends Entity {
                 break;
         }
 
+        if ((left && !frame.isFlipX()) || (!left && frame.isFlipX())) {
+            frame.flip(true, false);
+        }
+
+        /*
         if ((body.getLinearVelocity().x < 0 && !frame.isFlipX()) || (body.getLinearVelocity().x > 0 && frame.isFlipX())) {
             frame.flip(true, false);
         }
 
+         */
         setRegion(frame);
 
     }
