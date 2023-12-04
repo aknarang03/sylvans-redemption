@@ -106,6 +106,14 @@ public class Sylvan extends Entity {
         final float vy = body.getLinearVelocity().y;
 
         switch (control) {
+            case UP: {
+                if (currentState == State.FALL && Math.abs(vy) > .01f) { // your vertical velocity is not close to 0 (ie jumping or falling)
+                    body.setLinearVelocity(vx, 0.1f * vy);
+                } else if (currentState != State.FALL && currentState != State.JUMP && Math.abs(vy) < .01f) { // your vertical velocity is close to 0
+                    body.setLinearVelocity(vx, 5f);
+                }
+                break;
+            }
             case LEFT:
                 body.setLinearVelocity(-1f, vy);
                 left = true;
@@ -120,31 +128,6 @@ public class Sylvan extends Entity {
             default:
                 break;
         }
-
-        if (Math.abs(vy) > .01f) { // your vertical velocity is not close to 0 (ie jumping or falling)
-            switch (control) {
-                case UP:
-                    if (currentState == State.FALL) {
-                        body.setLinearVelocity(vx, 0.1f * vy);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (Math.abs(vy) < .01f) { // your vertical velocity is close to 0
-            switch (control) {
-                case UP:
-                    if (currentState != State.FALL && currentState != State.JUMP) {
-                        body.setLinearVelocity(vx, 5f);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
     }
 
     @Override
