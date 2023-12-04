@@ -26,22 +26,7 @@ public class Spider extends Entity {
     private Array<TextureAtlas.AtlasRegion> walkFrames;
     private Array<TextureAtlas.AtlasRegion> idleFrames;
 
-    // vars for "AI" movement
-    private float moveTimer = 0;
-
-    @Override
-    public void aiMove(float dt) { // MODIFY SO IT STAYS ON PLATFORM
-        moveTimer += dt;
-        if (moveTimer >= 1) {
-            left = !left;
-            moveTimer = 0;
-        }
-        if (left) {
-            body.setLinearVelocity(-1.5f,-3); // move left
-        } else {
-            body.setLinearVelocity(1.5f,-3); // move right
-        }
-    }
+    private float moveTimer = 0; // for "ai" movement
 
     public Spider(SylvanGame game, Vector2 initPos) {
         super(game,true,0.5f,0.33f);
@@ -60,33 +45,34 @@ public class Spider extends Entity {
         bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
-        body.setUserData("spider"); // this may not work when there's a bunch of spiders
-
+        body.setUserData("spider");
         body.setFixedRotation(true);
+
         shape = new PolygonShape();
         shape.setAsBox(getWidth()/4f,getHeight()/4f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
-        fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
+        fixtureDef.restitution = 0.1f;
 
         body.createFixture(fixtureDef);
+
         shape.dispose();
+
     }
 
     @Override
-    public void move(Control control) { // MODIFY TO ALLOW CLIMBING
+    public void move(Control control) {
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
-        switch (control) {
+        switch (control) { // switch on user input
+
             case UP:
                 if (currentState != State.FALL && currentState != State.JUMP && Math.abs(vy) < .01f) {
-                    //body.applyForceToCenter(0f, 1f, true);
                     body.setLinearVelocity(vx, 5f);
-                    //currentState = State.JUMP;
                 }
                 break;
             case LEFT:
@@ -136,13 +122,11 @@ public class Spider extends Entity {
         TextureRegion frame;
 
         final State newState = getState();
-
         if (currentState == newState) { // state has not changed
             stateTimer = stateTimer + dt;
         } else {
             stateTimer = 0;
         }
-
         currentState = newState;
 
         switch (currentState) {
@@ -162,61 +146,60 @@ public class Spider extends Entity {
         }
 
         // flip frame if it's facing the wrong way
-
         if ((left && frame.isFlipX()) || (!left && !frame.isFlipX())) {
             frame.flip(true, false);
         }
 
         setRegion(frame);
 
-        if (!possessed) { // if this is being called in wrong spot I can call above and do return; in aiMove()
+        // move the sprite with "ai" if not possessed
+        if (!possessed) {
             aiMove(dt);
         }
 
     }
 
     @Override
+    public void aiMove(float dt) {
+        moveTimer += dt;
+        if (moveTimer >= 1) {
+            left = !left;
+            moveTimer = 0;
+        }
+        if (left) { body.setLinearVelocity(-1.5f,-3); } // move left
+        else { body.setLinearVelocity(1.5f,-3); } // move right
+    }
+
+    @Override
     public State getState() {
+
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
-        if (!possessed) {
-            return State.WALK;
-        }
+        if (!possessed) { return State.WALK; } // with "ai" movement it will always be walking
 
         switch (currentState) {
 
             case IDLE: {
-                if (vy > 0) {
-                    return State.JUMP;
-                } else if (Math.abs(vx) > .01f) {
-                    return State.WALK;
-                }
+                if (vy > 0) { return State.JUMP; }
+                else if (Math.abs(vx) > .01f) { return State.WALK; }
                 return State.IDLE;
             }
 
             case WALK: {
-                if (vy > 0) {
-                    return State.JUMP;
-                } else if (Math.abs(vx) <= .01f) {
-                    return State.IDLE;
-                }
+                if (vy > 0) { return State.JUMP; }
+                else if (Math.abs(vx) <= .01f) { return State.IDLE; }
                 return State.WALK;
             }
 
             case JUMP: {
-                if (vy <= 0) {
-                    return State.FALL;
-                }
+                if (vy <= 0) { return State.FALL; }
                 return State.JUMP;
             }
 
             case FALL: {
-                if (vy == 0) {
-                    return State.LAND;
-                } else if (vy > 0) {
-                    return State.JUMP; // since bat can jump in midair
-                }
+                if (vy == 0) { return State.LAND; }
+                else if (vy > 0) { return State.JUMP; } // bat can jump in midair
                 return State.FALL;
             }
 
@@ -224,15 +207,12 @@ public class Spider extends Entity {
                 return State.IDLE;
             }
 
-            default:
+            default: {
                 return State.IDLE;
+            }
+
         }
+
     }
 
-    /*
-    @Override
-    public boolean shouldFlip() {
-        return false;
-    }
-     */
 }
