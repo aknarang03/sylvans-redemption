@@ -26,8 +26,6 @@ public class Spider extends Entity {
 
     // vars for "AI" movement
     private float moveTimer = 0;
-    boolean left = true;
-    boolean wall = false;
 
     @Override
     public void aiMove(float dt) { // MODIFY SO IT STAYS ON PLATFORM
@@ -44,16 +42,10 @@ public class Spider extends Entity {
     }
 
     public Spider(SylvanGame game, Vector2 initPos) {
-        super(game);
-        name = "Spider";
+        super(game,true,0.5f,0.33f);
+        initialPosition = initPos;
         initSprite();
         initBody();
-        initialPosition = initPos;
-
-        // have not changed these yet
-        WIDTH_MULTIPLYER = 0.36f;
-        HEIGHT_MULTIPLYER = 0.33f;
-        left = true;
     }
 
     @Override
@@ -63,14 +55,14 @@ public class Spider extends Entity {
         System.out.println("init body");
 
         bodyDef = new BodyDef();
-        bodyDef.position.set(2.4f,2.5f);
+        bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("spider"); // this may not work when there's a bunch of spiders
 
         body.setFixedRotation(true);
         shape = new PolygonShape();
-        shape.setAsBox(getWidth()/2.5f,getHeight()/2.5f);
+        shape.setAsBox(getWidth()/4f,getHeight()/4f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
@@ -79,10 +71,6 @@ public class Spider extends Entity {
 
         body.createFixture(fixtureDef);
         shape.dispose();
-    }
-
-    public void setPossessed(boolean possessed) {
-        this.possessed = possessed;
     }
 
     @Override

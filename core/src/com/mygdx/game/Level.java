@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -127,11 +126,11 @@ public class Level implements Screen {
 
     public void createEntities() { // construct each entity
         // will loop thru enemies array
-        Vector2 sylvanPos = new Vector2(1,1.7f);
+        //Vector2 sylvanPos = new Vector2(1,1.7f);
         //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
-        sylvan = new Sylvan(game,sylvanPos);
-        bat = new Bat(game,new Vector2(0,2));
-        spider = new Spider(game,new Vector2(0,3));
+        sylvan = new Sylvan(game,new Vector2(5.5f,2.5f));
+        bat = new Bat(game,new Vector2(5,1));
+        spider = new Spider(game,new Vector2(2.4f,2.5f));
         changeCurrentInhabitedEntity(sylvan); // on level creation
     }
 
@@ -203,9 +202,9 @@ public class Level implements Screen {
 
         processInput();
 
-        sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLYER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLYER, sylvan.getWidth(), sylvan.getHeight());
-        bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLYER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLYER, bat.getWidth(), bat.getHeight());
-        spider.setBounds(spider.body.getPosition().x - spider.getWidth() * spider.WIDTH_MULTIPLYER, spider.body.getPosition().y - spider.getHeight() * spider.HEIGHT_MULTIPLYER, spider.getWidth(), spider.getHeight());
+        sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLIER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLIER, sylvan.getWidth(), sylvan.getHeight());
+        bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLIER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLIER, bat.getWidth(), bat.getHeight());
+        spider.setBounds(spider.body.getPosition().x - spider.getWidth() * spider.WIDTH_MULTIPLIER, spider.body.getPosition().y - spider.getHeight() * spider.HEIGHT_MULTIPLIER, spider.getWidth(), spider.getHeight());
 
         // UPDATE DISTANCES ARRAY
 

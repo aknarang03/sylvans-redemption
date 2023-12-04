@@ -23,21 +23,13 @@ public class Bat extends Entity {
     private Array<TextureAtlas.AtlasRegion> attackFrames;
     private Array<TextureAtlas.AtlasRegion> flyFrames;
 
-    // vars for "AI" movement
     private float moveTimer = 0;
-    boolean left = true;
 
     public Bat(SylvanGame game, Vector2 initPos) {
-        super(game);
-        name = "Bat";
+        super(game,true,0.36f,0.33f);
+        initialPosition = initPos;
         initSprite();
         initBody();
-        initialPosition = initPos;
-
-        // have not changed these yet
-        WIDTH_MULTIPLYER = 0.36f;
-        HEIGHT_MULTIPLYER = 0.33f;
-        left = true;
     }
 
     @Override
@@ -63,7 +55,7 @@ public class Bat extends Entity {
         bodyDef = new BodyDef();
         System.out.println(getX());
         //bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
-        bodyDef.position.set(5,1);
+        bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("bat"); // this may not work when there's a bunch of bats
@@ -79,10 +71,6 @@ public class Bat extends Entity {
 
         body.createFixture(fixtureDef);
         shape.dispose();
-    }
-
-    public void setPossessed(boolean possessed) {
-        this.possessed = possessed;
     }
 
     @Override

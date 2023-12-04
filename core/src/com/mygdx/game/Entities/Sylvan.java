@@ -1,7 +1,6 @@
 package com.mygdx.game.Entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,6 +15,7 @@ import com.mygdx.game.SylvanGame;
 
 public class Sylvan extends Entity {
 
+    // sprite variables
     private Animation idle;
     private Animation walk;
     private Animation jump;
@@ -23,7 +23,6 @@ public class Sylvan extends Entity {
     private Animation land;
     private Animation glidepossess;
     private Animation standpossess;
-
     private Array<TextureAtlas.AtlasRegion> idleFrames;
     private Array<TextureAtlas.AtlasRegion> walkFrames;
     private Array<TextureAtlas.AtlasRegion> jumpFrames;
@@ -32,25 +31,12 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> glidepossessFrames;
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
-
-
-
     public Sylvan(SylvanGame game, Vector2 initPos) {
-        super(game);
-        name = "Sylvan";
+        super(game,false, 0.36f,0.33f);
         initialPosition = initPos;
         initSprite();
         initBody();
-        //System.out.println("width:" + this.getWidth());
-        WIDTH_MULTIPLYER = 0.36f;
-        HEIGHT_MULTIPLYER = 0.33f;
-        left = false;
-
-        //currentState = State.IDLE;
     }
-
-    @Override
-    public void aiMove(float dt) {} // this will never be called on sylvan
 
     public void initBody() {
 
@@ -59,26 +45,22 @@ public class Sylvan extends Entity {
 
         bodyDef = new BodyDef();
         System.out.println(getX());
-        bodyDef.position.set(5 + getWidth() / 2, 2 + getHeight() / 2); // when I remove the 5+ he falls
+        bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("sylvan");
 
         body.setFixedRotation(true);
         shape = new PolygonShape();
-        //shape.setAsBox(0.3f,0.3f); // temp values
         shape.setAsBox(getWidth() / 3.8f, getHeight() / 3.1f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
-        //fixtureDef.friction = 0;
         fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
 
         body.createFixture(fixtureDef);
-        //body.setUserData(this);
         shape.dispose();
-        //System.out.println(body.getPosition());
     }
 
     @Override
@@ -113,7 +95,6 @@ public class Sylvan extends Entity {
         animations.put("standpossess", standpossess);
 
         setBounds(0, 0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
-        // maybe this is wrong?
         setScale(0.7f);
         setRegion(idleFrames.get(0));
 
@@ -122,12 +103,8 @@ public class Sylvan extends Entity {
     @Override
     public void move(Control control) {
 
-        //currentState = getState();
-
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
-
-        // NOTE: currentState != State.JUMP makes it so that you can't wall climb
 
         if (Math.abs(vy) > .01f) {
             switch (control) {
@@ -138,16 +115,13 @@ public class Sylvan extends Entity {
                 }
                 break;
 
-
                 case LEFT:
                     System.out.println("vy > ");
                     body.setLinearVelocity(-1f, vy);
-                    //body.applyForceToCenter(-1,0, true);
                     left = true;
                     break;
                 case RIGHT:
                     body.setLinearVelocity(1f, vy);
-                    //body.applyForceToCenter(1,0,true);
                     left = false;
                     System.out.println("vy > ");
                     break;
@@ -161,9 +135,7 @@ public class Sylvan extends Entity {
             switch (control) {
                 case UP:
                     if (currentState != State.FALL && currentState != State.JUMP) {
-                        //body.applyForceToCenter(0f, 1f, true);
                         body.setLinearVelocity(vx, 5f);
-                        //currentState = State.JUMP;
                     }
                     break;
                 case LEFT:
@@ -185,7 +157,6 @@ public class Sylvan extends Entity {
     public void update(float timeElapsed, float dt) { // this was TextureRegion getFrame()
 
         TextureRegion frame;
-        //currentState = getState();
         final State newState = getState();
 
         if (currentState == newState) { // state has not changed
@@ -219,23 +190,8 @@ public class Sylvan extends Entity {
         if ((left && !frame.isFlipX()) || (!left && frame.isFlipX())) {
             frame.flip(true, false);
         }
-
-        /*
-        if ((body.getLinearVelocity().x < 0 && !frame.isFlipX()) || (body.getLinearVelocity().x > 0 && frame.isFlipX())) {
-            frame.flip(true, false);
-        }
-
-         */
         setRegion(frame);
-
     }
-
-    /*
-    public boolean shouldFlip() {
-        float vx = body.getLinearVelocity().x;
-        return vx < 0;
-    }
-     */
 
     @Override
     public State getState() {
@@ -289,4 +245,7 @@ public class Sylvan extends Entity {
         }
 
     }
+
+    @Override
+    public void aiMove(float dt) {} // this will never be called on sylvan
 }
