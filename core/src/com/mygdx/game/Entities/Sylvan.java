@@ -131,27 +131,26 @@ public class Sylvan extends Entity {
     }
 
     @Override
-    public void update(float timeElapsed, float dt) { // this was TextureRegion getFrame()
+    public void update(float timeElapsed, float dt) {
 
         TextureRegion frame;
-        final State newState = getState();
+        final State newState = getState(); // to use in stateTimer check
 
+        // NOTE: currently not useful
         if (currentState == newState) { // state has not changed
             stateTimer += dt;
         } else {
             stateTimer = 0;
         }
 
-        currentState = newState;
+        currentState = newState; // set currentState to new state
 
         switch (currentState) {
-
             case JUMP:
                 frame = (animations.get("jump").getKeyFrame(timeElapsed, true));
                 break;
             case FALL:
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
-                // fall has same animation as glide intentionally
                 break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
@@ -164,65 +163,56 @@ public class Sylvan extends Entity {
                 break;
         }
 
+        // make sprite face correct way
         if ((left && !frame.isFlipX()) || (!left && frame.isFlipX())) {
             frame.flip(true, false);
         }
+
         setRegion(frame);
     }
 
     @Override
     public State getState() {
 
+        // to be used in checks
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
         switch (currentState) {
 
             case IDLE: {
-                if (vy > 0) { // if you press jump while idling
-                    return State.JUMP;
-                } else if (Math.abs(vx) > .01f) {
-                    return State.WALK;
-                }
-                return State.IDLE;
+                if (vy > 0) { return State.JUMP; } // jump pressed
+                else if (Math.abs(vx) > .01f) { return State.WALK; } // if left / right pressed
+                return State.IDLE; // nothing pressed
             }
 
             case WALK: {
-                if (vy > 0) {
-                    return State.JUMP;
-                } else if (Math.abs(vx) <= .01f) {
-                    return State.IDLE;
-                }
-                else if (vy < 0) {
-                    return State.FALL;
-                }
-                return State.WALK;
+                if (vy > 0) { return State.JUMP; } // jump pressed
+                else if (Math.abs(vx) <= .01f) { return State.IDLE; } // stopped walking
+                else if (vy < 0) { return State.FALL; } // walked off platform
+                return State.WALK; // still walking
             }
 
             case JUMP: {
-                if (vy <= 0) {
-                    return State.FALL;
-                }
-                return State.JUMP;
+                if (vy <= 0) { return State.FALL; } // jump reached max point
+                return State.JUMP; // jump has not reached max point
             }
 
             case FALL: {
-                if (vy == 0) {
-                    return State.LAND;
-                }
-                return State.FALL;
+                if (vy == 0) { return State.LAND; } // no longer falling
+                return State.FALL; // still falling
             }
 
-            case LAND: {
-                return State.IDLE;
-            }
+            case LAND: { return State.IDLE; } // state is idle after landing
+            // NOTE: later, check state timer in here and wait to return idle so that animation can play
 
-            default:
-                return State.IDLE;
+            default: { return State.IDLE; }
+
         }
 
     }
 
     @Override
     public void aiMove(float dt) {} // this will never be called on sylvan
+
 }
