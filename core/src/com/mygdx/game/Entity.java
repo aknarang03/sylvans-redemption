@@ -52,11 +52,9 @@ public abstract class Entity extends Sprite {
 
     public abstract void initBody(); // init the Entity body variables
     public abstract void initSprite(); // set up Entity animations
-
     public Body getBody() {
         return body;
     }
-
     public abstract void move(Control control); // differs based on entity since they can each move differently
     public abstract void update(float time, float dt); // update frame etc
     public abstract State getState(); // return state based on what entity is doing

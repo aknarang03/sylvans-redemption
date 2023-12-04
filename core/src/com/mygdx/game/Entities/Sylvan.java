@@ -107,9 +107,9 @@ public class Sylvan extends Entity {
 
         switch (control) {
             case UP: {
-                if (currentState == State.FALL && Math.abs(vy) > .01f) { // your vertical velocity is not close to 0 (ie jumping or falling)
+                if (currentState == State.FALL) { // your vertical velocity is not close to 0 (ie jumping or falling)
                     body.setLinearVelocity(vx, 0.1f * vy);
-                } else if (currentState != State.FALL && currentState != State.JUMP && Math.abs(vy) < .01f) { // your vertical velocity is close to 0
+                } else if (currentState != State.JUMP) { // your vertical velocity is close to 0
                     body.setLinearVelocity(vx, 5f);
                 }
                 break;
@@ -198,6 +198,7 @@ public class Sylvan extends Entity {
                 return State.JUMP; // jump has not reached max point
             }
 
+            // is it an issue that I'm checking exactly 0?
             case FALL: {
                 if (vy == 0) { return State.LAND; } // no longer falling
                 return State.FALL; // still falling

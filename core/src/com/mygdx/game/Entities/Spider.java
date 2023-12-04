@@ -71,7 +71,7 @@ public class Spider extends Entity {
         switch (control) { // switch on user input
 
             case UP:
-                if (currentState != State.FALL && currentState != State.JUMP && Math.abs(vy) < .01f) {
+                if (currentState != State.FALL && currentState != State.JUMP) {
                     body.setLinearVelocity(vx, 5f);
                 }
                 break;
