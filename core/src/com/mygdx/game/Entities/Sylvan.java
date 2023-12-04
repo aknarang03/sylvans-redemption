@@ -127,6 +127,35 @@ public class Sylvan extends Entity {
         final float vy = body.getLinearVelocity().y;
 
         // NOTE: currentState != State.JUMP makes it so that you can't wall climb
+
+        if (Math.abs(vy) > .01f) {
+            switch (control) {
+                case UP: {
+                    if (currentState == State.FALL) {
+                        body.setLinearVelocity(vx, 0.1f * vy);
+                    }
+                }
+                break;
+
+                /*
+                case LEFT:
+                    System.out.println("vy > ");
+                    body.setLinearVelocity(-1f, 0);
+                    //body.applyForceToCenter(-1,0, true);
+                    left = true;
+                    break;
+                case RIGHT:
+                    body.setLinearVelocity(1f, 0);
+                    //body.applyForceToCenter(1,0,true);
+                    left = false;
+                    System.out.println("vy > ");
+                    break;
+*/
+            }
+
+
+        }
+
         if (Math.abs(vy) < .01f) { // right now this disables possess from the air but I will be removing this check when I fix the wall climbing thing
             switch (control) {
                 case UP:
