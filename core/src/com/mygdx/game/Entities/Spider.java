@@ -171,7 +171,7 @@ public class Spider extends Entity {
     }
 
     @Override
-    public State getState() {
+    public State getState() { // nearly the same as sylvan's
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
@@ -189,6 +189,7 @@ public class Spider extends Entity {
             case WALK: {
                 if (vy > 0) { return State.JUMP; }
                 else if (Math.abs(vx) <= .01f) { return State.IDLE; }
+                else if (vy < 0) { return State.FALL; }
                 return State.WALK;
             }
 
@@ -199,7 +200,7 @@ public class Spider extends Entity {
 
             case FALL: {
                 if (vy == 0) { return State.LAND; }
-                else if (vy > 0) { return State.JUMP; } // bat can jump in midair
+                else if (vy > 0) { return State.JUMP; } // allows climb (along with some code in move)
                 return State.FALL;
             }
 

@@ -203,7 +203,9 @@ public class Sylvan extends Entity {
                 return State.FALL; // still falling
             }
 
-            case LAND: { return State.IDLE; } // state is idle after landing
+            case LAND: {
+                return State.IDLE; // state is idle after landing
+            }
             // NOTE: later, check state timer in here and wait to return idle so that animation can play
 
             default: { return State.IDLE; }

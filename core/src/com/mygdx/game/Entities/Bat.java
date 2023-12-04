@@ -18,11 +18,10 @@ public class Bat extends Entity {
 
     private Animation attack;
     private Animation fly;
-
     private Array<TextureAtlas.AtlasRegion> attackFrames;
     private Array<TextureAtlas.AtlasRegion> flyFrames;
 
-    private float moveTimer = 0;
+    private float moveTimer = 0; // for "ai" move
 
     public Bat(SylvanGame game, Vector2 initPos) {
         super(game,true,0.36f,0.33f);
@@ -33,6 +32,7 @@ public class Bat extends Entity {
 
     @Override
     public void aiMove(float dt) {
+        // swap which way it's moving after move timer goes off
         moveTimer += dt;
         if (moveTimer >= 3) {
             left = !left;
@@ -49,17 +49,14 @@ public class Bat extends Entity {
     public void initBody() {
 
         world = game.currentLevel.getWorld();
-        System.out.println("init body");
 
         bodyDef = new BodyDef();
-        System.out.println(getX());
-        //bodyDef.position.set(5 + getWidth() / 2,5 + getHeight() / 2);
         bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("bat"); // this may not work when there's a bunch of bats
-
         body.setFixedRotation(true);
+
         shape = new PolygonShape();
         shape.setAsBox(getWidth()/2.5f,getHeight()/2.5f);
         fixtureDef = new FixtureDef();
@@ -69,47 +66,40 @@ public class Bat extends Entity {
         fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
 
         body.createFixture(fixtureDef);
+
         shape.dispose();
+
     }
 
     @Override
     public State getState() {
+
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
         switch (currentState) {
 
             case IDLE: {
-                if (vy > 0) { // if you press jump while idling
-                    return State.JUMP;
-                } else if (Math.abs(vx) > .01f) {
-                    return State.WALK;
-                }
+                if (vy > 0) { return State.JUMP; }
+                else if (Math.abs(vx) > .01f) { return State.WALK; }
                 return State.IDLE;
             }
 
             case WALK: {
-                if (vy > 0) {
-                    return State.JUMP;
-                } else if (Math.abs(vx) <= .01f) {
-                    return State.IDLE;
-                }
+                if (vy > 0) { return State.JUMP; }
+                else if (Math.abs(vx) <= .01f) { return State.IDLE; }
+                else if (vy < 0) { return State.FALL; }
                 return State.WALK;
             }
 
             case JUMP: {
-                if (vy <= 0) {
-                    return State.FALL;
-                }
+                if (vy <= 0) { return State.FALL; }
                 return State.JUMP;
             }
 
             case FALL: {
-                if (vy == 0) {
-                    return State.LAND;
-                } else if (vy > 0) {
-                    return State.JUMP; // since bat can jump in midair
-                }
+                if (vy == 0) { return State.LAND;
+                } else if (vy > 0) { return State.JUMP; } // allows jump in midair (flight)
                 return State.FALL;
             }
 
@@ -117,30 +107,24 @@ public class Bat extends Entity {
                 return State.IDLE;
             }
 
-            default:
+            default: {
                 return State.IDLE;
-        }
-    }
+            }
 
-    /*
-    @Override
-    public boolean shouldFlip() {
-        return false;
+        }
+
     }
-     */
 
     @Override
     public void move(Control control) {
-        //System.out.println(currentState);
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
         switch (control) {
             case UP:
-                if (vy <= 0) {
-                    body.setLinearVelocity(vx,3f);
-                }
+                //if (vy <= 0) { body.setLinearVelocity(vx,3f); } // jump flight option
+                body.setLinearVelocity(vx,1f); // smoother flight option
                 break;
             case LEFT:
                 body.setLinearVelocity(-1f, vy);
@@ -174,24 +158,20 @@ public class Bat extends Entity {
 
     }
 
-
-
     @Override
     public void update(float timeElapsed, float dt) {
 
         TextureRegion frame;
 
         final State newState = getState();
-
         if (currentState == newState) { // state has not changed
             stateTimer = stateTimer + dt;
         } else {
             stateTimer = 0;
         }
-
         currentState = newState;
 
-        switch (currentState) {
+        switch (currentState) { // animations
             case JUMP:
                 frame = (animations.get("fly").getKeyFrame(timeElapsed, true));
                 break;
@@ -207,9 +187,10 @@ public class Bat extends Entity {
 
         setRegion(frame);
 
-        if (!possessed) { // if this is being called in wrong spot I can call above and do return; in aiMove()
+        if (!possessed) {
             aiMove(dt);
         }
+
     }
 
 }
