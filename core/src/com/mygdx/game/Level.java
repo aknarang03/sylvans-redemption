@@ -48,6 +48,8 @@ public class Level implements Screen {
     private FixtureDef fixtureDef;
     private Body body;
 
+    private Array<Body> wallBodies;
+
     public OrthographicCamera camera;
     private Viewport viewport;
 
@@ -71,6 +73,8 @@ public class Level implements Screen {
         // init HUD here
 
         possessTimer = 0;
+
+        wallBodies = new Array<Body>();
 
         this.game = game;
         debugRenderer = new Box2DDebugRenderer();
@@ -105,6 +109,16 @@ public class Level implements Screen {
         if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false;}
         currentInhabitedEntity = entity;
         entity.possessed = true;
+        if (!spider.possessed) {
+            System.out.println("aaaaa");
+            for (Body body : wallBodies) {
+                body.getFixtureList().get(0).setFriction(0);
+            }
+        } else {
+            for (Body body : wallBodies) {
+                body.getFixtureList().get(0).setFriction(1);
+            }
+        }
     }
 
     public World getWorld() {
@@ -147,6 +161,20 @@ public class Level implements Screen {
             body.setUserData("ground");
         }
 
+        for (MapObject mapObject : map.getLayers().get("Wall Objects").getObjects().getByType(RectangleMapObject.class)) {
+            System.out.println("got object");
+            Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
+            body = world.createBody(bodyDef);
+            shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
+            fixtureDef.shape = shape;
+            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
+            fixtureDef.friction = 0;
+            body.createFixture(fixtureDef);
+            body.setUserData("wall");
+            wallBodies.add(body);
+        }
     }
 
     @Override

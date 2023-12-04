@@ -32,7 +32,8 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> glidepossessFrames;
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
-    Vector2 maxPoint;
+
+
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game);
@@ -44,6 +45,7 @@ public class Sylvan extends Entity {
         WIDTH_MULTIPLYER = 0.36f;
         HEIGHT_MULTIPLYER = 0.33f;
         left = false;
+
         //currentState = State.IDLE;
     }
 
@@ -58,7 +60,6 @@ public class Sylvan extends Entity {
         bodyDef = new BodyDef();
         System.out.println(getX());
         bodyDef.position.set(5 + getWidth() / 2, 2 + getHeight() / 2); // when I remove the 5+ he falls
-        maxPoint = new Vector2(5 + getWidth() / 2, 5 + getHeight() / 2);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("sylvan");
@@ -137,20 +138,20 @@ public class Sylvan extends Entity {
                 }
                 break;
 
-                /*
+
                 case LEFT:
                     System.out.println("vy > ");
-                    body.setLinearVelocity(-1f, 0);
+                    body.setLinearVelocity(-1f, vy);
                     //body.applyForceToCenter(-1,0, true);
                     left = true;
                     break;
                 case RIGHT:
-                    body.setLinearVelocity(1f, 0);
+                    body.setLinearVelocity(1f, vy);
                     //body.applyForceToCenter(1,0,true);
                     left = false;
                     System.out.println("vy > ");
                     break;
-*/
+
             }
 
 
@@ -159,7 +160,7 @@ public class Sylvan extends Entity {
         if (Math.abs(vy) < .01f) { // right now this disables possess from the air but I will be removing this check when I fix the wall climbing thing
             switch (control) {
                 case UP:
-                    if (currentState != State.FALL && currentState != State.JUMP && Math.abs(vy) < .01f) {
+                    if (currentState != State.FALL && currentState != State.JUMP) {
                         //body.applyForceToCenter(0f, 1f, true);
                         body.setLinearVelocity(vx, 5f);
                         //currentState = State.JUMP;
@@ -188,7 +189,7 @@ public class Sylvan extends Entity {
         final State newState = getState();
 
         if (currentState == newState) { // state has not changed
-            stateTimer = stateTimer + dt;
+            stateTimer += dt;
         } else {
             stateTimer = 0;
         }
