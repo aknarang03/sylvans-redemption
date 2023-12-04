@@ -27,6 +27,7 @@ import com.mygdx.game.Entities.Sylvan;
 
 public class Level implements Screen {
 
+    // debug renderer vars
     private Box2DDebugRenderer debugRenderer;
     Matrix4 debugMatrix;
 
@@ -35,48 +36,47 @@ public class Level implements Screen {
     final SylvanGame game;
     private World world;
     private GameContactListener contactListener;
+
     private Array<Entity> enemies; // this will hold the enemies for each level to be drawn
     public Array<Vector2> distances; // tracks distances between currentEntity and each enemy
 
+    // tiled map vars
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private TmxMapLoader mapLoader;
 
+    // body vars
     private BodyDef bodyDef;
     private PolygonShape shape;
     private FixtureDef fixtureDef;
     private Body body;
+    private Array<Body> wallBodies; // need this to access friction of wall bodies to change when player is spider
 
-    private Array<Body> wallBodies;
-
+    // camera vars
     public OrthographicCamera camera;
     private Viewport viewport;
 
+    // visuals / sounds
     private Music music;
-    private Texture backgroundImage;
     private Sprite backgroundSprite;
 
     Sylvan sylvan;
-    Bat bat; // temporary for prototype
-    Spider spider; // temporary for prototype
-    Entity currentInhabitedEntity;
+    Bat bat; // temporary for prototype (will later be in array sent in constructor)
+    Spider spider; // temporary for prototype (will later be in array sent in constructor)
+
+    Entity currentInhabitedEntity; // track what the player is
+
+    // time vars
     private float timeElapsed;
     private float possessTimer; // how long sylvan has possessed an enemy
 
     private Vector2 disappearPos; // send sylvan's body here during possession
 
+    public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename) {
 
-    // constructor
-    public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename, String backgroundImgFilename) {
-
-        // init HUD here
-
-        possessTimer = 0;
-
-        wallBodies = new Array<Body>();
+        // init HUD in here
 
         this.game = game;
-        debugRenderer = new Box2DDebugRenderer();
 
         // init camera and viewport
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
@@ -85,9 +85,10 @@ public class Level implements Screen {
         // load the map
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapFilename);
-        renderer = new OrthogonalTiledMapRenderer(map,1/SylvanGame.PPM);
 
-        //camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight()/2, 0);
+        // init renderers
+        renderer = new OrthogonalTiledMapRenderer(map,1/SylvanGame.PPM);
+        debugRenderer = new Box2DDebugRenderer();
 
         // set up world
         Vector2 gravity = new Vector2(0,-10);
@@ -97,19 +98,26 @@ public class Level implements Screen {
         contactListener = new GameContactListener();
         world.setContactListener(contactListener);
 
-        this.enemies = enemies; // init enemies array
+        // init arrays
+        this.enemies = enemies;
+        wallBodies = new Array<Body>();
 
         createStructure(); // build level in box2d
 
+        // possess vars
+        possessTimer = 0;
         disappearPos = new Vector2(100,100);
+
     }
 
     public void changeCurrentInhabitedEntity(Entity entity) { // call when player is now a different body
-        if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false;}
-        currentInhabitedEntity = entity;
+
+        if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false;} // current entity not possessed anymore
+        currentInhabitedEntity = entity; // change to the passed in entity
         entity.possessed = true;
+
+        // see if walls should have friction (since spider can climb them)
         if (!spider.possessed) {
-            System.out.println("aaaaa");
             for (Body body : wallBodies) {
                 body.getFixtureList().get(0).setFriction(0);
             }
@@ -118,33 +126,22 @@ public class Level implements Screen {
                 body.getFixtureList().get(0).setFriction(1);
             }
         }
-    }
 
-    public World getWorld() {
-        return world;
     }
 
     public void createEntities() { // construct each entity
-        // will loop thru enemies array
-        //Vector2 sylvanPos = new Vector2(1,1.7f);
-        //sylvan.setPosition(1/SylvanGame.PPM,1.7f/SylvanGame.PPM);
+        // THIS WILL LOOP THRU ENTITIES ARRAY. CURRENT IMPLEMENTATION TEMPORARY
         sylvan = new Sylvan(game,new Vector2(5.5f,2.5f));
         bat = new Bat(game,new Vector2(5,1));
         spider = new Spider(game,new Vector2(2.4f,2.5f));
-        changeCurrentInhabitedEntity(sylvan); // on level creation
+        changeCurrentInhabitedEntity(sylvan); // on level creation, sylvan is inhabited
     }
 
-    // build level in box2d
-    public void createStructure() {
+    public void createStructure() { // build level in box2d
 
         bodyDef = new BodyDef();
         shape = new PolygonShape();
         fixtureDef = new FixtureDef();
-
-        System.out.println(map.getTileSets().getTileSet(0).getName());
-        System.out.println(map.getLayers().get(0).getName());
-        System.out.println(map.getLayers().getCount());
-        System.out.println(map.getLayers().get(1).getName());
 
         // uses the ground object layer in tmx file to draw the boxes in the correct places
         for (MapObject mapObject : map.getLayers().get("Ground Objects").getObjects().getByType(RectangleMapObject.class)) {
@@ -160,6 +157,7 @@ public class Level implements Screen {
             body.setUserData("ground");
         }
 
+        // use wall object layer to draw walls
         for (MapObject mapObject : map.getLayers().get("Wall Objects").getObjects().getByType(RectangleMapObject.class)) {
             System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
@@ -174,14 +172,10 @@ public class Level implements Screen {
             body.setUserData("wall");
             wallBodies.add(body);
         }
-    }
-
-    @Override
-    public void show() {
 
     }
 
-    public void processInput() {
+    public void processInput() { // pass the input to current entity's move() function
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             currentInhabitedEntity.move(Control.RIGHT);
@@ -200,105 +194,110 @@ public class Level implements Screen {
 
     public void update(float delta) {
 
-        processInput();
+        // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)
 
+        processInput(); // get user input
+
+        // move the sprites to where the bodies are (they have moved from move() or aiMove())
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLIER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLIER, sylvan.getWidth(), sylvan.getHeight());
         bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLIER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLIER, bat.getWidth(), bat.getHeight());
         spider.setBounds(spider.body.getPosition().x - spider.getWidth() * spider.WIDTH_MULTIPLIER, spider.body.getPosition().y - spider.getHeight() * spider.HEIGHT_MULTIPLIER, spider.getWidth(), spider.getHeight());
 
-        // UPDATE DISTANCES ARRAY
+        if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
 
-        if (!sylvan.possessed) {
-            possessTimer += delta;
-        }
-        if (possessTimer >= 5) { // later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
+        // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
+        if (possessTimer >= 5) {
             Vector2 pos = currentInhabitedEntity.getBody().getPosition();
             changeCurrentInhabitedEntity(sylvan);
             sylvan.body.setTransform(pos.x,pos.y+1,0);
             possessTimer = 0;
         }
 
-        world.step(1/60f,6,2);
+        world.step(1/60f,6,2); // physics step
+
         // this function will loop thru all entities to update frame
         sylvan.update(timeElapsed,delta);
         bat.update(timeElapsed,delta);
         spider.update(timeElapsed,delta);
         camera.update();
         renderer.setView(camera);
+
     }
 
     @Override
     public void render(float delta) { // called in SylvanGame.render()
 
-        update(delta);
+        update(delta); // update screen
 
+        // clear screen
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        renderer.render();
+        renderer.render(); // render level
 
-        camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0);
+        camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0); // set camera pos to player
 
+        // render debug boxes
         debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
         debugRenderer.render(world,camera.combined);
 
         game.batch.setProjectionMatrix(camera.combined);
 
-        game.batch.begin();
-        // this will draw all entities by looping thru array
-        if (sylvan.possessed) {
+        game.batch.begin(); // BATCH BEGIN
+        // NOTE: this will draw all entities by looping thru array
+        if (sylvan.possessed) { // only draw sylvan if possessed
             sylvan.draw(game.batch);
-            //game.batch.draw(sylvan,flip ? sylvan.getX()+sylvan.getWidth() : sylvan.getX(), sylvan.getY(), flip ? -sylvan.getWidth() : sylvan.getWidth(), sylvan.getHeight());
         }
+        // draw the prototype enemies
         bat.draw(game.batch);
         spider.draw(game.batch);
-        game.batch.end();
+        game.batch.end(); // BATCH END
 
-        timeElapsed += delta;
+        timeElapsed += delta; // update timeElapsed for animations
+
     }
 
     public void possess() {
-        if (sylvan.possessed) { // if player is currently not possessing anyone
+
+        if (sylvan.possessed) { // if sylvan is currently not possessing anyone
+
+            // get distances for prototype enemies (temp code for prototype)
             double batDistance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
             double spiderDistance = getDistance(sylvan.body.getPosition(),spider.body.getPosition());
-            if (batDistance <= 1.5) { // if the possess is valid
-                changeCurrentInhabitedEntity(bat); // temporary
+
+            // check if the possess is valid. (temp code for prototype; this will loop thru enemies array)
+            // here bat has priority
+            if (batDistance <= 1.5) {
+                changeCurrentInhabitedEntity(bat);
                 sylvan.body.setTransform(disappearPos,0);
             } else if (spiderDistance <= 1.5) {
-                changeCurrentInhabitedEntity(spider); // temporary
+                changeCurrentInhabitedEntity(spider);
                 sylvan.body.setTransform(disappearPos,0);
             }
+
         }
+
     }
 
-    public double getDistance(Vector2 entity1, Vector2 entity2){
+    public double getDistance (Vector2 entity1, Vector2 entity2) { // get distance between two entities
         return Math.sqrt(Math.pow((entity2.x - entity1.x), 2) + Math.pow((entity2.y - entity1.y), 2));
     }
+
+    public World getWorld() { return world; }
 
     @Override
     public void resize(int width, int height) { // handles window resize
         viewport.update(width,height,true);
     }
+    @Override
+    public void dispose() {} // IMPLEMENT
 
     @Override
-    public void pause() {
-
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-
-    }
-
+    public void hide() {}
     @Override
-    public void dispose() { // IMPLEMENT
-
-    }
-
-
+    public void show() {}
 }

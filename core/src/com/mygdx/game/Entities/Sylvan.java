@@ -1,5 +1,4 @@
 package com.mygdx.game.Entities;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -41,16 +40,16 @@ public class Sylvan extends Entity {
     public void initBody() {
 
         world = game.currentLevel.getWorld();
-        System.out.println("init body");
 
+        // set up body
         bodyDef = new BodyDef();
-        System.out.println(getX());
         bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         body.setUserData("sylvan");
-
         body.setFixedRotation(true);
+
+        // set up fixture
         shape = new PolygonShape();
         shape.setAsBox(getWidth() / 3.8f, getHeight() / 3.1f);
         fixtureDef = new FixtureDef();
@@ -60,13 +59,13 @@ public class Sylvan extends Entity {
         fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
 
         body.createFixture(fixtureDef);
+
         shape.dispose();
+
     }
 
     @Override
     public void initSprite() {
-
-        System.out.println("sprite init");
 
         atlas = new TextureAtlas(Gdx.files.internal("sylvan/sylvan.atlas"));
 
@@ -106,51 +105,46 @@ public class Sylvan extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
-        if (Math.abs(vy) > .01f) {
+        switch (control) {
+            case LEFT:
+                body.setLinearVelocity(-1f, vy);
+                left = true;
+                break;
+            case RIGHT:
+                body.setLinearVelocity(1f, vy);
+                left = false;
+                break;
+            case POSSESS:
+                game.currentLevel.possess();
+                break;
+            default:
+                break;
+        }
+
+        if (Math.abs(vy) > .01f) { // your vertical velocity is not close to 0 (ie jumping or falling)
             switch (control) {
-                case UP: {
+                case UP:
                     if (currentState == State.FALL) {
                         body.setLinearVelocity(vx, 0.1f * vy);
                     }
-                }
-                break;
-
-                case LEFT:
-                    System.out.println("vy > ");
-                    body.setLinearVelocity(-1f, vy);
-                    left = true;
                     break;
-                case RIGHT:
-                    body.setLinearVelocity(1f, vy);
-                    left = false;
-                    System.out.println("vy > ");
+                default:
                     break;
-
             }
-
-
         }
 
-        if (Math.abs(vy) < .01f) { // right now this disables possess from the air but I will be removing this check when I fix the wall climbing thing
+        if (Math.abs(vy) < .01f) { // your vertical velocity is close to 0
             switch (control) {
                 case UP:
                     if (currentState != State.FALL && currentState != State.JUMP) {
                         body.setLinearVelocity(vx, 5f);
                     }
                     break;
-                case LEFT:
-                    body.setLinearVelocity(-1f, vy);
-                    left = true;
-                    break;
-                case RIGHT:
-                    body.setLinearVelocity(1f, vy);
-                    left = false;
-                    break;
-                case POSSESS:
-                    game.currentLevel.possess();
+                default:
                     break;
             }
         }
+
     }
 
     @Override

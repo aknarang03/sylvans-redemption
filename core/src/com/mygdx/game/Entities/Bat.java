@@ -1,7 +1,4 @@
 package com.mygdx.game.Entities;
-
-// Flying Enemy
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -14,6 +11,8 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
+
+// Flying Enemy
 
 public class Bat extends Entity {
 

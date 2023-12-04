@@ -12,6 +12,8 @@ import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
+// Climbing Enemy
+
 public class Spider extends Entity {
 
     private Animation jump;
