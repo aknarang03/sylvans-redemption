@@ -108,9 +108,9 @@ public class Sylvan extends Entity {
         switch (control) {
             case UP: {
                 if (currentState == State.FALL) { // your vertical velocity is not close to 0 (ie jumping or falling)
-                    body.setLinearVelocity(vx, 0.1f * vy);
+                    body.setLinearVelocity(vx, 0.1f * vy); // glide
                 } else if (currentState != State.JUMP) { // your vertical velocity is close to 0
-                    body.setLinearVelocity(vx, 5f);
+                    body.setLinearVelocity(vx, 5f); // jump
                 }
                 break;
             }
