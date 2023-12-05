@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -60,6 +62,8 @@ public class Level implements Screen {
     private Music music;
     private Sprite backgroundSprite;
 
+    ShapeRenderer shapeRenderer; // for the line that's drawn between sylvan and enemy
+
     Sylvan sylvan;
     Bat bat; // temporary for prototype (will later be in array sent in constructor)
     Spider spider; // temporary for prototype (will later be in array sent in constructor)
@@ -89,6 +93,7 @@ public class Level implements Screen {
         // init renderers
         renderer = new OrthogonalTiledMapRenderer(map,1/SylvanGame.PPM);
         debugRenderer = new Box2DDebugRenderer();
+        shapeRenderer = new ShapeRenderer();
 
         // set up world
         Vector2 gravity = new Vector2(0,-10);
@@ -252,6 +257,14 @@ public class Level implements Screen {
         bat.draw(game.batch);
         spider.draw(game.batch);
         game.batch.end(); // BATCH END
+
+        /* // SHAPE RENDERER TEST (doesn't work properly)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(1,0,0,1);
+        shapeRenderer.line(sylvan.getBody().getPosition().x,sylvan.getBody().getPosition().y,bat.getBody().getPosition().x, bat.getBody().getPosition().y);
+        System.out.println(shapeRenderer.isDrawing());
+        shapeRenderer.end();
+         */
 
         timeElapsed += delta; // update timeElapsed for animations
 
