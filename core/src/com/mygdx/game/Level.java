@@ -41,7 +41,7 @@ public class Level implements Screen {
     private GameContactListener contactListener;
 
     private Array<Entity> enemies; // this will hold the enemies for each level to be drawn
-    public Array<Vector2> distances; // tracks distances between currentEntity and each enemy
+    public Array<Double> distances; // tracks distances between currentEntity and each enemy
 
     // tiled map vars
     private TiledMap map;
@@ -66,9 +66,6 @@ public class Level implements Screen {
     ShapeRenderer shapeRenderer; // for the line that's drawn between sylvan and enemy
 
     Sylvan sylvan;
-    Bat bat; // temporary for prototype (will later be in array sent in constructor)
-    Spider spider; // temporary for prototype (will later be in array sent in constructor)
-    Rock rock; // temporary for prototype (will later be in array sent in constructor)
 
     Entity currentInhabitedEntity; // track what the player is
 
@@ -107,9 +104,12 @@ public class Level implements Screen {
 
         // init arrays
         this.enemies = enemies;
+        distances = new Array<Double>();
         wallBodies = new Array<Body>();
 
         createStructure(); // build level in box2d
+
+        sylvan = new Sylvan(game,new Vector2(5.5f,2.5f)); // create Sylvan
 
         // possess vars
         possessTimer = 0;
@@ -124,7 +124,7 @@ public class Level implements Screen {
         entity.possessed = true;
 
         // see if walls should have friction (since spider can climb them)
-        if (!spider.possessed) {
+        if (!(currentInhabitedEntity.body.getUserData() == "spider")) {
             for (Body body : wallBodies) {
                 body.getFixtureList().get(0).setFriction(0);
             }
@@ -138,10 +138,12 @@ public class Level implements Screen {
 
     public void createEntities() { // construct each entity
         // THIS WILL LOOP THRU ENTITIES ARRAY. CURRENT IMPLEMENTATION TEMPORARY
-        sylvan = new Sylvan(game,new Vector2(5.5f,2.5f));
-        bat = new Bat(game,new Vector2(5,1));
-        spider = new Spider(game,new Vector2(2.4f,2.5f));
-        rock = new Rock(game,new Vector2(1,1));
+        sylvan.initSprite();
+        sylvan.initBody();
+        for (Entity enemy : enemies) {
+            enemy.initSprite();
+            enemy.initBody();
+        }
         changeCurrentInhabitedEntity(sylvan); // on level creation, sylvan is inhabited
     }
 
@@ -208,10 +210,9 @@ public class Level implements Screen {
 
         // move the sprites to where the bodies are (they have moved from move() or aiMove())
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLIER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLIER, sylvan.getWidth(), sylvan.getHeight());
-        bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLIER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLIER, bat.getWidth(), bat.getHeight());
-        spider.setBounds(spider.body.getPosition().x - spider.getWidth() * spider.WIDTH_MULTIPLIER, spider.body.getPosition().y - spider.getHeight() * spider.HEIGHT_MULTIPLIER, spider.getWidth(), spider.getHeight());
-        rock.setBounds(rock.body.getPosition().x - rock.getWidth() * rock.WIDTH_MULTIPLIER, rock.body.getPosition().y - rock.getHeight() * rock.HEIGHT_MULTIPLIER, rock.getWidth(), rock.getHeight());
-
+        for (Entity enemy : enemies) {
+            enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
+        }
 
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
 
@@ -227,9 +228,10 @@ public class Level implements Screen {
 
         // this function will loop thru all entities to update frame
         sylvan.update(timeElapsed,delta);
-        bat.update(timeElapsed,delta);
-        spider.update(timeElapsed,delta);
-        rock.update(timeElapsed,delta);
+        for (Entity enemy : enemies) {
+            enemy.update(timeElapsed,delta);
+        }
+
         camera.update();
         renderer.setView(camera);
 
@@ -260,9 +262,9 @@ public class Level implements Screen {
             sylvan.draw(game.batch);
         }
         // draw the prototype enemies
-        bat.draw(game.batch);
-        spider.draw(game.batch);
-        rock.draw(game.batch);
+        for (Entity enemy : enemies) {
+            enemy.draw(game.batch);
+        }
         game.batch.end(); // BATCH END
 
         /* // SHAPE RENDERER TEST (doesn't work properly)
@@ -281,21 +283,27 @@ public class Level implements Screen {
 
         if (sylvan.possessed) { // if sylvan is currently not possessing anyone
 
+            distances.clear();
             // get distances for prototype enemies (temp code for prototype)
-            double batDistance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
-            double spiderDistance = getDistance(sylvan.body.getPosition(),spider.body.getPosition());
-            double rockDistance = getDistance(sylvan.body.getPosition(),rock.body.getPosition());
+            for (Entity enemy : enemies) {
+                distances.add(getDistance(sylvan.body.getPosition(),enemy.body.getPosition()));
+            }
 
-            // check if the possess is valid. (temp code for prototype; this will loop thru enemies array)
-            // here bat has priority
-            if (batDistance <= 1.5) {
-                changeCurrentInhabitedEntity(bat);
-                sylvan.body.setTransform(disappearPos,0);
-            } else if (spiderDistance <= 1.5) {
-                changeCurrentInhabitedEntity(spider);
-                sylvan.body.setTransform(disappearPos,0);
-            } else if (rockDistance <= 1.5) {
-                changeCurrentInhabitedEntity(rock);
+            // get shortest distance
+            double shortest = distances.get(0);
+            int idx = 0;
+            int iter = 0;
+            for (double distance : distances) {
+                if (distance < shortest) {
+                    shortest = distance;
+                    idx = iter;
+                }
+                iter++;
+            }
+
+            // check if the possess is valid
+            if (shortest <= 1.5) {
+                changeCurrentInhabitedEntity(enemies.get(idx));
                 sylvan.body.setTransform(disappearPos,0);
             }
 

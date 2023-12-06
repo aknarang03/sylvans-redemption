@@ -31,8 +31,6 @@ public class Spider extends Entity {
     public Spider(SylvanGame game, Vector2 initPos) {
         super(game,true,0.5f,0.33f);
         initialPosition = initPos;
-        initSprite();
-        initBody();
     }
 
     @Override

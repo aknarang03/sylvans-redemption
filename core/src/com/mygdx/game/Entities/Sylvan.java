@@ -33,8 +33,6 @@ public class Sylvan extends Entity {
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game,false, 0.36f,0.33f);
         initialPosition = initPos;
-        initSprite();
-        initBody();
     }
 
     public void initBody() {

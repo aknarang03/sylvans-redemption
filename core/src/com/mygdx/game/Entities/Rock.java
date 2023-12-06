@@ -28,8 +28,6 @@ public class Rock extends Entity {
     public Rock(SylvanGame game, Vector2 initPos) {
         super(game,true, 0.36f,0.37f);
         initialPosition = initPos;
-        initSprite();
-        initBody();
     }
 
     public void initBody() {

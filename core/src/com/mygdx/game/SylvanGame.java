@@ -2,7 +2,12 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.Entities.Bat;
+import com.mygdx.game.Entities.Rock;
+import com.mygdx.game.Entities.Spider;
+import com.mygdx.game.Entities.Sylvan;
 
 public class SylvanGame extends Game {
 
@@ -43,9 +48,13 @@ public class SylvanGame extends Game {
 		int numEnemies;
 
 		// PROTOTYPE LEVEL
-		numEnemies = 2;
-		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
+		numEnemies = 3;
 		// PUT ENEMIES IN ARRAY HERE
+		Bat bat = new Bat(this,new Vector2(5,1));
+		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
+		Rock rock = new Rock(this,new Vector2(1,1));
+		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
+		prototypeEnemies.add(bat,spider,rock);
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
 		prototypeLevel = new Level(this, prototypeEnemies, prototypeMapFilename);
 
