@@ -267,10 +267,12 @@ public class Level implements Screen {
         }
         game.batch.end(); // BATCH END
 
-        /* // SHAPE RENDERER TEST (doesn't work properly)
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(1,0,0,1);
-        shapeRenderer.line(sylvan.getBody().getPosition().x,sylvan.getBody().getPosition().y,bat.getBody().getPosition().x, bat.getBody().getPosition().y);
+        // SHAPE RENDERER TEST
+        /*
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.CYAN);
+        shapeRenderer.rectLine(sylvan.body.getPosition(),enemies.get(0).body.getPosition(),0.05f);
         System.out.println(shapeRenderer.isDrawing());
         shapeRenderer.end();
          */
