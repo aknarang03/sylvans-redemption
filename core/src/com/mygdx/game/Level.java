@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Entities.Bat;
+import com.mygdx.game.Entities.Rock;
 import com.mygdx.game.Entities.Spider;
 import com.mygdx.game.Entities.Sylvan;
 
@@ -67,6 +68,7 @@ public class Level implements Screen {
     Sylvan sylvan;
     Bat bat; // temporary for prototype (will later be in array sent in constructor)
     Spider spider; // temporary for prototype (will later be in array sent in constructor)
+    Rock rock; // temporary for prototype (will later be in array sent in constructor)
 
     Entity currentInhabitedEntity; // track what the player is
 
@@ -139,6 +141,7 @@ public class Level implements Screen {
         sylvan = new Sylvan(game,new Vector2(5.5f,2.5f));
         bat = new Bat(game,new Vector2(5,1));
         spider = new Spider(game,new Vector2(2.4f,2.5f));
+        rock = new Rock(game,new Vector2(1,1));
         changeCurrentInhabitedEntity(sylvan); // on level creation, sylvan is inhabited
     }
 
@@ -207,6 +210,8 @@ public class Level implements Screen {
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLIER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLIER, sylvan.getWidth(), sylvan.getHeight());
         bat.setBounds(bat.body.getPosition().x - bat.getWidth() * bat.WIDTH_MULTIPLIER, bat.body.getPosition().y - bat.getHeight() * bat.HEIGHT_MULTIPLIER, bat.getWidth(), bat.getHeight());
         spider.setBounds(spider.body.getPosition().x - spider.getWidth() * spider.WIDTH_MULTIPLIER, spider.body.getPosition().y - spider.getHeight() * spider.HEIGHT_MULTIPLIER, spider.getWidth(), spider.getHeight());
+        rock.setBounds(rock.body.getPosition().x - rock.getWidth() * rock.WIDTH_MULTIPLIER, rock.body.getPosition().y - rock.getHeight() * rock.HEIGHT_MULTIPLIER, rock.getWidth(), rock.getHeight());
+
 
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
 
@@ -224,6 +229,7 @@ public class Level implements Screen {
         sylvan.update(timeElapsed,delta);
         bat.update(timeElapsed,delta);
         spider.update(timeElapsed,delta);
+        rock.update(timeElapsed,delta);
         camera.update();
         renderer.setView(camera);
 
@@ -256,6 +262,7 @@ public class Level implements Screen {
         // draw the prototype enemies
         bat.draw(game.batch);
         spider.draw(game.batch);
+        rock.draw(game.batch);
         game.batch.end(); // BATCH END
 
         /* // SHAPE RENDERER TEST (doesn't work properly)
@@ -277,6 +284,7 @@ public class Level implements Screen {
             // get distances for prototype enemies (temp code for prototype)
             double batDistance = getDistance(sylvan.body.getPosition(),bat.body.getPosition());
             double spiderDistance = getDistance(sylvan.body.getPosition(),spider.body.getPosition());
+            double rockDistance = getDistance(sylvan.body.getPosition(),rock.body.getPosition());
 
             // check if the possess is valid. (temp code for prototype; this will loop thru enemies array)
             // here bat has priority
@@ -285,6 +293,9 @@ public class Level implements Screen {
                 sylvan.body.setTransform(disappearPos,0);
             } else if (spiderDistance <= 1.5) {
                 changeCurrentInhabitedEntity(spider);
+                sylvan.body.setTransform(disappearPos,0);
+            } else if (rockDistance <= 1.5) {
+                changeCurrentInhabitedEntity(rock);
                 sylvan.body.setTransform(disappearPos,0);
             }
 
