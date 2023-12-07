@@ -33,6 +33,9 @@ public class Sylvan extends Entity {
 
     int health;
 
+    // timers
+    public double knockbackTimer;
+
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game,false, 0.36f,0.33f);
         initialPosition = initPos;
@@ -112,6 +115,10 @@ public class Sylvan extends Entity {
             System.out.println("hit");
         }
          */
+
+        if (knockbackTimer >= 0) {
+            return;
+        }
 
         switch (control) {
             case UP: {
@@ -228,8 +235,10 @@ public class Sylvan extends Entity {
     }
 
     public void takeDamage() {
+        knockbackTimer = 0.5f;
         health--;
         System.out.println("health:" + health);
+
         //setColor(Color.RED);
         /*
         if (health == 0) {

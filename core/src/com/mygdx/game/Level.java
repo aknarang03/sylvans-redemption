@@ -241,6 +241,7 @@ public class Level implements Screen {
          */
 
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
+        sylvan.knockbackTimer -= delta;
 
         // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
         if (possessTimer >= 5) {
