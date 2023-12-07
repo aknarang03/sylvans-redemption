@@ -1,6 +1,5 @@
 package com.mygdx.game.Entities;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -138,7 +137,7 @@ public class Sylvan extends Entity {
                 left = false;
                 break;
             case POSSESS:
-                game.currentLevel.possess();
+                game.currentLevel.getPossessTarget();
                 break;
             default:
                 break;

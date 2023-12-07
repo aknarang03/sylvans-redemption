@@ -7,7 +7,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
@@ -23,9 +22,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.Entities.Bat;
-import com.mygdx.game.Entities.Rock;
-import com.mygdx.game.Entities.Spider;
 import com.mygdx.game.Entities.Sylvan;
 import com.mygdx.game.Entities.Token;
 
@@ -75,6 +71,7 @@ public class Level implements Screen {
     Sylvan sylvan;
 
     Entity currentInhabitedEntity; // track what the player is
+    Entity targetEntity; // entity to possess
 
     // time vars
     private float timeElapsed;
@@ -124,6 +121,8 @@ public class Level implements Screen {
         disappearPos = new Vector2(100,100);
 
         TOKEN_COUNT = tokenCount;
+
+        targetEntity = null;
 
     }
 
@@ -243,6 +242,10 @@ public class Level implements Screen {
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
         sylvan.knockbackTimer -= delta;
 
+        if (shouldPossess()) {
+            possess();
+        }
+
         // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
         if (possessTimer >= 5) {
             Vector2 pos = currentInhabitedEntity.getBody().getPosition();
@@ -322,7 +325,20 @@ public class Level implements Screen {
 
     }
 
+    public boolean shouldPossess() {
+        if (targetEntity != null) {// && animation done playing
+            return true;
+        }
+        return false;
+    }
+
     public void possess() {
+        changeCurrentInhabitedEntity(targetEntity);
+        sylvan.body.setTransform(disappearPos,0);
+        targetEntity = null;
+    }
+
+    public void getPossessTarget() {
 
         if (sylvan.possessed) { // if sylvan is currently not possessing anyone
 
@@ -348,8 +364,7 @@ public class Level implements Screen {
 
             // check if the possess is valid
             if (shortest <= 1.5) {
-                changeCurrentInhabitedEntity(enemies.get(idx));
-                sylvan.body.setTransform(disappearPos,0);
+                targetEntity = enemies.get(idx);
             }
 
         }
