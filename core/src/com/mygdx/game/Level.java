@@ -222,6 +222,10 @@ public class Level implements Screen {
     public void update(float delta) {
 
         // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)
+        distances.clear();
+        for (Entity enemy : enemies) {
+            distances.add(getDistance(sylvan.body.getPosition(),enemy.body.getPosition()));
+        }
 
         processInput(); // get user input
 
@@ -285,8 +289,16 @@ public class Level implements Screen {
         }
 
         // draw the prototype enemies
+        // change color if sylvan is close
+        int iter = 0;
         for (Entity enemy : enemies) {
             enemy.draw(game.batch);
+            if (distances.get(iter) <= 1.5) {
+                enemy.setColor(Color.CYAN);
+            } else {
+                enemy.setColor(Color.WHITE);
+            }
+            iter++;
         }
 
         // draw the tokens
@@ -313,11 +325,13 @@ public class Level implements Screen {
 
         if (sylvan.possessed) { // if sylvan is currently not possessing anyone
 
-            distances.clear();
             // get distances for prototype enemies (temp code for prototype)
+            /*
+            distances.clear();
             for (Entity enemy : enemies) {
                 distances.add(getDistance(sylvan.body.getPosition(),enemy.body.getPosition()));
             }
+             */
 
             // get shortest distance
             double shortest = distances.get(0);
