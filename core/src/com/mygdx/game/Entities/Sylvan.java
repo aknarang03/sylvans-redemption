@@ -1,5 +1,6 @@
 package com.mygdx.game.Entities;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -30,9 +31,12 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> glidepossessFrames;
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
+    int health;
+
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game,false, 0.36f,0.33f);
         initialPosition = initPos;
+        health = 3;
     }
 
     public void initBody() {
@@ -102,6 +106,12 @@ public class Sylvan extends Entity {
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
+
+        /*
+        if (currentState == State.HIT) {
+            System.out.println("hit");
+        }
+         */
 
         switch (control) {
             case UP: {
@@ -176,6 +186,10 @@ public class Sylvan extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
+        if (dead) {
+            return State.DEAD;
+        }
+
         switch (currentState) {
 
             case IDLE: {
@@ -211,6 +225,23 @@ public class Sylvan extends Entity {
 
         }
 
+    }
+
+    public void takeDamage() {
+        health--;
+        System.out.println("health:" + health);
+        //setColor(Color.RED);
+        /*
+        if (health == 0) {
+            die();
+        }
+         */
+    }
+
+    @Override
+    public void die() { // this will be different from the enemies I think
+        dead = true;
+        //world.destroyBody(body); // causes issues with collision listener
     }
 
     @Override

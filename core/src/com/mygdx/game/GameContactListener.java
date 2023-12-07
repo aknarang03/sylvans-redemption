@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -8,16 +9,22 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 
 public class GameContactListener implements ContactListener {
 
+    Level level;
+
+    GameContactListener(Level level) { // or take Game game?
+        this.level = level;
+    }
+
     @Override
     public void beginContact(Contact contact) {
 
         // figure out which fixture is enemy and which one is sylvan
-        Fixture enemy = (contact.getFixtureA().getBody().getUserData() == "sylvan") ? contact.getFixtureB() : contact.getFixtureA();
+        Fixture other = (contact.getFixtureA().getBody().getUserData() == "sylvan") ? contact.getFixtureB() : contact.getFixtureA();
         Fixture sylvan = (contact.getFixtureA().getBody().getUserData() == "sylvan") ? contact.getFixtureA() : contact.getFixtureB();
 
         // KNOCKBACK
 
-        if (enemy.getBody().getUserData() == "bat" || enemy.getBody().getUserData() == "spider") {
+        if (other.getBody().getUserData() == "bat" || other.getBody().getUserData() == "spider") {
 
             double velx = sylvan.getBody().getLinearVelocity().x;
             double vely = sylvan.getBody().getLinearVelocity().y;
@@ -50,7 +57,12 @@ public class GameContactListener implements ContactListener {
                 sylvan.getBody().applyForceToCenter(FORCELEFT,0,true);
             }
 
-            // NOTE: he will take damage here too
+            level.sylvan.takeDamage();
+            //level.sylvan.currentState = Entity.State.HIT;
+
+        }
+
+        else if (other.getBody().getUserData() == "token") {
 
         }
 

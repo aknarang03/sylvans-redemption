@@ -148,6 +148,10 @@ public class Rock extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
+        if (dead) {
+            return State.DEAD;
+        }
+
         switch (currentState) {
 
             case IDLE: {

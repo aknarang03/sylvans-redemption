@@ -174,6 +174,10 @@ public class Spider extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
+        if (dead) {
+            return State.DEAD;
+        }
+
         if (!possessed) { return State.WALK; } // with "ai" movement it will always be walking
 
         switch (currentState) {

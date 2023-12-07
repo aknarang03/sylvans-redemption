@@ -99,7 +99,7 @@ public class Level implements Screen {
         world = new World(gravity,true);
 
         // set up contact listener
-        contactListener = new GameContactListener();
+        contactListener = new GameContactListener(this);
         world.setContactListener(contactListener);
 
         // init arrays
