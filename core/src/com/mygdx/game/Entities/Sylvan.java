@@ -86,8 +86,8 @@ public class Sylvan extends Entity {
         jump = new Animation<TextureRegion>(1 / 5f, jumpFrames);
         glide = new Animation<TextureRegion>(1 / 9f, glideFrames);
         land = new Animation<TextureRegion>(1 / 9f, landFrames);
-        glidepossess = new Animation<TextureRegion>(1 / 9f, glidepossessFrames);
-        standpossess = new Animation<TextureRegion>(1 / 9f, standpossessFrames);
+        glidepossess = new Animation<TextureRegion>(1 / 4f, glidepossessFrames);
+        standpossess = new Animation<TextureRegion>(1 / 4f, standpossessFrames);
 
         animations.put("idle", idle);
         animations.put("walk", walk);
@@ -116,6 +116,9 @@ public class Sylvan extends Entity {
          */
 
         if (knockbackTimer >= 0) {
+            return;
+        }
+        if (currentState == State.POSSESS) {
             return;
         }
 
@@ -160,6 +163,9 @@ public class Sylvan extends Entity {
         currentState = newState; // set currentState to new state
 
         switch (currentState) {
+            case POSSESS:
+                frame = (animations.get("glidepossess").getKeyFrame(timeElapsed, true));
+                break;
             case JUMP:
                 frame = (animations.get("jump").getKeyFrame(timeElapsed, true));
                 break;
@@ -185,6 +191,12 @@ public class Sylvan extends Entity {
         setRegion(frame);
     }
 
+
+
+    public void resetState() {
+        currentState = State.IDLE;
+    }
+
     @Override
     public State getState() {
 
@@ -197,6 +209,10 @@ public class Sylvan extends Entity {
         }
 
         switch (currentState) {
+
+            case POSSESS: {
+                return State.POSSESS;
+            }
 
             case IDLE: {
                 if (vy > 0) { return State.JUMP; } // jump pressed

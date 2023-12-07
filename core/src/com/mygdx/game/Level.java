@@ -312,21 +312,26 @@ public class Level implements Screen {
         game.batch.end(); // BATCH END
 
         // SHAPE RENDERER TEST
-        /*
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.CYAN);
-        shapeRenderer.rectLine(sylvan.body.getPosition(),enemies.get(0).body.getPosition(),0.05f);
-        System.out.println(shapeRenderer.isDrawing());
-        shapeRenderer.end();
-         */
+        if (shouldPossess()) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(Color.CYAN);
+            shapeRenderer.rectLine(sylvan.body.getPosition(), targetEntity.body.getPosition(), 0.05f);
+            System.out.println(shapeRenderer.isDrawing());
+            shapeRenderer.end();
+        }
 
         timeElapsed += delta; // update timeElapsed for animations
 
     }
 
     public boolean shouldPossess() {
-        if (targetEntity != null) {// && animation done playing
+        final boolean hasTarget = (targetEntity != null);
+        //final boolean animationDone = sylvan.animations.get("glidepossess").isAnimationFinished(timeElapsed);
+        final boolean animationDone = (sylvan.stateTimer >=0.4f);
+        System.out.println(sylvan.currentState);
+
+        if (hasTarget && animationDone) {
             return true;
         }
         return false;
@@ -336,6 +341,8 @@ public class Level implements Screen {
         changeCurrentInhabitedEntity(targetEntity);
         sylvan.body.setTransform(disappearPos,0);
         targetEntity = null;
+        sylvan.resetState(); // set Sylvan's state back to IDLE from POSSESS
+        // get rid of the blue line
     }
 
     public void getPossessTarget() {
@@ -364,6 +371,8 @@ public class Level implements Screen {
 
             // check if the possess is valid
             if (shortest <= 1.5) {
+                sylvan.currentState = Entity.State.POSSESS;
+                sylvan.stateTimer = 0;
                 targetEntity = enemies.get(idx);
             }
 
