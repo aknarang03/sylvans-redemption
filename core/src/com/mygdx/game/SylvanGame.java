@@ -8,6 +8,7 @@ import com.mygdx.game.Entities.Bat;
 import com.mygdx.game.Entities.Rock;
 import com.mygdx.game.Entities.Spider;
 import com.mygdx.game.Entities.Sylvan;
+import com.mygdx.game.Entities.Token;
 
 public class SylvanGame extends Game {
 
@@ -45,19 +46,30 @@ public class SylvanGame extends Game {
 
 	public void createLevels() {
 		// for now this is where every level is created
-		// perhaps will save them in an array so that it's easier to switch levels
+		// perhaps will save them in an array / map or something so that it's easier to switch levels
 		int numEnemies;
+		int numTokens;
 
 		// PROTOTYPE LEVEL
+
 		numEnemies = 3;
-		// PUT ENEMIES IN ARRAY HERE
+		numTokens = 3;
+
 		Bat bat = new Bat(this,new Vector2(5,1));
 		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
 		Rock rock = new Rock(this,new Vector2(1,1));
+
 		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
 		prototypeEnemies.add(bat,spider,rock);
+
+		Token token1 = new Token(this,new Vector2(6,4));
+
+		Array<Token> prototypeTokens = new Array<Token>();
+		prototypeTokens.add(token1);
+
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
-		prototypeLevel = new Level(this, prototypeEnemies, prototypeMapFilename);
+
+		prototypeLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename,numTokens);
 
 	}
 

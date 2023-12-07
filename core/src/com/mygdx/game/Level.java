@@ -27,6 +27,7 @@ import com.mygdx.game.Entities.Bat;
 import com.mygdx.game.Entities.Rock;
 import com.mygdx.game.Entities.Spider;
 import com.mygdx.game.Entities.Sylvan;
+import com.mygdx.game.Entities.Token;
 
 public class Level implements Screen {
 
@@ -36,12 +37,18 @@ public class Level implements Screen {
 
     //private Hud hud; // make Hud class to show the top left interface as seen in game sketch
 
+    // setup vars
     final SylvanGame game;
     private World world;
     private GameContactListener contactListener;
 
+    // enemy vars
     private Array<Entity> enemies; // this will hold the enemies for each level to be drawn
     public Array<Double> distances; // tracks distances between currentEntity and each enemy
+
+    // token vars
+    public Array<Token> tokens; // holds the tokens for each level to be drawn
+    int TOKEN_COUNT; // token count to be decided by user
 
     // tiled map vars
     private TiledMap map;
@@ -75,7 +82,7 @@ public class Level implements Screen {
 
     private Vector2 disappearPos; // send sylvan's body here during possession
 
-    public Level(final SylvanGame game, Array<Entity> enemies, String mapFilename) {
+    public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount) {
 
         // init HUD in here
 
@@ -104,6 +111,7 @@ public class Level implements Screen {
 
         // init arrays
         this.enemies = enemies;
+        this.tokens = tokens;
         distances = new Array<Double>();
         wallBodies = new Array<Body>();
 
@@ -114,6 +122,8 @@ public class Level implements Screen {
         // possess vars
         possessTimer = 0;
         disappearPos = new Vector2(100,100);
+
+        TOKEN_COUNT = tokenCount;
 
     }
 
@@ -143,6 +153,10 @@ public class Level implements Screen {
         for (Entity enemy : enemies) {
             enemy.initSprite();
             enemy.initBody();
+        }
+        for (Token token : tokens) {
+            token.initSprite();
+            token.initBody();
         }
         changeCurrentInhabitedEntity(sylvan); // on level creation, sylvan is inhabited
     }
@@ -183,21 +197,6 @@ public class Level implements Screen {
             wallBodies.add(body);
         }
 
-        // use collectible object layer to put soul token bodies
-        for (MapObject mapObject : map.getLayers().get("Collectible Objects").getObjects().getByType(RectangleMapObject.class)) {
-            System.out.println("got object");
-            Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
-            body = world.createBody(bodyDef);
-            shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
-            fixtureDef.shape = shape;
-            fixtureDef.filter.groupIndex = SylvanGame.TOKEN_GROUP;
-            fixtureDef.friction = 100;
-            body.createFixture(fixtureDef);
-            body.setUserData("token");
-        }
-
     }
 
     public void processInput() { // pass the input to current entity's move() function
@@ -228,6 +227,11 @@ public class Level implements Screen {
         for (Entity enemy : enemies) {
             enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
         }
+        /*
+        for (Token token : tokens) {
+            token.setBounds(token.body.getPosition().x - token.getWidth() * 1, token.body.getPosition().y - token.getHeight() * 1, token.getWidth(), token.getHeight());
+        }
+         */
 
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
 
@@ -272,13 +276,19 @@ public class Level implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin(); // BATCH BEGIN
-        // NOTE: this will draw all entities by looping thru array
+
         if (sylvan.possessed) { // only draw sylvan if possessed
             sylvan.draw(game.batch);
         }
+
         // draw the prototype enemies
         for (Entity enemy : enemies) {
             enemy.draw(game.batch);
+        }
+
+        // draw the tokens
+        for (Token token : tokens) {
+            token.draw(game.batch);
         }
         game.batch.end(); // BATCH END
 
