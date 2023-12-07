@@ -47,7 +47,7 @@ public class Token extends Sprite {
         bodyDef.position.set(position.x,position.y);
         bodyDef.type = BodyDef.BodyType.StaticBody;
         body = world.createBody(bodyDef);
-        body.setUserData("token");
+        //body.setUserData("token");
 
         // set up fixture
         shape = new PolygonShape();

@@ -154,9 +154,12 @@ public class Level implements Screen {
             enemy.initSprite();
             enemy.initBody();
         }
+        int count = 0;
         for (Token token : tokens) {
             token.initSprite();
             token.initBody();
+            token.body.setUserData("token"+count);
+            count++;
         }
         changeCurrentInhabitedEntity(sylvan); // on level creation, sylvan is inhabited
     }
@@ -336,6 +339,12 @@ public class Level implements Screen {
 
         }
 
+    }
+
+    public void getToken(int idx) {
+        System.out.println("got token " + idx);
+        Token token = tokens.get(idx);
+        System.out.println(token.body.getUserData());
     }
 
     public double getDistance (Vector2 entity1, Vector2 entity2) { // get distance between two entities

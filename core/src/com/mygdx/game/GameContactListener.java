@@ -62,8 +62,13 @@ public class GameContactListener implements ContactListener {
 
         }
 
-        else if (other.getBody().getUserData() == "token") {
-            // How would I make the tokens disappear?? Do they have to be drawn in program and not level
+        else if (other.getBody().getUserData().toString().contains("token")) {
+            // collect token
+            String datastring = other.getBody().getUserData().toString();
+            char idxChar = datastring.charAt(5);
+            int idx = Integer.parseInt(String.valueOf(idxChar));
+            level.getToken(idx);
+
         }
 
     }
