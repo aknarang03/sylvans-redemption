@@ -22,6 +22,7 @@ public class SylvanGame extends Game {
 	public static final short ENEMY_GROUP = 2;
 	public static final short GROUND_GROUP = 3;
 	public static final short MOVABLE_GROUP = 4;
+	public static final short TOKEN_GROUP = 5;
 
 	public SpriteBatch batch;
 

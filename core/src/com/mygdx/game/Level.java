@@ -167,7 +167,7 @@ public class Level implements Screen {
             body.setUserData("ground");
         }
 
-        // use wall object layer to draw walls
+        // use wall object layer to put wall bodies
         for (MapObject mapObject : map.getLayers().get("Wall Objects").getObjects().getByType(RectangleMapObject.class)) {
             System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
@@ -181,6 +181,21 @@ public class Level implements Screen {
             body.createFixture(fixtureDef);
             body.setUserData("wall");
             wallBodies.add(body);
+        }
+
+        // use collectible object layer to put soul token bodies
+        for (MapObject mapObject : map.getLayers().get("Collectible Objects").getObjects().getByType(RectangleMapObject.class)) {
+            System.out.println("got object");
+            Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
+            body = world.createBody(bodyDef);
+            shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
+            fixtureDef.shape = shape;
+            fixtureDef.filter.groupIndex = SylvanGame.TOKEN_GROUP;
+            fixtureDef.friction = 100;
+            body.createFixture(fixtureDef);
+            body.setUserData("token");
         }
 
     }
