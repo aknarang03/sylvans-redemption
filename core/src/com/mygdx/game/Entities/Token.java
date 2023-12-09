@@ -54,7 +54,7 @@ public class Token extends Sprite {
 
         // set up fixture
         shape = new PolygonShape();
-        shape.setAsBox(0.2f,0.2f);
+        shape.setAsBox(0.05f,0.05f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
 

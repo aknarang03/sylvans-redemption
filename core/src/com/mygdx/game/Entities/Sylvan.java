@@ -30,7 +30,7 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> glidepossessFrames;
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
-    int health;
+    public int health;
 
     // timers
     public double knockbackTimer;
@@ -112,7 +112,7 @@ public class Sylvan extends Entity {
         if (knockbackTimer >= 0) {
             return;
         }
-        if (currentState == State.POSSESS || currentState == State.LAND) { // prevent from changing state with states where the timer matters
+        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD) { // prevent from changing state with states where the timer matters
             return;
         }
 
@@ -259,11 +259,11 @@ public class Sylvan extends Entity {
         System.out.println("health:" + health);
 
         //setColor(Color.RED);
-        /*
+
         if (health == 0) {
             die();
         }
-         */
+
     }
 
     @Override

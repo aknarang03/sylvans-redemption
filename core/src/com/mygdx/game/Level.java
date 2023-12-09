@@ -45,6 +45,7 @@ public class Level implements Screen {
     // token vars
     public Array<Token> tokens; // holds the tokens for each level to be drawn
     final int TOKEN_COUNT; // token count to be decided by user
+    int numTokensCollected; // amount of tokens collected by user
 
     // tiled map vars
     private TiledMap map;
@@ -121,6 +122,8 @@ public class Level implements Screen {
         disappearPos = new Vector2(100,100);
 
         TOKEN_COUNT = tokenCount;
+
+        numTokensCollected = 0;
 
         targetEntity = null;
 
@@ -226,6 +229,8 @@ public class Level implements Screen {
             if (token.shouldCollect) {
                 world.destroyBody(token.body);
                 tokens.removeIndex(counter);
+                numTokensCollected++;
+                System.out.println(numTokensCollected);
             }
             counter++;
         }
@@ -236,6 +241,14 @@ public class Level implements Screen {
         }
 
     }
+
+    /*
+    public void checkDie() {
+        if (sylvan.dead) {
+            world.destroyBody(sylvan.body);
+        }
+    }
+     */
 
     public void update(float delta) {
 
