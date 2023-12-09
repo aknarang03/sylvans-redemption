@@ -165,9 +165,16 @@ public class Sylvan extends Entity {
 
         currentState = newState; // set currentState to new state
 
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
+
         switch (currentState) {
             case POSSESS:
-                frame = (animations.get("standpossess").getKeyFrame(stateTimer, true)); // NOTE: figure out whether to play glide or stand
+                if (vy == 0) {
+                    frame = (animations.get("standpossess").getKeyFrame(stateTimer, true)); // NOTE: figure out whether to play glide or stand
+                } else {
+                    frame = (animations.get("glidepossess").getKeyFrame(stateTimer, true));
+                }
                 break;
             case JUMP:
                 frame = (animations.get("jump").getKeyFrame(stateTimer, true));

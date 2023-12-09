@@ -264,6 +264,10 @@ public class Level implements Screen {
 
     public void update(float delta) {
 
+        if (restartLevel()) {
+            // SET SCREEN TO GAME OVER SCREEN
+        }
+
         // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)
         distances.clear();
         for (Entity enemy : enemies) {
@@ -418,6 +422,20 @@ public class Level implements Screen {
 
         }
 
+    }
+
+    public boolean restartLevel(){
+        if(sylvan.currentState == Entity.State.DEAD && sylvan.stateTimer > 2){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean completeLevel(){
+        if (numTokensCollected == TOKEN_COUNT) {
+            return true;
+        }
+        return false;
     }
 
     public void getToken(int idx) {
