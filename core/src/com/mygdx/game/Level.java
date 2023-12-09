@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.Entities.Bat;
 import com.mygdx.game.Entities.Sylvan;
 import com.mygdx.game.Entities.Token;
 
@@ -80,6 +82,8 @@ public class Level implements Screen {
 
     private Vector2 disappearPos; // send sylvan's body here during possession
 
+    private Sprite indicator;
+
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount) {
 
         // init HUD in here
@@ -127,6 +131,14 @@ public class Level implements Screen {
 
         targetEntity = null;
 
+        createIndicator();
+
+    }
+
+    public void createIndicator() {
+        indicator = new Sprite();
+        Texture indicatorImg = new Texture(Gdx.files.internal("indicator.png"));
+        indicator.setRegion(indicatorImg);
     }
 
     public void changeCurrentInhabitedEntity(Entity entity) { // call when player is now a different body
@@ -266,6 +278,8 @@ public class Level implements Screen {
             enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
         }
 
+        indicator.setBounds(currentInhabitedEntity.body.getPosition().x - 0.26f, currentInhabitedEntity.body.getPosition().y + (currentInhabitedEntity.getHeight()/4), 0.5f, 0.5f);
+
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
         sylvan.knockbackTimer -= delta;
 
@@ -331,6 +345,7 @@ public class Level implements Screen {
                 enemy.setColor(Color.CYAN);
             } else {
                 enemy.setColor(Color.WHITE);
+
             }
             iter++;
         }
@@ -342,9 +357,11 @@ public class Level implements Screen {
 
         }
 
+        indicator.draw(game.batch);
+
         game.batch.end(); // BATCH END
 
-        // SHAPE RENDERER TEST
+        // SHAPE RENDERER
         if (shouldPossess()) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
