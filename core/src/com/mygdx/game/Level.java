@@ -44,7 +44,7 @@ public class Level implements Screen {
 
     // token vars
     public Array<Token> tokens; // holds the tokens for each level to be drawn
-    int TOKEN_COUNT; // token count to be decided by user
+    final int TOKEN_COUNT; // token count to be decided by user
 
     // tiled map vars
     private TiledMap map;
