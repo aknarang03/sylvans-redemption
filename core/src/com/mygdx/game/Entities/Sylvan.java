@@ -109,16 +109,10 @@ public class Sylvan extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
-        /*
-        if (currentState == State.HIT) {
-            System.out.println("hit");
-        }
-         */
-
         if (knockbackTimer >= 0) {
             return;
         }
-        if (currentState == State.POSSESS) {
+        if (currentState == State.POSSESS || currentState == State.LAND) { // prevent from changing state with states where the timer matters
             return;
         }
 
@@ -151,9 +145,18 @@ public class Sylvan extends Entity {
     public void update(float timeElapsed, float dt) {
 
         TextureRegion frame;
-        final State newState = getState(); // to use in stateTimer check
 
-        // NOTE: currently not useful
+        final State newState = getState(); // to use in stateTimer check
+        final boolean playStand; // to decide whether to play glide or stand possess anim
+
+        /*
+        if (currentState == State.WALK || currentState == State.LAND) {
+            playStand = true;
+        } else {
+            playStand = false;
+        }
+         */
+
         if (currentState == newState) { // state has not changed
             stateTimer += dt;
         } else {
@@ -164,10 +167,10 @@ public class Sylvan extends Entity {
 
         switch (currentState) {
             case POSSESS:
-                frame = (animations.get("glidepossess").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("standpossess").getKeyFrame(stateTimer, true)); // NOTE: figure out whether to play glide or stand
                 break;
             case JUMP:
-                frame = (animations.get("jump").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("jump").getKeyFrame(stateTimer, true));
                 break;
             case FALL:
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
@@ -239,6 +242,7 @@ public class Sylvan extends Entity {
             }
 
             case LAND: {
+                if (stateTimer <= 0.1) {return State.LAND; }
                 return State.IDLE; // state is idle after landing
             }
             // NOTE: later, check state timer in here and wait to return idle so that animation can play

@@ -326,10 +326,9 @@ public class Level implements Screen {
     }
 
     public boolean shouldPossess() {
+
         final boolean hasTarget = (targetEntity != null);
-        //final boolean animationDone = sylvan.animations.get("glidepossess").isAnimationFinished(timeElapsed);
         final boolean animationDone = (sylvan.stateTimer >=0.4f);
-        System.out.println(sylvan.currentState);
 
         if (hasTarget && animationDone) {
             return true;
