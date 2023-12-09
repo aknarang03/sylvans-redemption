@@ -219,6 +219,24 @@ public class Level implements Screen {
 
     }
 
+    public void checkCollect() {
+
+        int counter = 0;
+        for (Token token : tokens) {
+            if (token.shouldCollect) {
+                world.destroyBody(token.body);
+                tokens.removeIndex(counter);
+            }
+            counter++;
+        }
+
+        // set new user data
+        for (int i = 0; i < tokens.size; i++) {
+            tokens.get(i).body.setUserData("token" + i);
+        }
+
+    }
+
     public void update(float delta) {
 
         // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)
@@ -234,8 +252,6 @@ public class Level implements Screen {
         for (Entity enemy : enemies) {
             enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
         }
-
-
 
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
         sylvan.knockbackTimer -= delta;
@@ -253,6 +269,9 @@ public class Level implements Screen {
         }
 
         world.step(1/60f,6,2); // physics step
+        if (!world.isLocked()) {
+            checkCollect();
+        }
 
         // this function will loop thru all entities to update frame
         sylvan.update(timeElapsed,delta);
@@ -305,7 +324,9 @@ public class Level implements Screen {
 
         // draw the tokens
         for (Token token : tokens) {
+
             token.draw(game.batch);
+
         }
 
         game.batch.end(); // BATCH END
@@ -372,6 +393,7 @@ public class Level implements Screen {
     public void getToken(int idx) {
         System.out.println("got token " + idx);
         Token token = tokens.get(idx);
+        token.shouldCollect = true;
         System.out.println(token.body.getUserData());
     }
 

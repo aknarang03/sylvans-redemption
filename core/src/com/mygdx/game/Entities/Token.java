@@ -33,9 +33,12 @@ public class Token extends Sprite {
 
     final public float MULTIPLYER = 0.1f;
 
+    public boolean shouldCollect;
+
     public Token(SylvanGame game, Vector2 position) {
         this.game = game;
         this.position = position;
+        shouldCollect = false;
     }
 
     public void initBody() {
