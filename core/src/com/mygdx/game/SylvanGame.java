@@ -63,13 +63,14 @@ public class SylvanGame extends Game {
 		prototypeEnemies.add(bat,spider,rock);
 
 		Token token1 = new Token(this,new Vector2(6,4));
+		Token token2 = new Token(this,new Vector2(5,4));
 
 		Array<Token> prototypeTokens = new Array<Token>();
-		prototypeTokens.add(token1);
+		prototypeTokens.add(token1, token2);
 
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
 
-		prototypeLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename,numTokens);
+		prototypeLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens);
 
 	}
 

@@ -157,6 +157,7 @@ public class Level implements Screen {
         for (Token token : tokens) {
             token.initSprite();
             token.initBody();
+            token.setBounds(token.body.getPosition().x - token.getWidth() * token.MULTIPLYER, token.body.getPosition().y - token.getHeight() * token.MULTIPLYER, token.getWidth(), token.getHeight());
             token.body.setUserData("token"+count);
             count++;
         }
@@ -233,11 +234,8 @@ public class Level implements Screen {
         for (Entity enemy : enemies) {
             enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
         }
-        /*
-        for (Token token : tokens) {
-            token.setBounds(token.body.getPosition().x - token.getWidth() * 1, token.body.getPosition().y - token.getHeight() * 1, token.getWidth(), token.getHeight());
-        }
-         */
+
+
 
         if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
         sylvan.knockbackTimer -= delta;
@@ -309,6 +307,7 @@ public class Level implements Screen {
         for (Token token : tokens) {
             token.draw(game.batch);
         }
+
         game.batch.end(); // BATCH END
 
         // SHAPE RENDERER TEST
@@ -341,20 +340,11 @@ public class Level implements Screen {
         sylvan.body.setTransform(disappearPos,0);
         targetEntity = null;
         sylvan.resetState(); // set Sylvan's state back to IDLE from POSSESS
-        // get rid of the blue line
     }
 
     public void getPossessTarget() {
 
         if (sylvan.possessed) { // if sylvan is currently not possessing anyone
-
-            // get distances for prototype enemies (temp code for prototype)
-            /*
-            distances.clear();
-            for (Entity enemy : enemies) {
-                distances.add(getDistance(sylvan.body.getPosition(),enemy.body.getPosition()));
-            }
-             */
 
             // get shortest distance
             double shortest = distances.get(0);

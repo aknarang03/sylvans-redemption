@@ -31,12 +31,12 @@ public class Token extends Sprite {
     // sprite vars
     private Texture tokenImg;
 
+    final public float MULTIPLYER = 0.1f;
 
     public Token(SylvanGame game, Vector2 position) {
         this.game = game;
         this.position = position;
     }
-
 
     public void initBody() {
 
@@ -62,14 +62,12 @@ public class Token extends Sprite {
     }
 
     public void initSprite() {
-
         tokenImg = new Texture(Gdx.files.internal("token/soultoken.png"));
-        setScale(20f);
-        setTexture(tokenImg);
+        //setTexture(tokenImg);
+        setScale(0.2f);
+        setBounds(0, 0, tokenImg.getWidth() / SylvanGame.PPM, tokenImg.getHeight() / SylvanGame.PPM);
         setPosition(position.x,position.y);
         setRegion(tokenImg);
-
     }
-
 
 }
