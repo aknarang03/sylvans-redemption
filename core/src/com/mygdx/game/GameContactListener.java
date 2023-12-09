@@ -24,7 +24,7 @@ public class GameContactListener implements ContactListener {
 
         // KNOCKBACK
 
-        if (other.getBody().getUserData() == "bat" || other.getBody().getUserData() == "spider") {
+        if (sylvan.getBody().getUserData() == "sylvan" && (other.getBody().getUserData() == "bat" || other.getBody().getUserData() == "spider")) {
 
             double velx = sylvan.getBody().getLinearVelocity().x;
             double vely = sylvan.getBody().getLinearVelocity().y;
