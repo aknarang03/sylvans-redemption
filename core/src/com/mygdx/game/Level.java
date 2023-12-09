@@ -295,7 +295,8 @@ public class Level implements Screen {
         if (possessTimer >= 5) {
             Vector2 pos = currentInhabitedEntity.getBody().getPosition();
             changeCurrentInhabitedEntity(sylvan);
-            sylvan.body.setTransform(pos.x,pos.y+1,0);
+            sylvan.body.setTransform(pos.x,pos.y+0.7f,0);
+            sylvan.body.applyForceToCenter(0,0.6f,true);
             possessTimer = 0;
         }
 
