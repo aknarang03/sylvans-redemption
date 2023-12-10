@@ -94,6 +94,9 @@ public class Level implements Screen {
 
     Sound possessSound;
     Sound landSound;
+    Sound hitSound;
+    Sound collectSound;
+    Sound jumpSound;
 
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount) {
 
@@ -155,12 +158,19 @@ public class Level implements Screen {
     }
 
     public void initSounds() {
+        // maybe move sounds to game instead?
 
         possessSound = Gdx.audio.newSound(Gdx.files.internal("sounds/possess.mp3"));
         landSound = Gdx.audio.newSound(Gdx.files.internal("sounds/land.mp3"));
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit.mp3"));
+        collectSound = Gdx.audio.newSound(Gdx.files.internal("sounds/collect.wav"));
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.mp3"));
 
         sounds.put("land",landSound);
         sounds.put("possess",possessSound);
+        sounds.put("hit",hitSound);
+        sounds.put("collect",collectSound);
+        sounds.put("jump",jumpSound);
 
     }
 
@@ -266,6 +276,7 @@ public class Level implements Screen {
                 tokens.removeIndex(counter);
                 numTokensCollected++;
                 System.out.println(numTokensCollected);
+                sounds.get("collect").play(0.2f);
             }
             counter++;
         }

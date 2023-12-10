@@ -85,7 +85,7 @@ public class Sylvan extends Entity {
 
         idle = new Animation<TextureRegion>(1 / 9f, idleFrames);
         walk = new Animation<TextureRegion>(1 / 9f, walkFrames);
-        jump = new Animation<TextureRegion>(1 / 5f, jumpFrames);
+        jump = new Animation<TextureRegion>(1 / 6f, jumpFrames);
         glide = new Animation<TextureRegion>(1 / 9f, glideFrames);
         land = new Animation<TextureRegion>(1 / 9f, landFrames);
         glidepossess = new Animation<TextureRegion>(1 / 4f, glidepossessFrames);
@@ -180,6 +180,9 @@ public class Sylvan extends Entity {
                 break;
             case JUMP:
                 frame = (animations.get("jump").getKeyFrame(stateTimer, true));
+                if (stateTimer < 0.01) {
+                    game.currentLevel.sounds.get("jump").play(0.5f);
+                }
                 break;
             case FALL:
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
@@ -189,6 +192,9 @@ public class Sylvan extends Entity {
                 break;
             case LAND:
                 frame = (animations.get("land").getKeyFrame(timeElapsed, false));
+                if (stateTimer < 0.01) {
+                    game.currentLevel.sounds.get("land").play(0.1f);
+                }
                 break;
             default:
                 frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
@@ -246,7 +252,7 @@ public class Sylvan extends Entity {
 
             // is it an issue that I'm checking exactly 0?
             case FALL: {
-                if (vy == 0) { game.currentLevel.sounds.get("land").play(0.1f); return State.LAND; } // no longer falling
+                if (vy == 0) { return State.LAND; } // no longer falling
                 return State.FALL; // still falling
             }
 
@@ -264,10 +270,14 @@ public class Sylvan extends Entity {
 
     public void takeDamage() {
         knockbackTimer = 0.5f;
+
         health--;
+
         System.out.println("health:" + health);
 
         //setColor(Color.RED);
+
+        game.currentLevel.sounds.get("hit").play(0.2f);
 
         if (health == 0) {
             die();

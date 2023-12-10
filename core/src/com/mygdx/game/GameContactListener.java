@@ -57,7 +57,10 @@ public class GameContactListener implements ContactListener {
                 player.getBody().applyForceToCenter(FORCELEFT,0,true);
             }
 
-            level.sylvan.takeDamage();
+            if (level.sylvan.knockbackTimer <= 0) {
+                level.sylvan.takeDamage();
+            }
+
 
         }
 
