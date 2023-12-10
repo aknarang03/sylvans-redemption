@@ -36,11 +36,14 @@ public class Sylvan extends Entity {
     // timers
     public double knockbackTimer;
 
+    boolean playGlide;
+
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game,false, 0.36f,0.33f);
         initialPosition = initPos;
         health = 3;
+        playGlide = true;
     }
 
     public void initBody() {
@@ -186,12 +189,18 @@ public class Sylvan extends Entity {
                 break;
             case FALL:
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
+                if (stateTimer >= 1 && playGlide) {
+                    game.currentLevel.sounds.get("glide").play(0.5f);
+                    playGlide = false;
+                }
                 break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                 break;
             case LAND:
                 frame = (animations.get("land").getKeyFrame(timeElapsed, false));
+                playGlide = true;
+                game.currentLevel.sounds.get("glide").stop();
                 if (stateTimer < 0.01) {
                     game.currentLevel.sounds.get("land").play(0.1f);
                 }
