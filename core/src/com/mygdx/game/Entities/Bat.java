@@ -136,6 +136,9 @@ public class Bat extends Entity {
                 body.setLinearVelocity(1f, vy);
                 left = false;
                 break;
+            case POSSESS:
+                game.currentLevel.unpossess();
+                break;
         }
 
     }

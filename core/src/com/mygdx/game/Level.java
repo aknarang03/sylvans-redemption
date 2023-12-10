@@ -87,6 +87,7 @@ public class Level implements Screen {
     // time vars
     private float timeElapsed;
     private float possessTimer; // how long sylvan has possessed an enemy
+    public float cooldown; // so that sylvan doesnt possess after unpossess
 
     private Vector2 disappearPos; // send sylvan's body here during possession
 
@@ -139,6 +140,7 @@ public class Level implements Screen {
         // possess vars
         possessTimer = 0;
         disappearPos = new Vector2(100,100);
+        cooldown = 0;
 
         TOKEN_COUNT = tokenCount;
 
@@ -327,11 +329,7 @@ public class Level implements Screen {
 
         // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
         if (possessTimer >= 5) {
-            Vector2 pos = currentInhabitedEntity.getBody().getPosition();
-            changeCurrentInhabitedEntity(sylvan);
-            sylvan.body.setTransform(pos.x,pos.y+0.9f,0);
-            sylvan.body.applyForceToCenter(0,0.6f,true);
-            possessTimer = 0;
+            unpossess();
         }
 
         world.step(1/60f,6,2); // physics step
@@ -348,6 +346,17 @@ public class Level implements Screen {
         camera.update();
         renderer.setView(camera);
 
+        cooldown-=delta;
+
+    }
+
+    public void unpossess() {
+        Vector2 pos = currentInhabitedEntity.getBody().getPosition();
+        changeCurrentInhabitedEntity(sylvan);
+        sylvan.body.setTransform(pos.x,pos.y+0.9f,0);
+        sylvan.body.applyForceToCenter(0,0.6f,true);
+        possessTimer = 0;
+        cooldown = 1;
     }
 
     @Override
@@ -435,7 +444,7 @@ public class Level implements Screen {
 
     public void getPossessTarget() {
 
-        if (sylvan.possessed) { // if sylvan is currently not possessing anyone
+        if (sylvan.possessed && cooldown <= 0) { // if sylvan is currently not possessing anyone
 
             // get shortest distance
             double shortest = distances.get(0);

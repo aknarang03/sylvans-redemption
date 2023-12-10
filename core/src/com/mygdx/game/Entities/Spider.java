@@ -82,7 +82,7 @@ public class Spider extends Entity {
                 left = false;
                 break;
             case POSSESS:
-                game.currentLevel.getPossessTarget();
+                game.currentLevel.unpossess();
                 break;
         }
 

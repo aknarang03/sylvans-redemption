@@ -98,6 +98,9 @@ public class Rock extends Entity {
                 body.setLinearVelocity(0.8f, vy);
                 left = false;
                 break;
+            case POSSESS:
+                game.currentLevel.unpossess();
+                break;
             default:
                 break;
         }
