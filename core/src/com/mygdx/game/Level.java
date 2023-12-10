@@ -101,6 +101,7 @@ public class Level implements Screen {
     Sound jumpSound;
     Sound glideSound;
     Sound flapSound;
+    Sound walkSound;
 
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount) {
 
@@ -172,7 +173,7 @@ public class Level implements Screen {
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("sounds/jump.mp3"));
         glideSound = Gdx.audio.newSound(Gdx.files.internal("sounds/glide.mp3"));
         flapSound = Gdx.audio.newSound(Gdx.files.internal("sounds/flap.mp3"));
-
+        walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/walk.mp3"));
 
         sounds.put("land",landSound);
         sounds.put("possess",possessSound);
@@ -181,7 +182,7 @@ public class Level implements Screen {
         sounds.put("jump",jumpSound);
         sounds.put("glide",glideSound);
         sounds.put("flap",flapSound);
-
+        sounds.put("walk",walkSound);
 
     }
 

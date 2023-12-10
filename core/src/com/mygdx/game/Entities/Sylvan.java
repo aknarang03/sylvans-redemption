@@ -38,6 +38,7 @@ public class Sylvan extends Entity {
     public double knockbackTimer;
 
     boolean playGlide;
+    boolean playWalk;
 
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
@@ -45,6 +46,7 @@ public class Sylvan extends Entity {
         initialPosition = initPos;
         health = 3;
         playGlide = true;
+        playWalk = true;
     }
 
     public void initBody() {
@@ -156,7 +158,6 @@ public class Sylvan extends Entity {
         TextureRegion frame;
 
         final State newState = getState(); // to use in stateTimer check
-        final boolean playStand; // to decide whether to play glide or stand possess anim
 
         /*
         if (currentState == State.WALK || currentState == State.LAND) {
@@ -177,6 +178,11 @@ public class Sylvan extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
+        if (currentState != State.WALK) {
+            game.currentLevel.sounds.get("walk").stop();
+            playWalk = true;
+        }
+
         switch (currentState) {
             case POSSESS:
                 if (vy == 0) {
@@ -193,13 +199,17 @@ public class Sylvan extends Entity {
                 break;
             case FALL:
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
-                if (stateTimer >= 1 && playGlide && possessed) {
+                if (stateTimer >= 1 && playGlide && possessed) { // need to check possessed here because when unpossessed he is always falling outside screen
                     game.currentLevel.sounds.get("glide").play(0.5f);
                     playGlide = false;
                 }
                 break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
+                if (playWalk) {
+                    game.currentLevel.sounds.get("walk").loop(1f);
+                    playWalk = false;
+                }
                 break;
             case LAND:
                 frame = (animations.get("land").getKeyFrame(timeElapsed, false));
