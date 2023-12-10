@@ -1,5 +1,6 @@
 package com.mygdx.game.Entities;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -34,6 +35,7 @@ public class Sylvan extends Entity {
 
     // timers
     public double knockbackTimer;
+
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
         super(game,false, 0.36f,0.33f);
@@ -244,7 +246,7 @@ public class Sylvan extends Entity {
 
             // is it an issue that I'm checking exactly 0?
             case FALL: {
-                if (vy == 0) { return State.LAND; } // no longer falling
+                if (vy == 0) { game.currentLevel.sounds.get("land").play(0.1f); return State.LAND; } // no longer falling
                 return State.FALL; // still falling
             }
 

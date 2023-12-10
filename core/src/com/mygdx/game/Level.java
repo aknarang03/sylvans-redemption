@@ -4,11 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -27,7 +30,11 @@ import com.mygdx.game.Entities.Bat;
 import com.mygdx.game.Entities.Sylvan;
 import com.mygdx.game.Entities.Token;
 
+import java.util.HashMap;
+
 public class Level implements Screen {
+
+    public HashMap<String, Sound> sounds = new HashMap();
 
     // debug renderer vars
     private Box2DDebugRenderer debugRenderer;
@@ -84,6 +91,9 @@ public class Level implements Screen {
 
     private Sprite indicator;
 
+    Sound possessSound;
+    Sound landSound;
+
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount) {
 
         // init HUD in here
@@ -132,6 +142,7 @@ public class Level implements Screen {
         targetEntity = null;
 
         createIndicator();
+        initSounds();
 
     }
 
@@ -139,6 +150,16 @@ public class Level implements Screen {
         indicator = new Sprite();
         Texture indicatorImg = new Texture(Gdx.files.internal("indicator.png"));
         indicator.setRegion(indicatorImg);
+    }
+
+    public void initSounds() {
+
+        possessSound = Gdx.audio.newSound(Gdx.files.internal("sounds/possess.mp3"));
+        landSound = Gdx.audio.newSound(Gdx.files.internal("sounds/land.mp3"));
+
+        sounds.put("land",landSound);
+        sounds.put("possess",possessSound);
+
     }
 
     public void changeCurrentInhabitedEntity(Entity entity) { // call when player is now a different body
@@ -295,7 +316,7 @@ public class Level implements Screen {
         if (possessTimer >= 5) {
             Vector2 pos = currentInhabitedEntity.getBody().getPosition();
             changeCurrentInhabitedEntity(sylvan);
-            sylvan.body.setTransform(pos.x,pos.y+0.7f,0);
+            sylvan.body.setTransform(pos.x,pos.y+0.9f,0);
             sylvan.body.applyForceToCenter(0,0.6f,true);
             possessTimer = 0;
         }
@@ -396,6 +417,7 @@ public class Level implements Screen {
         sylvan.body.setTransform(disappearPos,0);
         targetEntity = null;
         sylvan.resetState(); // set Sylvan's state back to IDLE from POSSESS
+        possessSound.play(0.5f);
     }
 
     public void getPossessTarget() {
