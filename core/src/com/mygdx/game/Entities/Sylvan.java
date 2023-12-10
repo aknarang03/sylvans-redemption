@@ -189,7 +189,7 @@ public class Sylvan extends Entity {
                 break;
             case FALL:
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
-                if (stateTimer >= 1 && playGlide) {
+                if (stateTimer >= 1 && playGlide && possessed) {
                     game.currentLevel.sounds.get("glide").play(0.5f);
                     playGlide = false;
                 }

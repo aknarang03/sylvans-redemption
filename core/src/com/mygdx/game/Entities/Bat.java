@@ -22,6 +22,7 @@ public class Bat extends Entity {
     private Array<TextureAtlas.AtlasRegion> flyFrames;
 
     private float moveTimer = 0; // for "ai" move
+    private float flapTimer = 0;
 
     public Bat(SylvanGame game, Vector2 initPos) {
         super(game,true,0.36f,0.33f);
@@ -168,6 +169,8 @@ public class Bat extends Entity {
 
         TextureRegion frame;
 
+        flapTimer+=dt;
+
         final State newState = getState();
         if (currentState == newState) { // state has not changed
             stateTimer = stateTimer + dt;
@@ -179,7 +182,13 @@ public class Bat extends Entity {
         switch (currentState) { // animations
             case JUMP:
                 frame = (animations.get("fly").getKeyFrame(timeElapsed, true));
+                if (flapTimer >= 0.8) {
+                //if (animations.get("fly").getKeyFrameIndex(timeElapsed) == 1){
+                    game.currentLevel.sounds.get("flap").play(0.5f);
+                    flapTimer = 0;
+                }
                 break;
+
             default:
                 frame = (animations.get("fly").getKeyFrame(timeElapsed, true));
                 break;
