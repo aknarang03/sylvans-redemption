@@ -1,6 +1,7 @@
 package com.mygdx.game.Entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -114,10 +115,13 @@ public class Sylvan extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
+
         if (knockbackTimer >= 0) {
             return;
         }
-        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD) { // prevent from changing state with states where the timer matters
+
+
+        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD || currentState == State.HIT) { // prevent from changing state with states where the timer matters
             return;
         }
 
@@ -241,6 +245,14 @@ public class Sylvan extends Entity {
                 return State.POSSESS;
             }
 
+            /*
+            case HIT: {
+                if (stateTimer <= 0.5f) { return State.HIT; }
+                else if (vy < 0) {return State.FALL; }
+                else { return State.IDLE; }
+            }
+             */
+
             case IDLE: {
                 if (vy > 0) { return State.JUMP; } // jump pressed
                 else if (Math.abs(vx) > .01f) { return State.WALK; } // if left / right pressed
@@ -285,6 +297,7 @@ public class Sylvan extends Entity {
         System.out.println("health:" + health);
 
         //setColor(Color.RED);
+        currentState = State.HIT;
 
         game.currentLevel.sounds.get("hit").play(0.2f);
 
