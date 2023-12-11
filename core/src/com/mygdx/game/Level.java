@@ -325,9 +325,9 @@ public class Level implements Screen {
             game.uiSounds.get("start level").play(1f);
             playStart = false;
         }
-
-        if (sylvan.dead) {
+        if (endLevel()) {
             // SET SCREEN TO GAME OVER
+            game.setScreen(new GameOverScreen(game));
         }
         if (completeLevel()) {
             if (playCompleted) {game.uiSounds.get("completed level").play(1f); playCompleted=false;}
@@ -501,8 +501,8 @@ public class Level implements Screen {
 
     }
 
-    public boolean restartLevel(){
-        if(sylvan.currentState == Entity.State.DEAD && sylvan.stateTimer > 2){
+    public boolean endLevel(){
+        if(sylvan.currentState == Entity.State.DEAD && sylvan.stateTimer > 1.5){
             return true;
         }
         return false;

@@ -63,7 +63,7 @@ public class MainMenu implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             return Control.SELECT;
         }
-        return Control.POSSESS;
+        return null;
     }
 
 
