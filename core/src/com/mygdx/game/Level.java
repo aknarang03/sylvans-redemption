@@ -79,7 +79,7 @@ public class Level implements Screen {
 
     ShapeRenderer shapeRenderer; // for the line that's drawn between sylvan and enemy
 
-    Sylvan sylvan;
+    public Sylvan sylvan;
 
     Entity currentInhabitedEntity; // track what the player is
     Entity targetEntity; // entity to possess

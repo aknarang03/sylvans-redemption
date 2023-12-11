@@ -25,6 +25,9 @@ public class Rock extends Entity {
     private Array<TextureAtlas.AtlasRegion> idleFrames;
     private Array<TextureAtlas.AtlasRegion> riseFrames;
 
+    boolean playWalk;
+    boolean playReturn;
+
     public Rock(SylvanGame game, Vector2 initPos) {
         super(game,true, 0.36f,0.37f);
         initialPosition = initPos;
@@ -68,10 +71,10 @@ public class Rock extends Entity {
         idleFrames = atlas.findRegions("rockidle");
         riseFrames = atlas.findRegions("rockrise");
 
-        rockreturn = new Animation<TextureRegion>(1 / 4f, returnFrames);
+        rockreturn = new Animation<TextureRegion>(1 / 7f, returnFrames);
         rockwalk = new Animation<TextureRegion>(1 / 4f, walkFrames);
         rockidle = new Animation<TextureRegion>(1 / 4f, idleFrames);
-        rockrise = new Animation<TextureRegion>(1 / 4f, riseFrames);
+        rockrise = new Animation<TextureRegion>(1 / 7f, riseFrames);
 
         animations.put("return", rockreturn);
         animations.put("walk", rockwalk);
@@ -89,6 +92,12 @@ public class Rock extends Entity {
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
+
+        /*
+        if ((control == Control.LEFT || control == Control.RIGHT) && currentState==State.WALK && stateTimer <= 0.5){
+            return;
+        }
+         */
 
         switch (control) { // no UP control for rock
             case LEFT:
@@ -122,18 +131,40 @@ public class Rock extends Entity {
 
         currentState = newState; // set currentState to new state
 
+        if (possessed && currentState != State.WALK) {
+            game.currentLevel.sounds.get("walk").stop();
+            playWalk = true;
+        }
+
         switch (currentState) { // NOTE: this is currently incorrect
             case FALL:
                 frame = (animations.get("return").getKeyFrame(timeElapsed, false));
                 break;
             case WALK:
-                frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
+                if (stateTimer < 0.1) {
+                    frame = animations.get("rise").getKeyFrame(stateTimer,false);
+                } else {
+                    frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
+                    if (playWalk && possessed) {
+                        game.currentLevel.sounds.get("walk").loop(0.6f);
+                        playWalk = false;
+                    }
+                    playReturn = true;
+                }
                 break;
             case LAND:
-                frame = (animations.get("rise").getKeyFrame(timeElapsed, false));
+                frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
+                if (stateTimer < 0.01) {
+                    game.currentLevel.sounds.get("land").play(0.1f);
+                }
                 break;
             default:
-                frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
+                if (stateTimer < 0.1 && playReturn) {
+                    frame = animations.get("return").getKeyFrame(stateTimer,false);
+                    playReturn = false;
+                } else {
+                    frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
+                }
                 break;
         }
 

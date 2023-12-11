@@ -179,7 +179,7 @@ public class Sylvan extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
-        if (currentState != State.WALK) {
+        if (possessed && currentState != State.WALK) {
             game.currentLevel.sounds.get("walk").stop();
             playWalk = true;
         }
@@ -307,7 +307,7 @@ public class Sylvan extends Entity {
 
         System.out.println("health:" + health);
 
-        //setColor(Color.RED);
+        //setColor(Color.RED)
 
         game.currentLevel.sounds.get("hit").play(0.2f);
 
