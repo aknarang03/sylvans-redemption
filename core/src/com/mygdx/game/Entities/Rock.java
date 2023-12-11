@@ -161,6 +161,7 @@ public class Rock extends Entity {
             default:
                 if (stateTimer < 0.1 && playReturn) {
                     frame = animations.get("return").getKeyFrame(stateTimer,false);
+                    game.currentLevel.sounds.get("land").play(0.1f);
                     playReturn = false;
                 } else {
                     frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
