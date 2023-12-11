@@ -1,16 +1,27 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Entities.Bat;
 import com.mygdx.game.Entities.Rock;
 import com.mygdx.game.Entities.Spider;
-import com.mygdx.game.Entities.Sylvan;
 import com.mygdx.game.Entities.Token;
 
+import java.util.HashMap;
+
 public class SylvanGame extends Game {
+
+	public HashMap<String, Sound> uiSounds = new HashMap();
+	Sound startGameSound;
+	Sound startGameOverlaySound;
+	Sound completedLevelSound;
+	Sound startLevelSound;
+	Sound pauseSound;
+	Sound selectSound;
 
 	public static final float PPM = 64; // Pixels Per Meter
 
@@ -32,11 +43,34 @@ public class SylvanGame extends Game {
 	// Levels
 	Level prototypeLevel;
 
+	public Array<Level> levels;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		levels = new Array<Level>();
 		createLevels(); // construct levels
-		pickLevel(prototypeLevel);
+		initSounds();
+		setScreen(new MainMenu(this));
+		//pickLevel(prototypeLevel);
+	}
+
+	public void initSounds() {
+
+		startGameSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start.mp3"));
+		startGameOverlaySound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start_overlay.mp3"));
+		completedLevelSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_level.mp3"));
+		startLevelSound = Gdx.audio.newSound(Gdx.files.internal("sounds/level_start.mp3"));
+		pauseSound = Gdx.audio.newSound(Gdx.files.internal("sounds/pause.mp3"));
+		selectSound = Gdx.audio.newSound(Gdx.files.internal("sounds/select.mp3"));
+
+		uiSounds.put("start game", startGameSound);
+		uiSounds.put("start game overlay", startGameOverlaySound);
+		uiSounds.put("completed level", completedLevelSound);
+		uiSounds.put("start level", startLevelSound);
+		uiSounds.put("pause", pauseSound);
+		uiSounds.put("select", selectSound);
+
 	}
 
 	public void pickLevel(Level level) { // change currentLevel
@@ -72,6 +106,7 @@ public class SylvanGame extends Game {
 
 		prototypeLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens);
 
+		levels.add(prototypeLevel);
 	}
 
 	public void setCurrentLevel(Level level) {
