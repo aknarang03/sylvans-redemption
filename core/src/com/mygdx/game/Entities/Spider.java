@@ -27,10 +27,13 @@ public class Spider extends Entity {
     private Array<TextureAtlas.AtlasRegion> idleFrames;
 
     private float moveTimer = 0; // for "ai" movement
+    boolean playWalk;
 
     public Spider(SylvanGame game, Vector2 initPos) {
         super(game,true,0.5f,0.33f);
         initialPosition = initPos;
+        ability = "Climb";
+        playWalk = true;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class Spider extends Entity {
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
-        fixtureDef.restitution = 0.1f;
+        fixtureDef.restitution = 0.01f;
 
         body.createFixture(fixtureDef);
 
@@ -127,16 +130,28 @@ public class Spider extends Entity {
         }
         currentState = newState;
 
+        if (currentState != State.WALK || !possessed) {
+            game.currentLevel.sounds.get("skitter").stop();
+            playWalk = true;
+        }
+
         switch (currentState) {
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
+                if (playWalk && possessed) {
+                    game.currentLevel.sounds.get("skitter").loop(0.6f);
+                    playWalk = false;
+                }
                 break;
             case FALL:
                 frame = (animations.get("fall").getKeyFrame(timeElapsed, false));
                 break;
             case JUMP:
                 frame = (animations.get("jump").getKeyFrame(timeElapsed, false));
+                if (stateTimer < 0.01) { game.currentLevel.sounds.get("jump").play(0.5f); }
                 break;
+            case LAND:
+                if (stateTimer < 0.01) { game.currentLevel.sounds.get("land").play(0.1f); }
             case IDLE:
             default:
                 frame = (animations.get("idle").getKeyFrame(timeElapsed, false));

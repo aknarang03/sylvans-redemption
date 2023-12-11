@@ -27,6 +27,7 @@ public class Bat extends Entity {
     public Bat(SylvanGame game, Vector2 initPos) {
         super(game,true,0.36f,0.33f);
         initialPosition = initPos;
+        ability = "Fly";
     }
 
     @Override

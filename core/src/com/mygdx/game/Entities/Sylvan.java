@@ -47,6 +47,7 @@ public class Sylvan extends Entity {
         health = 3;
         playGlide = true;
         playWalk = true;
+        ability = "Glide";
     }
 
     public void initBody() {
@@ -123,7 +124,7 @@ public class Sylvan extends Entity {
         }
 
 
-        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD || currentState == State.HIT) { // prevent from changing state with states where the timer matters
+        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD) { // prevent from changing state with states where the timer matters
             return;
         }
 
@@ -207,7 +208,7 @@ public class Sylvan extends Entity {
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                 if (playWalk) {
-                    game.currentLevel.sounds.get("walk").loop(1f);
+                    game.currentLevel.sounds.get("walk").loop(0.6f);
                     playWalk = false;
                 }
                 break;
@@ -307,7 +308,6 @@ public class Sylvan extends Entity {
         System.out.println("health:" + health);
 
         //setColor(Color.RED);
-        currentState = State.HIT;
 
         game.currentLevel.sounds.get("hit").play(0.2f);
 

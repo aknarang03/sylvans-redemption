@@ -22,8 +22,9 @@ public abstract class Entity extends Sprite {
     public abstract void aiMove(float dt);
 
     // states for movement / animations
-    protected enum State {IDLE, WALK, JUMP, FALL, LAND, POSSESS, HIT, DEAD}; // these may change
+    protected enum State {IDLE, WALK, JUMP, FALL, LAND, POSSESS, ATTACK, DEAD}; // these may change
     public State currentState;
+    public String ability; // ability string to show in HUD
 
     // vars for sprite
     protected HashMap<String, Animation<TextureRegion>> animations = new HashMap();
