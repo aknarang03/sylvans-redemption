@@ -45,13 +45,16 @@ public class SylvanGame extends Game {
 
 	public Array<Level> levels;
 
+	public MainMenu mainMenu;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		levels = new Array<Level>();
 		createLevels(); // construct levels
+		mainMenu = new MainMenu(this);
 		initSounds();
-		setScreen(new MainMenu(this));
+		setScreen(mainMenu);
 		//pickLevel(prototypeLevel);
 	}
 
