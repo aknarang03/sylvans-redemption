@@ -19,6 +19,9 @@ public class MainMenu implements Screen {
 
     // MAKE START GAME AND CONTROLS SELECTABLE TEXT
 
+
+    // for some reason, when I make one main menu to use, it messes up the width and height. but if I send in a new one, it doesn't until the second time.
+
     public MainMenu(SylvanGame game) {
 
         camera = new OrthographicCamera();

@@ -327,7 +327,7 @@ public class Level implements Screen {
         }
         if (endLevel()) {
             // SET SCREEN TO GAME OVER
-            game.setScreen(new GameOverScreen(game));
+            game.setScreen(game.gameOver);
         }
         if (completeLevel()) {
             if (playCompleted) {game.uiSounds.get("completed level").play(1f); playCompleted=false;}
@@ -513,6 +513,11 @@ public class Level implements Screen {
             return true;
         }
         return false;
+    }
+
+    public void restartLevel() { // WHAT TO DO WHEN LEVEL RESTARTS
+        sylvan.resetState();
+        sylvan.setPosition(sylvan.initialPosition.x,sylvan.initialPosition.y);
     }
 
     public void getToken(int idx) {

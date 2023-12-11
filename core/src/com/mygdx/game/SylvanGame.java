@@ -46,6 +46,7 @@ public class SylvanGame extends Game {
 	public Array<Level> levels;
 
 	public MainMenu mainMenu;
+	public GameOverScreen gameOver;
 
 	@Override
 	public void create () {
@@ -53,6 +54,7 @@ public class SylvanGame extends Game {
 		levels = new Array<Level>();
 		createLevels(); // construct levels
 		mainMenu = new MainMenu(this);
+		gameOver = new GameOverScreen(this);
 		initSounds();
 		setScreen(mainMenu);
 		//pickLevel(prototypeLevel);
