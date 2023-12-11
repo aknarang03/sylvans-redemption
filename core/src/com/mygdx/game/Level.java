@@ -35,6 +35,9 @@ import java.util.HashMap;
 
 public class Level implements Screen {
 
+    boolean playCompleted;
+    boolean playStart;
+
     public HashMap<String, Sound> sounds = new HashMap();
 
     // debug renderer vars
@@ -155,6 +158,9 @@ public class Level implements Screen {
 
         createIndicator();
         initSounds();
+
+        playCompleted = true;
+        playStart = true;
 
     }
 
@@ -313,8 +319,20 @@ public class Level implements Screen {
 
     public void update(float delta) {
 
-        if (restartLevel()) {
-            // SET SCREEN TO GAME OVER SCREEN
+        // USE pause() AND resume() FOR PAUSE MENU
+
+        if (playStart) {
+            game.uiSounds.get("start level").play(1f);
+            playStart = false;
+        }
+
+        if (sylvan.dead) {
+            // SET SCREEN TO GAME OVER
+        }
+        if (completeLevel()) {
+            if (playCompleted) {game.uiSounds.get("completed level").play(1f); playCompleted=false;}
+            // SET SCREEN TO LEVEL COMPLETED SCREEN
+            // DESTROY THIS LEVEL
         }
 
         // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)

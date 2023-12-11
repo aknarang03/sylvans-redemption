@@ -17,6 +17,8 @@ public class MainMenu implements Screen {
 
     OrthographicCamera camera;
 
+    // MAKE START GAME AND CONTROLS SELECTABLE TEXT
+
     public MainMenu(SylvanGame game) {
 
         camera = new OrthographicCamera();
@@ -43,6 +45,8 @@ public class MainMenu implements Screen {
         game.batch.end();
 
         if (processInput() == Control.SELECT) {
+            game.uiSounds.get("start game overlay").play(1f);
+            game.uiSounds.get("start game").play(1f);
             game.pickLevel(game.levels.get(0));
         }
 

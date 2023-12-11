@@ -87,7 +87,7 @@ public class SylvanGame extends Game {
 		// PROTOTYPE LEVEL
 
 		numEnemies = 3;
-		numTokens = 3;
+		numTokens = 2;
 
 		Bat bat = new Bat(this,new Vector2(5,1));
 		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
