@@ -109,6 +109,8 @@ public class Level implements Screen {
     Sound walkSound;
     Sound skitterSound;
 
+    private boolean pause;
+
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id) {
 
         // init HUD in here
@@ -164,6 +166,8 @@ public class Level implements Screen {
 
         playCompleted = true;
         playStart = true;
+
+        pause = false;
 
     }
 
@@ -288,7 +292,18 @@ public class Level implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT) || Gdx.input.isKeyPressed(Input.Keys.E)) {
             currentInhabitedEntity.move(Control.POSSESS);
         }
+        /*
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            pause = !pause;
+        }
+         */
 
+    }
+
+    public void processPause() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            pause = !pause;
+        }
     }
 
     public void checkCollect() {
@@ -337,6 +352,11 @@ public class Level implements Screen {
             // SET SCREEN TO LEVEL COMPLETED SCREEN
             // DESTROY THIS LEVEL
         }
+        /*
+        if (pause) {
+            pauseLevel();
+        }
+         */
 
         // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)
         distances.clear();
@@ -381,6 +401,7 @@ public class Level implements Screen {
         renderer.setView(camera);
 
         cooldown-=delta;
+        timeElapsed += delta; // update timeElapsed for animations
 
     }
 
@@ -397,7 +418,20 @@ public class Level implements Screen {
     @Override
     public void render(float delta) { // called in SylvanGame.render()
 
-        update(delta); // update screen
+        // check if user has just pressed pause. if so, do not update level
+        processPause();
+        if (!pause) {
+            // resume any possibly paused long sounds
+            sounds.get("walk").resume();
+            sounds.get("glide").resume();
+            update(delta);
+        } else {
+            // pause any possible long sounds
+            sounds.get("walk").pause();
+            sounds.get("glide").pause();
+        }
+
+        //update(delta); // update screen
 
         // clear screen
         Gdx.gl.glClearColor(0,0,0,1);
@@ -454,7 +488,7 @@ public class Level implements Screen {
             shapeRenderer.end();
         }
 
-        timeElapsed += delta; // update timeElapsed for animations
+        //timeElapsed += delta; // update timeElapsed for animations
 
     }
 
@@ -518,8 +552,7 @@ public class Level implements Screen {
         return false;
     }
 
-    public void restartLevel() {
-
+    public void pauseLevel() {
 
     }
 
