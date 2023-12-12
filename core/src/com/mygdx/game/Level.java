@@ -306,10 +306,16 @@ public class Level implements Screen {
             else {game.uiSounds.get("select").play(1f); }
             pause = !pause;
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             if (pause) {
                 game.uiSounds.get("select").play(1f);
                 game.restartLevel(0);
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            if (pause) {
+                game.uiSounds.get("select").play(1f);
+                game.restartGame();
             }
         }
     }
