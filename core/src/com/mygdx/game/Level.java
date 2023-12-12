@@ -302,6 +302,8 @@ public class Level implements Screen {
 
     public void processPause() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (pause == false) {game.uiSounds.get("pause").play(1f); }
+            else {game.uiSounds.get("select").play(1f); }
             pause = !pause;
         }
     }
