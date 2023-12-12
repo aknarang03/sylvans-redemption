@@ -151,6 +151,7 @@ public class MainMenu implements Screen {
             } else {
                 game.uiSounds.get("select").play(1f);
                 // GO TO CONTROLS SCREEN
+                game.setScreen(game.controlsMenu);
             }
 
         }

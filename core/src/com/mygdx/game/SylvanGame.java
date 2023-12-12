@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -22,6 +23,8 @@ public class SylvanGame extends Game {
 	Sound startLevelSound;
 	Sound pauseSound;
 	Sound selectSound;
+
+	public BitmapFont font;
 
 	public static final float PPM = 64; // Pixels Per Meter
 
@@ -44,15 +47,18 @@ public class SylvanGame extends Game {
 	//public Level level;
 
 	public MainMenu mainMenu;
+	public ControlsMenu controlsMenu;
 	public GameOverScreen gameOver;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		font = new BitmapFont();
 		//createLevels(); // construct levels
 		createLevel0();
 		mainMenu = new MainMenu(this);
 		gameOver = new GameOverScreen(this);
+		controlsMenu = new ControlsMenu(this);
 		initSounds();
 		setScreen(mainMenu);
 		//pickLevel(prototypeLevel);
