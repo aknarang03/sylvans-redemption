@@ -96,6 +96,8 @@ public class Level implements Screen {
 
     private Sprite indicator;
 
+    public int id;
+
     // SOUNDS
     Sound possessSound;
     Sound landSound;
@@ -107,11 +109,12 @@ public class Level implements Screen {
     Sound walkSound;
     Sound skitterSound;
 
-    public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount) {
+    public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id) {
 
         // init HUD in here
 
         this.game = game;
+        this.id = id;
 
         // init camera and viewport
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
@@ -515,9 +518,9 @@ public class Level implements Screen {
         return false;
     }
 
-    public void restartLevel() { // WHAT TO DO WHEN LEVEL RESTARTS
-        sylvan.resetState();
-        sylvan.setPosition(sylvan.initialPosition.x,sylvan.initialPosition.y);
+    public void restartLevel() {
+
+
     }
 
     public void getToken(int idx) {

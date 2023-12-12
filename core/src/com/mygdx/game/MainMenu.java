@@ -19,7 +19,6 @@ public class MainMenu implements Screen {
 
     // MAKE START GAME AND CONTROLS SELECTABLE TEXT
 
-
     // for some reason, when I make one main menu to use, it messes up the width and height. but if I send in a new one, it doesn't until the second time.
 
     public MainMenu(SylvanGame game) {
@@ -32,6 +31,7 @@ public class MainMenu implements Screen {
         menuSprite = new Sprite(menuImg);
         menuSprite.setSize(game.SCREEN_WIDTH,game.SCREEN_HEIGHT);
         menuSprite.setPosition(0,0);
+
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MainMenu implements Screen {
         if (processInput() == Control.SELECT) {
             game.uiSounds.get("start game overlay").play(1f);
             game.uiSounds.get("start game").play(1f);
-            game.pickLevel(game.levels.get(0));
+            game.pickLevel(game.currentLevel);
         }
 
     }
@@ -69,23 +69,16 @@ public class MainMenu implements Screen {
         return null;
     }
 
-
-
-
-
-
-
     @Override
     public void show() {
 
     }
 
-
-
     @Override
     public void resize(int width, int height) {
 
     }
+
 
     @Override
     public void pause() {

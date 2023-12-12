@@ -117,7 +117,7 @@ public class GameOverScreen implements Screen {
             if (pointingTo == PointingTo.RestartGame) {
                 game.setScreen(game.mainMenu); // why does this make the main menu screen ugly
             } else {
-
+                game.restartLevel(game.currentLevel.id);
             }
         }
 
