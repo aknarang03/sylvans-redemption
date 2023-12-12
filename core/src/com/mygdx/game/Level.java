@@ -300,11 +300,17 @@ public class Level implements Screen {
 
     }
 
-    public void processPause() {
+    public void processPause() { // CHANGE SO THAT IT RECOGNIZES IT AS A PAUSE CONTROL AND A RESTART CONTROL
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (pause == false) {game.uiSounds.get("pause").play(1f); }
+            if (!pause) {game.uiSounds.get("pause").play(1f); }
             else {game.uiSounds.get("select").play(1f); }
             pause = !pause;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+            if (pause) {
+                game.uiSounds.get("select").play(1f);
+                game.restartLevel(0);
+            }
         }
     }
 
@@ -500,6 +506,11 @@ public class Level implements Screen {
             shapeRenderer.rect(0,0, SylvanGame.SCREEN_WIDTH,SylvanGame.SCREEN_HEIGHT);
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
+            game.batch.begin();
+            game.font.getData().setScale(1f);
+            game.font.setColor(Color.WHITE);
+            game.font.draw(game.batch,"Press R to restart the level",3,3);
+            game.batch.end();
         }
 
         //timeElapsed += delta; // update timeElapsed for animations
