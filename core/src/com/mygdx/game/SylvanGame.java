@@ -82,12 +82,19 @@ public class SylvanGame extends Game {
 	}
 
 	public void restartLevel(int id) {
+		currentLevel.dispose();
 		switch (id) {
 			case 0:
 				//currentLevel.dispose();
 				createLevel0();
 				pickLevel(currentLevel);
 		}
+	}
+
+	public void restartGame() {
+		currentLevel.dispose();
+		setScreen(mainMenu);
+		createLevel0();
 	}
 
 	public void createLevel0() {
