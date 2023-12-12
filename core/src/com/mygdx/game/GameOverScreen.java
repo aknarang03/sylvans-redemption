@@ -114,6 +114,7 @@ public class GameOverScreen implements Screen {
         }
 
         if (input == Control.SELECT) {
+            game.uiSounds.get("select").play(1);
             if (pointingTo == PointingTo.RestartGame) {
                 game.restartGame(); // why does this make the main menu screen ugly
             } else {
