@@ -26,6 +26,7 @@ public class SylvanGame extends Game {
 	Sound selectSound;
 	Music forestMusic;
 	Music caveMusic;
+	Music mainMenuMusic;
 
 	public BitmapFont font;
 
@@ -64,6 +65,7 @@ public class SylvanGame extends Game {
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);
 		setScreen(mainMenu);
+		mainMenuMusic.play();
 		//pickLevel(prototypeLevel);
 	}
 
@@ -89,11 +91,14 @@ public class SylvanGame extends Game {
 
 		forestMusic = Gdx.audio.newMusic(Gdx.files.internal("music/forest_music.ogg"));
 		caveMusic = Gdx.audio.newMusic(Gdx.files.internal("music/cave_music.ogg"));
+		mainMenuMusic = Gdx.audio.newMusic(Gdx.files.internal("music/title_screen_music.mp3"));
+		mainMenuMusic.setVolume(0.5f);
 
 	}
 
 	public void pickLevel(Level level) { // change currentLevel
 		currentLevel.music.stop();
+		mainMenuMusic.stop();
 		setCurrentLevel(level);
 		level.createEntities();
 	}
@@ -111,6 +116,7 @@ public class SylvanGame extends Game {
 	public void restartGame() {
 		currentLevel.dispose();
 		setScreen(mainMenu);
+		mainMenuMusic.play();
 		createLevel0();
 		currentLevel.music.stop();
 	}
