@@ -74,6 +74,7 @@ public class Level implements Screen {
 
     // camera vars
     public OrthographicCamera camera;
+    public OrthographicCamera textCam;
     private Viewport viewport;
 
     // visuals / sounds
@@ -122,6 +123,10 @@ public class Level implements Screen {
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
         //viewport = new ExtendViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
+        // declare camera after viewport and use viewport width and height??
+
+        float aspectRatio = (float)Gdx.graphics.getHeight() / (float)Gdx.graphics.getWidth();
+        textCam = new OrthographicCamera(1000,1000*aspectRatio);
 
         // load the map
         mapLoader = new TmxMapLoader();
@@ -525,9 +530,11 @@ public class Level implements Screen {
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
             game.batch.begin();
-            game.font.getData().setScale(1f);
+            game.batch.setProjectionMatrix(textCam.combined);
+            game.font.getData().setScale(2f);
             game.font.setColor(Color.WHITE);
-            game.font.draw(game.batch,"Press R to restart the level",3,3);
+            game.font.draw(game.batch,"Press Enter to restart the level",-170,3);
+            game.font.draw(game.batch,"Press R to restart the game",-170,-30);
             game.batch.end();
         }
 
