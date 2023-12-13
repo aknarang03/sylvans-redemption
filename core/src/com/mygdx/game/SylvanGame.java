@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,6 +24,8 @@ public class SylvanGame extends Game {
 	Sound startLevelSound;
 	Sound pauseSound;
 	Sound selectSound;
+	Music forestMusic;
+	Music caveMusic;
 
 	public BitmapFont font;
 
@@ -52,6 +55,7 @@ public class SylvanGame extends Game {
 
 	@Override
 	public void create () {
+		initSounds();
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		//createLevels(); // construct levels
@@ -59,12 +63,15 @@ public class SylvanGame extends Game {
 		mainMenu = new MainMenu(this);
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);
-		initSounds();
 		setScreen(mainMenu);
 		//pickLevel(prototypeLevel);
 	}
 
 	public void initSounds() {
+
+		// I should change it to just fully declare Sounds in here since I'm adding them to the map anyway
+		// would reduce the amt of variables above
+		// do that for the level sounds too
 
 		startGameSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start.mp3"));
 		startGameOverlaySound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start_overlay.mp3"));
@@ -80,9 +87,13 @@ public class SylvanGame extends Game {
 		uiSounds.put("pause", pauseSound);
 		uiSounds.put("select", selectSound);
 
+		forestMusic = Gdx.audio.newMusic(Gdx.files.internal("music/forest_music.ogg"));
+		caveMusic = Gdx.audio.newMusic(Gdx.files.internal("music/cave_music.ogg"));
+
 	}
 
 	public void pickLevel(Level level) { // change currentLevel
+		currentLevel.music.stop();
 		setCurrentLevel(level);
 		level.createEntities();
 	}
@@ -101,6 +112,7 @@ public class SylvanGame extends Game {
 		currentLevel.dispose();
 		setScreen(mainMenu);
 		createLevel0();
+		currentLevel.music.stop();
 	}
 
 	public void createLevel0() {
@@ -125,7 +137,7 @@ public class SylvanGame extends Game {
 
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
 
-		currentLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens, id);
+		currentLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens, id, forestMusic);
 	}
 
 	/*
@@ -167,6 +179,9 @@ public class SylvanGame extends Game {
 		}
 		this.currentLevel = level;
 		this.setScreen(level);
+		currentLevel.music.setVolume(0.5f);
+		currentLevel.music.setLooping(true);
+		currentLevel.music.play();
 	}
 
 	@Override

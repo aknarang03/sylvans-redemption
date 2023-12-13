@@ -78,7 +78,7 @@ public class Level implements Screen {
     private Viewport viewport;
 
     // visuals / sounds
-    private Music music;
+    public Music music;
     private Sprite backgroundSprite;
 
     ShapeRenderer shapeRenderer; // for the line that's drawn between sylvan and enemy
@@ -112,7 +112,9 @@ public class Level implements Screen {
 
     private boolean pause;
 
-    public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id) {
+
+
+    public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id, Music music) {
 
         // init HUD in here
 
@@ -173,6 +175,9 @@ public class Level implements Screen {
         playStart = true;
 
         pause = false;
+
+        this.music = music;
+        //this.music.play();
 
     }
 
@@ -455,11 +460,13 @@ public class Level implements Screen {
             // resume any possibly paused long sounds
             sounds.get("walk").resume();
             sounds.get("glide").resume();
+            music.setVolume(0.5f);
             update(delta);
         } else {
             // pause any possible long sounds
             sounds.get("walk").pause();
             sounds.get("glide").pause();
+            music.setVolume(0.2f);
         }
 
         //update(delta); // update screen
