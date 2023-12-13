@@ -361,15 +361,14 @@ public class Level implements Screen {
 
 
     public void checkDie() {
-        //if (sylvan.dead) {
-        //world.destroyBody(sylvan.body);
-        //}
+        if (sylvan.dead) {
+            //world.destroyBody(sylvan.body);
+        }
         int counter = 0;
         for (Entity enemy : enemies) {
             if (enemy.dead) {
                 world.destroyBody(enemy.body);
                 enemies.removeIndex(counter);
-                enemy.deathSound.play(1);
                 System.out.println("enemy died");
             }
             counter++;
@@ -431,7 +430,7 @@ public class Level implements Screen {
         // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
         if (possessTimer >= 5) {
             unpossess();
-            sylvan.health++;
+            if (sylvan.health < 3)  {sylvan.health++;} // Sylvan gets 1 HP back if he possesses enemy for 5 seconds
         }
 
         world.step(1 / 60f, 6, 2); // physics step

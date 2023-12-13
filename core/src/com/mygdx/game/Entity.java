@@ -66,6 +66,7 @@ public abstract class Entity extends Sprite {
     public abstract State getState(); // return state based on what entity is doing
     public void die() {
         dead = true;
+        deathSound.play(1);
     }
 
 }

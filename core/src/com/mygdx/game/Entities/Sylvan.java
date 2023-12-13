@@ -48,6 +48,7 @@ public class Sylvan extends Entity {
         playGlide = true;
         playWalk = true;
         ability = "Glide";
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/sylvan_death.mp3"));
     }
 
     public void initBody() {

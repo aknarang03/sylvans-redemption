@@ -26,23 +26,26 @@ public class InfoDisplay {
     Label possessTimerLabel;
     Label tokensLabel;
     Label currentAbilityLabel;
+    Label healthLabel;
 
     // WHAT TO DISPLAY
     double possessTimer;
     int collectedTokens;
     int totalTokens;
+    int health = 0;
     String currentAbility;
 
     public InfoDisplay(SylvanGame game) {
 
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth()/2.5f,Gdx.graphics.getHeight()/2.5f);
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/1.5f);
         viewport = new FitViewport(camera.viewportWidth, camera.viewportHeight, camera);
         stage = new Stage(viewport,game.batch);
 
         table = new Table();
-        table.top();
+        table.setPosition(0,110);
+        table.defaults().left().top();
         table.setFillParent(true);
 
         labelFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
@@ -50,12 +53,15 @@ public class InfoDisplay {
         possessTimerLabel = new Label("",labelFont);
         tokensLabel = new Label("",labelFont);
         currentAbilityLabel = new Label("",labelFont);
+        healthLabel = new Label("",labelFont);
 
-        table.add(tokensLabel).expandX().padTop(10);
+        table.add(tokensLabel).expandX();
         table.row();
-        table.add(currentAbilityLabel).expandX().padTop(10);
+        table.add(currentAbilityLabel).expandX();
         table.row();
-        table.add(possessTimerLabel).expandX().padTop(10);
+        table.add(healthLabel).expandX();
+        table.row();
+        table.add(possessTimerLabel).expandX();
 
         stage.addActor(table);
 
@@ -66,6 +72,7 @@ public class InfoDisplay {
         collectedTokens = game.currentLevel.numTokensCollected;
         totalTokens = game.currentLevel.TOKEN_COUNT;
         currentAbility = game.currentLevel.currentInhabitedEntity.ability;
+        health = game.currentLevel.sylvan.health;
     }
 
     public void updateLabels() {
@@ -78,6 +85,7 @@ public class InfoDisplay {
             possessTimerLabel.setText("Unpossess in " + (5-(int)possessTimer));
         }
 
+        healthLabel.setText("Health: " + health);
         tokensLabel.setText(collectedTokens + " / " + totalTokens + " tokens");
         currentAbilityLabel.setText("Ability: " + currentAbility);
 
