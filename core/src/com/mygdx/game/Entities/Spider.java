@@ -34,6 +34,8 @@ public class Spider extends Entity {
         initialPosition = initPos;
         ability = "Climb";
         playWalk = true;
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/spider_death.mp3"));
+
     }
 
     @Override

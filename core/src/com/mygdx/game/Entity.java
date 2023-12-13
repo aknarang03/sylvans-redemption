@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -41,7 +42,9 @@ public abstract class Entity extends Sprite {
     protected boolean left;
     protected float stateTimer; // this doesn't do anything yet but will be used to ensure animations play before something happens eg. possess animation before possess
     protected boolean possessed;
+
     protected boolean dead;
+    public Sound deathSound;
 
     public Entity(SylvanGame game, boolean left, float wm, float hm) { // called for each entity
         this.game = game;

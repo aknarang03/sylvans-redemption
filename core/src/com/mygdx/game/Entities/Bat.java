@@ -28,6 +28,7 @@ public class Bat extends Entity {
         super(game,true,0.36f,0.33f);
         initialPosition = initPos;
         ability = "Fly";
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bat_death.mp3"));
     }
 
     @Override

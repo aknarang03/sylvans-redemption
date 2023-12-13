@@ -351,8 +351,8 @@ public class Level implements Screen {
             if (enemy.dead) {
                 world.destroyBody(enemy.body);
                 enemies.removeIndex(counter);
+                enemy.deathSound.play(1);
                 System.out.println("enemy died");
-                sounds.get("collect").play(0.2f);
             }
             counter++;
         }
