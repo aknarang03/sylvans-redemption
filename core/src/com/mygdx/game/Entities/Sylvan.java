@@ -183,6 +183,9 @@ public class Sylvan extends Entity {
             game.currentLevel.sounds.get("walk").stop();
             playWalk = true;
         }
+        if (!possessed) {
+            game.currentLevel.sounds.get("glide").stop();
+        }
 
         switch (currentState) {
             case POSSESS:
@@ -315,12 +318,6 @@ public class Sylvan extends Entity {
             die();
         }
 
-    }
-
-    @Override
-    public void die() { // this will be different from the enemies I think
-        dead = true;
-        //world.destroyBody(body); // causes issues with collision listener
     }
 
     @Override

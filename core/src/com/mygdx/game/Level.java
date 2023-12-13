@@ -289,7 +289,7 @@ public class Level implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
             currentInhabitedEntity.move(Control.UP);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT) || Gdx.input.isKeyPressed(Input.Keys.E)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             currentInhabitedEntity.move(Control.POSSESS);
         }
         /*
@@ -341,13 +341,23 @@ public class Level implements Screen {
 
     }
 
-    /*
+
     public void checkDie() {
-        if (sylvan.dead) {
-            world.destroyBody(sylvan.body);
+        //if (sylvan.dead) {
+            //world.destroyBody(sylvan.body);
+        //}
+        int counter = 0;
+        for (Entity enemy : enemies) {
+            if (enemy.dead) {
+                world.destroyBody(enemy.body);
+                enemies.removeIndex(counter);
+                System.out.println("enemy died");
+                sounds.get("collect").play(0.2f);
+            }
+            counter++;
         }
     }
-     */
+
 
     public void update(float delta) {
 
@@ -403,6 +413,7 @@ public class Level implements Screen {
         world.step(1/60f,6,2); // physics step
         if (!world.isLocked()) {
             checkCollect();
+            checkDie();
         }
 
         // this function will loop thru all entities to update frame
@@ -421,6 +432,7 @@ public class Level implements Screen {
 
     public void unpossess() {
         Vector2 pos = currentInhabitedEntity.getBody().getPosition();
+        if (currentInhabitedEntity.getBody().getUserData() != "rock") {currentInhabitedEntity.die();}
         changeCurrentInhabitedEntity(sylvan);
         sylvan.body.setLinearVelocity(0,0);
         sylvan.body.setTransform(pos.x,pos.y+0.9f,0);
