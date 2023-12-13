@@ -58,7 +58,7 @@ public class Level implements Screen {
     // token vars
     public Array<Token> tokens; // holds the tokens for each level to be drawn
     final int TOKEN_COUNT; // token count to be decided by user
-    int numTokensCollected; // amount of tokens collected by user
+    public int numTokensCollected; // amount of tokens collected by user
 
     // tiled map vars
     private TiledMap map;
@@ -90,7 +90,7 @@ public class Level implements Screen {
 
     // time vars
     private float timeElapsed;
-    private float possessTimer; // how long sylvan has possessed an enemy
+    public float possessTimer; // how long sylvan has possessed an enemy
     public float cooldown; // so that sylvan doesnt possess after unpossess
 
     private Vector2 disappearPos; // send sylvan's body here during possession
@@ -112,6 +112,7 @@ public class Level implements Screen {
 
     private boolean pause;
 
+    InfoDisplay infoDisplay;
 
 
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id, Music music) {
@@ -121,27 +122,29 @@ public class Level implements Screen {
         this.game = game;
         this.id = id;
 
+        infoDisplay = new InfoDisplay(this.game);
+
         // init camera and viewport
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
         //viewport = new ExtendViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
         // declare camera after viewport and use viewport width and height??
 
-        float aspectRatio = (float)Gdx.graphics.getHeight() / (float)Gdx.graphics.getWidth();
-        textCam = new OrthographicCamera(1000,1000*aspectRatio);
+        float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
+        textCam = new OrthographicCamera(1000, 1000 * aspectRatio);
 
         // load the map
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapFilename);
 
         // init renderers
-        renderer = new OrthogonalTiledMapRenderer(map,1/SylvanGame.PPM);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / SylvanGame.PPM);
         debugRenderer = new Box2DDebugRenderer();
         shapeRenderer = new ShapeRenderer();
 
         // set up world
-        Vector2 gravity = new Vector2(0,-10);
-        world = new World(gravity,true);
+        Vector2 gravity = new Vector2(0, -10);
+        world = new World(gravity, true);
 
         // set up contact listener
         contactListener = new GameContactListener(this);
@@ -155,11 +158,11 @@ public class Level implements Screen {
 
         createStructure(); // build level in box2d
 
-        sylvan = new Sylvan(game,new Vector2(5.5f,2.5f)); // create Sylvan
+        sylvan = new Sylvan(game, new Vector2(5.5f, 2.5f)); // create Sylvan
 
         // possess vars
         possessTimer = 0;
-        disappearPos = new Vector2(100,100);
+        disappearPos = new Vector2(100, 100);
         cooldown = 0;
 
         TOKEN_COUNT = tokenCount;
@@ -200,21 +203,23 @@ public class Level implements Screen {
         walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/walk.mp3"));
         skitterSound = Gdx.audio.newSound(Gdx.files.internal("sounds/skitter.mp3"));
 
-        sounds.put("land",landSound);
-        sounds.put("possess",possessSound);
-        sounds.put("hit",hitSound);
-        sounds.put("collect",collectSound);
-        sounds.put("jump",jumpSound);
-        sounds.put("glide",glideSound);
-        sounds.put("flap",flapSound);
-        sounds.put("walk",walkSound);
-        sounds.put("skitter",skitterSound);
+        sounds.put("land", landSound);
+        sounds.put("possess", possessSound);
+        sounds.put("hit", hitSound);
+        sounds.put("collect", collectSound);
+        sounds.put("jump", jumpSound);
+        sounds.put("glide", glideSound);
+        sounds.put("flap", flapSound);
+        sounds.put("walk", walkSound);
+        sounds.put("skitter", skitterSound);
 
     }
 
     public void changeCurrentInhabitedEntity(Entity entity) { // call when player is now a different body
 
-        if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false;} // current entity not possessed anymore
+        if (currentInhabitedEntity != null) {
+            currentInhabitedEntity.possessed = false;
+        } // current entity not possessed anymore
         currentInhabitedEntity = entity; // change to the passed in entity
         entity.possessed = true;
 
@@ -244,7 +249,7 @@ public class Level implements Screen {
             token.initSprite();
             token.initBody();
             token.setBounds(token.body.getPosition().x - token.getWidth() * token.MULTIPLYER, token.body.getPosition().y - token.getHeight() * token.MULTIPLYER, token.getWidth(), token.getHeight());
-            token.body.setUserData("token"+count);
+            token.body.setUserData("token" + count);
             count++;
         }
         changeCurrentInhabitedEntity(sylvan); // on level creation, sylvan is inhabited
@@ -259,7 +264,7 @@ public class Level implements Screen {
         // uses the ground object layer in tmx file to draw the boxes in the correct places
         for (MapObject mapObject : map.getLayers().get("Ground Objects").getObjects().getByType(RectangleMapObject.class)) {
             System.out.println("got object");
-            Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
             body = world.createBody(bodyDef);
@@ -273,7 +278,7 @@ public class Level implements Screen {
         // use wall object layer to put wall bodies
         for (MapObject mapObject : map.getLayers().get("Wall Objects").getObjects().getByType(RectangleMapObject.class)) {
             System.out.println("got object");
-            Rectangle rectangle = ((RectangleMapObject)mapObject).getRectangle();
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
             body = world.createBody(bodyDef);
@@ -293,7 +298,7 @@ public class Level implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             currentInhabitedEntity.move(Control.RIGHT);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             currentInhabitedEntity.move(Control.LEFT);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
@@ -312,8 +317,11 @@ public class Level implements Screen {
 
     public void processPause() { // CHANGE SO THAT IT RECOGNIZES IT AS A PAUSE CONTROL AND A RESTART CONTROL
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (!pause) {game.uiSounds.get("pause").play(1f); }
-            else {game.uiSounds.get("select").play(1f); }
+            if (!pause) {
+                game.uiSounds.get("pause").play(1f);
+            } else {
+                game.uiSounds.get("select").play(1f);
+            }
             pause = !pause;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -354,7 +362,7 @@ public class Level implements Screen {
 
     public void checkDie() {
         //if (sylvan.dead) {
-            //world.destroyBody(sylvan.body);
+        //world.destroyBody(sylvan.body);
         //}
         int counter = 0;
         for (Entity enemy : enemies) {
@@ -382,7 +390,10 @@ public class Level implements Screen {
             game.setScreen(game.gameOver);
         }
         if (completeLevel()) {
-            if (playCompleted) {game.uiSounds.get("completed level").play(1f); playCompleted=false;}
+            if (playCompleted) {
+                game.uiSounds.get("completed level").play(1f);
+                playCompleted = false;
+            }
             // SET SCREEN TO LEVEL COMPLETED SCREEN
             // DESTROY THIS LEVEL
         }
@@ -395,7 +406,7 @@ public class Level implements Screen {
         // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)
         distances.clear();
         for (Entity enemy : enemies) {
-            distances.add(getDistance(sylvan.body.getPosition(),enemy.body.getPosition()));
+            distances.add(getDistance(sylvan.body.getPosition(), enemy.body.getPosition()));
         }
 
         processInput(); // get user input
@@ -406,9 +417,11 @@ public class Level implements Screen {
             enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
         }
 
-        indicator.setBounds(currentInhabitedEntity.body.getPosition().x - 0.26f, currentInhabitedEntity.body.getPosition().y + (currentInhabitedEntity.getHeight()/4), 0.5f, 0.5f);
+        indicator.setBounds(currentInhabitedEntity.body.getPosition().x - 0.26f, currentInhabitedEntity.body.getPosition().y + (currentInhabitedEntity.getHeight() / 4), 0.5f, 0.5f);
 
-        if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
+        if (!sylvan.possessed) {
+            possessTimer += delta;
+        } // increment possess timer if sylvan is possessing someone
         sylvan.knockbackTimer -= delta;
 
         if (shouldPossess()) {
@@ -418,37 +431,47 @@ public class Level implements Screen {
         // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
         if (possessTimer >= 5) {
             unpossess();
+            sylvan.health++;
         }
 
-        world.step(1/60f,6,2); // physics step
+        world.step(1 / 60f, 6, 2); // physics step
         if (!world.isLocked()) {
             checkCollect();
             checkDie();
         }
 
         // this function will loop thru all entities to update frame
-        sylvan.update(timeElapsed,delta);
+        sylvan.update(timeElapsed, delta);
         for (Entity enemy : enemies) {
-            enemy.update(timeElapsed,delta);
+            enemy.update(timeElapsed, delta);
         }
 
         camera.update();
         renderer.setView(camera);
 
-        cooldown-=delta;
+        cooldown -= delta;
         timeElapsed += delta; // update timeElapsed for animations
+
+        infoDisplay.updateLabels();
 
     }
 
     public void unpossess() {
         Vector2 pos = currentInhabitedEntity.getBody().getPosition();
-        if (currentInhabitedEntity.getBody().getUserData() != "rock") {currentInhabitedEntity.die();}
+        if (currentInhabitedEntity.getBody().getUserData() != "rock") {
+            currentInhabitedEntity.die();
+        }
         changeCurrentInhabitedEntity(sylvan);
-        sylvan.body.setLinearVelocity(0,0);
-        sylvan.body.setTransform(pos.x,pos.y+0.7f,0);
-        sylvan.body.applyForceToCenter(0,0.45f,true);
+        sylvan.body.setLinearVelocity(0, 0);
+        sylvan.body.setTransform(pos.x, pos.y + 0.7f, 0);
+        sylvan.body.applyForceToCenter(0, 0.45f, true);
         possessTimer = 0;
         cooldown = 1;
+    }
+
+    @Override
+    public void show() {
+
     }
 
     @Override
@@ -472,7 +495,7 @@ public class Level implements Screen {
         //update(delta); // update screen
 
         // clear screen
-        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render(); // render level
@@ -480,8 +503,8 @@ public class Level implements Screen {
         camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0); // set camera pos to player
 
         // render debug boxes
-        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(),viewport.getScreenHeight(), 0);
-        debugRenderer.render(world,camera.combined);
+        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(), viewport.getScreenHeight(), 0);
+        debugRenderer.render(world, camera.combined);
 
         game.batch.setProjectionMatrix(camera.combined);
 
@@ -533,17 +556,20 @@ public class Level implements Screen {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             Color pauseColor = new Color(0, 0, 0, 0.7f);
             shapeRenderer.setColor(pauseColor);
-            shapeRenderer.rect(0,0, SylvanGame.SCREEN_WIDTH,SylvanGame.SCREEN_HEIGHT);
+            shapeRenderer.rect(0, 0, SylvanGame.SCREEN_WIDTH, SylvanGame.SCREEN_HEIGHT);
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
             game.batch.begin();
             game.batch.setProjectionMatrix(textCam.combined);
             game.font.getData().setScale(2f);
             game.font.setColor(Color.WHITE);
-            game.font.draw(game.batch,"Press Enter to restart the level",-170,3);
-            game.font.draw(game.batch,"Press R to restart the game",-170,-30);
+            game.font.draw(game.batch, "Press Enter to restart the level", -170, 3);
+            game.font.draw(game.batch, "Press R to restart the game", -170, -30);
             game.batch.end();
         }
+
+        game.batch.setProjectionMatrix(infoDisplay.stage.getCamera().combined);
+        infoDisplay.stage.draw();
 
         //timeElapsed += delta; // update timeElapsed for animations
 
@@ -552,7 +578,7 @@ public class Level implements Screen {
     public boolean shouldPossess() {
 
         final boolean hasTarget = (targetEntity != null);
-        final boolean animationDone = (sylvan.stateTimer >=0.4f);
+        final boolean animationDone = (sylvan.stateTimer >= 0.4f);
 
         if (hasTarget && animationDone) {
             return true;
@@ -562,7 +588,7 @@ public class Level implements Screen {
 
     public void possess() {
         changeCurrentInhabitedEntity(targetEntity);
-        sylvan.body.setTransform(disappearPos,0);
+        sylvan.body.setTransform(disappearPos, 0);
         targetEntity = null;
         sylvan.resetState(); // set Sylvan's state back to IDLE from POSSESS
         possessSound.play(0.5f);
@@ -595,14 +621,14 @@ public class Level implements Screen {
 
     }
 
-    public boolean endLevel(){
-        if(sylvan.currentState == Entity.State.DEAD && sylvan.stateTimer > 1.5){
+    public boolean endLevel() {
+        if (sylvan.currentState == Entity.State.DEAD && sylvan.stateTimer > 1.5) {
             return true;
         }
         return false;
     }
 
-    public boolean completeLevel(){
+    public boolean completeLevel() {
         if (numTokensCollected == TOKEN_COUNT) {
             return true;
         }
@@ -620,25 +646,32 @@ public class Level implements Screen {
         System.out.println(token.body.getUserData());
     }
 
-    public double getDistance (Vector2 entity1, Vector2 entity2) { // get distance between two entities
+    public double getDistance(Vector2 entity1, Vector2 entity2) { // get distance between two entities
         return Math.sqrt(Math.pow((entity2.x - entity1.x), 2) + Math.pow((entity2.y - entity1.y), 2));
     }
 
-    public World getWorld() { return world; }
+    public World getWorld() {
+        return world;
+    }
 
     @Override
     public void resize(int width, int height) { // handles window resize
-        viewport.update(width,height,true);
+        viewport.update(width, height, true);
     }
-    @Override
-    public void dispose() {} // IMPLEMENT
 
     @Override
-    public void pause() {}
+    public void dispose() {
+    } // IMPLEMENT
+
     @Override
-    public void resume() {}
+    public void pause() {
+    }
+
     @Override
-    public void hide() {}
+    public void resume() {
+    }
+
     @Override
-    public void show() {}
+    public void hide() {
+    }
 }
