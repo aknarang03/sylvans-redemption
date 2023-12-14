@@ -35,6 +35,8 @@ import java.util.HashMap;
 
 public class Level implements Screen {
 
+    double redTimer;
+
     boolean playCompleted;
     boolean playStart;
 
@@ -119,6 +121,8 @@ public class Level implements Screen {
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id, Music music) {
 
         // init HUD in here
+
+        redTimer = 1;
 
         this.game = game;
         this.id = id;
@@ -310,11 +314,6 @@ public class Level implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             currentInhabitedEntity.move(Control.POSSESS);
         }
-        /*
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            pause = !pause;
-        }
-         */
 
     }
 
@@ -382,6 +381,12 @@ public class Level implements Screen {
     public void update(float delta) {
 
         // USE pause() AND resume() FOR PAUSE MENU
+
+        if (sylvan.flashRed) {
+            redTimer = 0;
+            sylvan.flashRed = false;
+        }
+        redTimer+=delta;
 
         if (playStart) {
             game.uiSounds.get("start level").play(1f);
@@ -514,6 +519,11 @@ public class Level implements Screen {
 
         if (sylvan.possessed) { // only draw sylvan if possessed
             sylvan.draw(game.batch);
+            if (redTimer <= 0.5) {
+                sylvan.setColor(new Color( 1, 0.5f,0.5f,1));
+            } else {
+                sylvan.setColor(Color.WHITE);
+            }
         }
 
         // draw the prototype enemies

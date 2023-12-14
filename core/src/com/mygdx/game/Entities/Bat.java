@@ -201,28 +201,12 @@ public class Bat extends Entity {
             leftHit = false;
         }
 
-        //System.out.println(distanceToSylvan);
-        if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 1 && correctDir) {
+        if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 1 && correctDir) { // CAN ATTACK
             System.out.println("bat in attack range");
-
-            Random random = new Random();
-
-            //System.out.println(random.nextInt(11));
-
-
             currentState = State.ATTACK;
             stateTimer = 0;
-
-            if (game.currentLevel.sylvan.getBody().getPosition().x > this.body.getPosition().x) {
-                //if ((left && isFlipX()) || (!left && !isFlipX())) {
-                    //flip(true, false);
-                //}
-            }
-
             attackSound.play(1);
-
             game.currentLevel.sylvan.getAttacked(leftHit);
-
             attackCooldown = 5;
         }
     }

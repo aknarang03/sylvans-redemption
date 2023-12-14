@@ -14,6 +14,8 @@ import com.mygdx.game.SylvanGame;
 
 public class Sylvan extends Entity {
 
+    public boolean flashRed = false;
+
     // sprite variables
     private Animation idle;
     private Animation walk;
@@ -303,6 +305,9 @@ public class Sylvan extends Entity {
     }
 
     public void hitEnemy() {
+
+        flashRed = true;
+
         knockbackTimer = 0.5f;
 
         health--;
@@ -320,6 +325,8 @@ public class Sylvan extends Entity {
     }
 
     public void getAttacked(boolean leftHit) {
+
+        flashRed = true;
 
         game.currentLevel.sounds.get("hit").play(1);
 
