@@ -429,8 +429,8 @@ public class Level implements Screen {
 
         // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
         if (possessTimer >= 5) {
+            if ((currentInhabitedEntity.body.getUserData() == "bat" || currentInhabitedEntity.body.getUserData() == "spider") && sylvan.health < 3)  {sylvan.health++;} // Sylvan gets 1 HP back if he possesses enemy for 5 seconds
             unpossess();
-            if (sylvan.health < 3)  {sylvan.health++;} // Sylvan gets 1 HP back if he possesses enemy for 5 seconds
         }
 
         world.step(1 / 60f, 6, 2); // physics step
@@ -569,6 +569,14 @@ public class Level implements Screen {
 
         game.batch.setProjectionMatrix(infoDisplay.stage.getCamera().combined);
         infoDisplay.stage.draw();
+        game.batch.begin();
+        game.batch.draw(infoDisplay.tokenTexture,0,295);
+        int drawX = 60;
+        for (int i = 0; i < sylvan.health; i++) {
+            game.batch.draw(infoDisplay.heartTexture,drawX,295);
+            drawX += 20;
+        }
+        game.batch.end();
 
         //timeElapsed += delta; // update timeElapsed for animations
 

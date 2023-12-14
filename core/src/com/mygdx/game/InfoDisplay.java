@@ -3,11 +3,13 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -35,7 +37,13 @@ public class InfoDisplay {
     int health = 0;
     String currentAbility;
 
+    Texture heartTexture;
+    Texture tokenTexture;
+
     public InfoDisplay(SylvanGame game) {
+
+        createHeart();
+        createToken();
 
         this.game = game;
         camera = new OrthographicCamera();
@@ -44,7 +52,8 @@ public class InfoDisplay {
         stage = new Stage(viewport,game.batch);
 
         table = new Table();
-        table.setPosition(0,110);
+        table.setPosition(0,125);
+        //table.left().top();
         table.defaults().left().top();
         table.setFillParent(true);
 
@@ -58,8 +67,6 @@ public class InfoDisplay {
         table.add(tokensLabel).expandX();
         table.row();
         table.add(currentAbilityLabel).expandX();
-        table.row();
-        table.add(healthLabel).expandX();
         table.row();
         table.add(possessTimerLabel).expandX();
 
@@ -82,13 +89,21 @@ public class InfoDisplay {
         if (game.currentLevel.sylvan.possessed) {
             possessTimerLabel.setText("");
         } else {
-            possessTimerLabel.setText("Unpossess in " + (5-(int)possessTimer));
+            possessTimerLabel.setText((5-(int)possessTimer));
         }
 
         healthLabel.setText("Health: " + health);
-        tokensLabel.setText(collectedTokens + " / " + totalTokens + " tokens");
+        tokensLabel.setText("    " + collectedTokens + " / " + totalTokens);
         currentAbilityLabel.setText("Ability: " + currentAbility);
 
+    }
+
+    public void createHeart() {
+        heartTexture = new Texture(Gdx.files.internal("heart/heart_small.png"));
+    }
+
+    public void createToken() {
+        tokenTexture = new Texture(Gdx.files.internal("token/soultoken_small.png"));
     }
 
 }
