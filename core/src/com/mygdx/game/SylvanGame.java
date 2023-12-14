@@ -60,7 +60,8 @@ public class SylvanGame extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		//createLevels(); // construct levels
-		createLevel0();
+		//createLevel0();
+		createLevel1();
 		mainMenu = new MainMenu(this);
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);
@@ -142,6 +143,31 @@ public class SylvanGame extends Game {
 		prototypeTokens.add(token1, token2);
 
 		String prototypeMapFilename = "PrototypeLevelMap.tmx";
+
+		currentLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens, id, forestMusic);
+	}
+
+	public void createLevel1() {
+		// PROTOTYPE LEVEL
+
+		final int numEnemies = 3;
+		final int numTokens = 2;
+		final int id = 0;
+
+		Bat bat = new Bat(this,new Vector2(5,1));
+		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
+		Rock rock = new Rock(this,new Vector2(1,1));
+
+		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
+		prototypeEnemies.add(bat,spider,rock);
+
+		Token token1 = new Token(this,new Vector2(6,4));
+		Token token2 = new Token(this,new Vector2(5,4));
+
+		Array<Token> prototypeTokens = new Array<Token>();
+		prototypeTokens.add(token1, token2);
+
+		String prototypeMapFilename = "SRLvl1.tmx";
 
 		currentLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens, id, forestMusic);
 	}
