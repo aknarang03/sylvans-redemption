@@ -109,6 +109,7 @@ public class Level implements Screen {
     Sound flapSound;
     Sound walkSound;
     Sound skitterSound;
+    Sound enemyAttackSound;
 
     private boolean pause;
 
@@ -202,6 +203,7 @@ public class Level implements Screen {
         flapSound = Gdx.audio.newSound(Gdx.files.internal("sounds/flap.mp3"));
         walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/walk.mp3"));
         skitterSound = Gdx.audio.newSound(Gdx.files.internal("sounds/skitter.mp3"));
+        enemyAttackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy attack.mp3"));
 
         sounds.put("land", landSound);
         sounds.put("possess", possessSound);
@@ -212,6 +214,7 @@ public class Level implements Screen {
         sounds.put("flap", flapSound);
         sounds.put("walk", walkSound);
         sounds.put("skitter", skitterSound);
+        sounds.put("attack",enemyAttackSound);
 
     }
 
@@ -529,16 +532,26 @@ public class Level implements Screen {
 
         // draw the tokens
         for (Token token : tokens) {
-
             token.draw(game.batch);
-
         }
 
         indicator.draw(game.batch);
 
         game.batch.end(); // BATCH END
 
-        // SHAPE RENDERER
+        // DRAW HUD
+        game.batch.setProjectionMatrix(infoDisplay.stage.getCamera().combined);
+        infoDisplay.stage.draw();
+        game.batch.begin();
+        game.batch.draw(infoDisplay.tokenTexture,0,295);
+        int drawX = 60;
+        for (int i = 0; i < sylvan.health; i++) {
+            game.batch.draw(infoDisplay.heartTexture,drawX,295);
+            drawX += 20;
+        }
+        game.batch.end();
+
+        // DRAW BLUE LINE
         if (shouldPossess()) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -548,6 +561,7 @@ public class Level implements Screen {
             shapeRenderer.end();
         }
 
+        // DRAW PAUSE OVERLAY
         if (pause) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             //Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -566,17 +580,6 @@ public class Level implements Screen {
             game.font.draw(game.batch, "Press R to restart the game", -170, -30);
             game.batch.end();
         }
-
-        game.batch.setProjectionMatrix(infoDisplay.stage.getCamera().combined);
-        infoDisplay.stage.draw();
-        game.batch.begin();
-        game.batch.draw(infoDisplay.tokenTexture,0,295);
-        int drawX = 60;
-        for (int i = 0; i < sylvan.health; i++) {
-            game.batch.draw(infoDisplay.heartTexture,drawX,295);
-            drawX += 20;
-        }
-        game.batch.end();
 
         //timeElapsed += delta; // update timeElapsed for animations
 

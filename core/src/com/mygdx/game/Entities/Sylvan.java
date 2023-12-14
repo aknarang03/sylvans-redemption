@@ -1,7 +1,5 @@
 package com.mygdx.game.Entities;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -304,7 +302,7 @@ public class Sylvan extends Entity {
 
     }
 
-    public void takeDamage() {
+    public void hitEnemy() {
         knockbackTimer = 0.5f;
 
         health--;
@@ -315,7 +313,28 @@ public class Sylvan extends Entity {
 
         game.currentLevel.sounds.get("hit").play(0.2f);
 
-        if (health == 0) {
+        if (health <= 0) {
+            die();
+        }
+
+    }
+
+    public void getAttacked(boolean leftHit) {
+
+        game.currentLevel.sounds.get("hit").play(1);
+
+        final float FORCELEFT = -0.8f;
+        final float FORCERIGHT = 0.3f;
+
+        if (leftHit) {
+            body.applyForceToCenter(FORCERIGHT,0.3f,true);
+        } else {
+            body.applyForceToCenter(FORCELEFT,0.3f,true);
+        }
+
+        health--;
+
+        if (health <= 0) {
             die();
         }
 

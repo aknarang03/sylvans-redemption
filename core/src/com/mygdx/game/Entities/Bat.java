@@ -1,5 +1,6 @@
 package com.mygdx.game.Entities;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
+
+import java.util.Random;
 
 // Flying Enemy
 
@@ -24,11 +27,17 @@ public class Bat extends Entity {
     private float moveTimer = 0; // for "ai" move
     private float flapTimer = 0;
 
+    private float attackCooldown = 0;
+    private double distanceToSylvan = 0;
+
+    Sound attackSound;
+
     public Bat(SylvanGame game, Vector2 initPos) {
         super(game,true,0.36f,0.33f);
         initialPosition = initPos;
         ability = "Fly";
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bat_death.mp3"));
+        attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bat_attack.mp3"));
     }
 
     @Override
@@ -83,6 +92,13 @@ public class Bat extends Entity {
         }
 
         switch (currentState) {
+
+            case ATTACK: {
+                if (stateTimer >= 1) {
+                    return State.IDLE;
+                }
+                return State.ATTACK;
+            }
 
             case IDLE: {
                 if (vy > 0) { return State.JUMP; }
@@ -166,6 +182,51 @@ public class Bat extends Entity {
 
     }
 
+    public void checkAttack() {
+
+        boolean correctDir = false;
+        boolean leftHit = false;
+
+        Vector2 sylvanPos = game.currentLevel.sylvan.getBody().getPosition();
+
+        distanceToSylvan = game.currentLevel.getDistance(sylvanPos,body.getPosition());
+
+        if ((sylvanPos.x > body.getPosition().x && !left)) {
+            // sylvan is to the right of bat and bat is facing right
+            correctDir = true;
+            leftHit = true;
+        } else if (sylvanPos.x < body.getPosition().x && left) {
+            // sylvan is to the left of bat and bat is facing left
+            correctDir = true;
+            leftHit = false;
+        }
+
+        //System.out.println(distanceToSylvan);
+        if (distanceToSylvan <= 1.4 && Math.abs(sylvanPos.y-body.getPosition().y) <= 1 && correctDir) {
+            System.out.println("bat in attack range");
+
+            Random random = new Random();
+
+            //System.out.println(random.nextInt(11));
+
+
+            currentState = State.ATTACK;
+            stateTimer = 0;
+
+            if (game.currentLevel.sylvan.getBody().getPosition().x > this.body.getPosition().x) {
+                //if ((left && isFlipX()) || (!left && !isFlipX())) {
+                    //flip(true, false);
+                //}
+            }
+
+            attackSound.play(1);
+
+            game.currentLevel.sylvan.getAttacked(leftHit);
+
+            attackCooldown = 5;
+        }
+    }
+
     @Override
     public void update(float timeElapsed, float dt) {
 
@@ -181,7 +242,16 @@ public class Bat extends Entity {
         }
         currentState = newState;
 
+        if (!possessed && attackCooldown <= 0) {
+            checkAttack();
+        }
+
         switch (currentState) { // animations
+
+            case ATTACK:
+                frame = (animations.get("attack").getKeyFrame(stateTimer,true));
+                break;
+
             case JUMP:
                 frame = (animations.get("fly").getKeyFrame(timeElapsed, true));
                 if (flapTimer >= 0.8) {
@@ -203,9 +273,11 @@ public class Bat extends Entity {
 
         setRegion(frame);
 
-        if (!possessed) {
+        if (!possessed && currentState != State.ATTACK) {
             aiMove(dt);
         }
+
+        attackCooldown -= dt;
 
     }
 

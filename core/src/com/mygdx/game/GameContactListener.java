@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -58,7 +57,7 @@ public class GameContactListener implements ContactListener {
             }
 
             if (level.sylvan.knockbackTimer <= 0 && level.cooldown <= 0) {
-                level.sylvan.takeDamage();
+                level.sylvan.hitEnemy();
             }
 
 
