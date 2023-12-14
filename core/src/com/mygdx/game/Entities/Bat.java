@@ -202,7 +202,7 @@ public class Bat extends Entity {
         }
 
         //System.out.println(distanceToSylvan);
-        if (distanceToSylvan <= 1.4 && Math.abs(sylvanPos.y-body.getPosition().y) <= 1 && correctDir) {
+        if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 1 && correctDir) {
             System.out.println("bat in attack range");
 
             Random random = new Random();
