@@ -72,6 +72,10 @@ public class GameContactListener implements ContactListener {
 
         }
 
+        else if (other.getBody().getUserData() == "damage") {
+            level.sylvan.die();
+        }
+
     }
 
     @Override

@@ -108,7 +108,6 @@ public class SylvanGame extends Game {
 		currentLevel.dispose();
 		switch (id) {
 			case 0:
-				//currentLevel.dispose();
 				createLevel0();
 				break;
 			case 1:
