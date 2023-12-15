@@ -89,7 +89,7 @@ public class InfoDisplay {
         if (game.currentLevel.sylvan.possessed) {
             possessTimerLabel.setText("");
         } else {
-            possessTimerLabel.setText((5-(int)possessTimer));
+            possessTimerLabel.setText((int)(game.currentLevel.currentInhabitedEntity.posTime-(int)possessTimer));
         }
 
         healthLabel.setText("Health: " + health);

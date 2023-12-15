@@ -46,6 +46,8 @@ public abstract class Entity extends Sprite {
     protected boolean dead;
     public Sound deathSound;
 
+    public float posTime;
+
     public Entity(SylvanGame game, boolean left, float wm, float hm) { // called for each entity
         this.game = game;
         stateTimer = 0;

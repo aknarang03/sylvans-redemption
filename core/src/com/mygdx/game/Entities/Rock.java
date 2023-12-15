@@ -32,6 +32,7 @@ public class Rock extends Entity {
         super(game,true, 0.36f,0.37f);
         initialPosition = initPos;
         ability = "Movable platform";
+        posTime = 5;
     }
 
     public void initBody() {

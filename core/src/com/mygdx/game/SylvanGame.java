@@ -157,12 +157,12 @@ public class SylvanGame extends Game {
 		final int numTokens = 2;
 		final int id = 1;
 
-		Bat bat = new Bat(this,new Vector2(5,1));
-		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
-		Rock rock = new Rock(this,new Vector2(1,1));
+		Bat bat1 = new Bat(this,new Vector2(4,8));
+		Spider spider1 = new Spider(this,new Vector2(4,1));
+		//Rock rock = new Rock(this,new Vector2(1,1));
 
 		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
-		prototypeEnemies.add(bat,spider,rock);
+		prototypeEnemies.add(bat1,spider1);
 
 		Token token1 = new Token(this,new Vector2(6,4));
 		Token token2 = new Token(this,new Vector2(5,4));

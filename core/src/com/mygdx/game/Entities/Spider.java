@@ -42,6 +42,7 @@ public class Spider extends Entity {
         playWalk = true;
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/spider_death.mp3"));
         attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy attack.mp3"));
+        posTime = 5;
     }
 
     @Override

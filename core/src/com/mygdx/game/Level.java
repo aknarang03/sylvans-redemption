@@ -163,7 +163,8 @@ public class Level implements Screen {
 
         createStructure(); // build level in box2d
 
-        sylvan = new Sylvan(game, new Vector2(5.5f, 2.5f)); // create Sylvan
+        //sylvan = new Sylvan(game, new Vector2(5.5f, 2.5f)); // create Sylvan
+        sylvan = new Sylvan(game, new Vector2(1, 1)); // create Sylvan
 
         // possess vars
         possessTimer = 0;
@@ -307,7 +308,7 @@ public class Level implements Screen {
             shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
             fixtureDef.shape = shape;
             fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
-            fixtureDef.friction = 0;
+            fixtureDef.friction = 1;
             body.createFixture(fixtureDef);
             body.setUserData("damage");
             wallBodies.add(body);
@@ -344,7 +345,7 @@ public class Level implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             if (pause) {
                 game.uiSounds.get("select").play(1f);
-                game.restartLevel(0);
+                game.restartLevel(id);
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
@@ -451,7 +452,7 @@ public class Level implements Screen {
         }
 
         // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
-        if (possessTimer >= 5) {
+        if (possessTimer >= currentInhabitedEntity.posTime && !sylvan.possessed) {
             if ((currentInhabitedEntity.body.getUserData() == "bat" || currentInhabitedEntity.body.getUserData() == "spider") && sylvan.health < 3)  {sylvan.health++;} // Sylvan gets 1 HP back if he possesses enemy for 5 seconds
             unpossess();
         }

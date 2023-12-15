@@ -72,7 +72,7 @@ public class GameContactListener implements ContactListener {
 
         }
 
-        else if (other.getBody().getUserData() == "damage") {
+        else if (player.getBody().getUserData() == "sylvan" && other.getBody().getUserData() == "damage") {
             level.sylvan.die();
         }
 
