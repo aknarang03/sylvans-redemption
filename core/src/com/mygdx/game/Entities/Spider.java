@@ -1,5 +1,6 @@
 package com.mygdx.game.Entities;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,6 +17,9 @@ import com.mygdx.game.SylvanGame;
 
 public class Spider extends Entity {
 
+    private float attackCooldown = 0;
+    private double distanceToSylvan = 0;
+
     private Animation jump;
     private Animation fall;
     private Animation walk;
@@ -29,13 +33,15 @@ public class Spider extends Entity {
     private float moveTimer = 0; // for "ai" movement
     boolean playWalk;
 
+    Sound attackSound;
+
     public Spider(SylvanGame game, Vector2 initPos) {
         super(game,true,0.5f,0.33f);
         initialPosition = initPos;
         ability = "Climb";
         playWalk = true;
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/spider_death.mp3"));
-
+        attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy attack.mp3"));
     }
 
     @Override
@@ -91,6 +97,38 @@ public class Spider extends Entity {
                 break;
         }
 
+    }
+
+    public void checkAttack() {
+
+        boolean correctDir = false;
+        boolean leftHit = false;
+
+        Vector2 sylvanPos = game.currentLevel.sylvan.getBody().getPosition();
+
+        distanceToSylvan = game.currentLevel.getDistance(sylvanPos,body.getPosition());
+
+        if ((sylvanPos.x > body.getPosition().x && !left)) {
+            // sylvan is to the right of spider and spider is facing right
+            correctDir = true;
+            leftHit = true;
+        } else if (sylvanPos.x < body.getPosition().x && left) {
+            // sylvan is to the left of spider and spider is facing left
+            correctDir = true;
+            leftHit = false;
+        }
+
+        if (distanceToSylvan <= 1.7 && Math.abs(sylvanPos.y-body.getPosition().y) <= 0.3 && correctDir) { // CAN ATTACK
+            System.out.println("spider in attack range");
+            stateTimer = 0;
+            attackSound.play(1);
+            if (leftHit) {
+                body.applyForceToCenter(1,1,false);
+            } else {
+                body.applyForceToCenter(-1,1,false);
+            }
+            attackCooldown = 5;
+        }
     }
 
     @Override
@@ -171,6 +209,12 @@ public class Spider extends Entity {
         if (!possessed) {
             aiMove(dt);
         }
+
+        if (attackCooldown <= 0) {
+            checkAttack();
+        }
+
+        attackCooldown -= dt;
 
     }
 

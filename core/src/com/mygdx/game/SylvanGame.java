@@ -60,8 +60,8 @@ public class SylvanGame extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		//createLevels(); // construct levels
-		//createLevel0();
-		createLevel1();
+		createLevel0();
+		//createLevel1();
 		mainMenu = new MainMenu(this);
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);
