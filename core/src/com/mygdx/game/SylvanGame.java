@@ -60,8 +60,8 @@ public class SylvanGame extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		//createLevels(); // construct levels
-		createLevel0();
-		//createLevel1();
+		//createLevel0();
+		createLevel1();
 		mainMenu = new MainMenu(this);
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);
@@ -110,8 +110,12 @@ public class SylvanGame extends Game {
 			case 0:
 				//currentLevel.dispose();
 				createLevel0();
-				pickLevel(currentLevel);
+				break;
+			case 1:
+				createLevel1();
+				break;
 		}
+		pickLevel(currentLevel);
 	}
 
 	public void restartGame() {
@@ -152,7 +156,7 @@ public class SylvanGame extends Game {
 
 		final int numEnemies = 3;
 		final int numTokens = 2;
-		final int id = 0;
+		final int id = 1;
 
 		Bat bat = new Bat(this,new Vector2(5,1));
 		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
