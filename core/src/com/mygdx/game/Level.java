@@ -311,7 +311,20 @@ public class Level implements Screen {
             fixtureDef.friction = 1;
             body.createFixture(fixtureDef);
             body.setUserData("damage");
-            wallBodies.add(body);
+        }
+
+        for (MapObject mapObject : map.getLayers().get("Boundary Objects").getObjects().getByType(RectangleMapObject.class)) {
+            System.out.println("got object");
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
+            body = world.createBody(bodyDef);
+            shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
+            fixtureDef.shape = shape;
+            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
+            fixtureDef.friction = 0;
+            body.createFixture(fixtureDef);
+            body.setUserData("boundary");
         }
 
     }

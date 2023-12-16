@@ -36,7 +36,7 @@ public class Spider extends Entity {
     Sound attackSound;
 
     public Spider(SylvanGame game, Vector2 initPos) {
-        super(game,true,0.5f,0.33f);
+        super(game,true,0.7f,0.33f);
         initialPosition = initPos;
         ability = "Climb";
         playWalk = true;
@@ -64,7 +64,7 @@ public class Spider extends Entity {
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
-        fixtureDef.restitution = 0.005f;
+        fixtureDef.restitution = 0.1f;
 
         body.createFixture(fixtureDef);
 
@@ -153,7 +153,7 @@ public class Spider extends Entity {
         animations.put("idle",idle);
 
         setBounds(0,0, walkFrames.get(0).getRegionWidth() / SylvanGame.PPM, walkFrames.get(0).getRegionHeight() / SylvanGame.PPM);
-        setScale(1f);
+        setScale(1.5f);
         setRegion(walkFrames.get(0));
 
     }
@@ -170,6 +170,8 @@ public class Spider extends Entity {
             stateTimer = 0;
         }
         currentState = newState;
+
+        System.out.println(currentState);
 
         if (currentState != State.WALK || !possessed) {
             game.currentLevel.sounds.get("skitter").stop();
@@ -244,7 +246,6 @@ public class Spider extends Entity {
         }
 
         //if (!possessed) { return State.WALK; } // with "ai" movement it will always be walking
-        System.out.println(currentState);
 
         switch (currentState) {
 
@@ -268,7 +269,7 @@ public class Spider extends Entity {
 
             case FALL: {
                 if (vy == 0) { return State.LAND; }
-                else if (vy > 0) { return State.JUMP; } // allows climb (along with some code in move)
+                //else if (vy > 0) { return State.JUMP; } // allows climb (along with some code in move)
                 return State.FALL;
             }
 
