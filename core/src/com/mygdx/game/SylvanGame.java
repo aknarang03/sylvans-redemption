@@ -152,21 +152,25 @@ public class SylvanGame extends Game {
 		// PROTOTYPE LEVEL
 
 		final int numEnemies = 3;
-		final int numTokens = 2;
+		final int numTokens = 3;
 		final int id = 1;
 
 		Bat bat1 = new Bat(this,new Vector2(4,6.5f));
 		Spider spider1 = new Spider(this,new Vector2(4,1));
+		Bat bat2 = new Bat(this,new Vector2(16.6f,2));
+		Spider spider2 = new Spider(this,new Vector2(19.8f,1));
 		//Rock rock = new Rock(this,new Vector2(1,1));
 
 		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
-		prototypeEnemies.add(bat1,spider1);
+		prototypeEnemies.add(bat1,spider1,bat2,spider2);
 
 		Token token1 = new Token(this,new Vector2(2,6.5f));
-		//Token token2 = new Token(this,new Vector2(5,4));
+		Token token2 = new Token(this,new Vector2(13.25f,8.3f));
+		Token token3 = new Token(this,new Vector2(22.3f,0.6f));
+		Token token4 = new Token(this,new Vector2(22.3f,6f));
 
 		Array<Token> prototypeTokens = new Array<Token>();
-		prototypeTokens.add(token1);
+		prototypeTokens.add(token1,token2,token3,token4);
 
 		String prototypeMapFilename = "SRLvl1.tmx";
 
