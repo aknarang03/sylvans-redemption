@@ -64,7 +64,7 @@ public class Spider extends Entity {
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
-        fixtureDef.restitution = 0.01f;
+        fixtureDef.restitution = 0.005f;
 
         body.createFixture(fixtureDef);
 
@@ -124,9 +124,9 @@ public class Spider extends Entity {
             stateTimer = 0;
             attackSound.play(1);
             if (leftHit) {
-                body.applyForceToCenter(1,1,false);
+                body.applyForceToCenter(1.3f,0.08f,true);
             } else {
-                body.applyForceToCenter(-1,1,false);
+                body.applyForceToCenter(-1.3f,0.08f,true);
             }
             attackCooldown = 5;
         }
@@ -207,7 +207,7 @@ public class Spider extends Entity {
         setRegion(frame);
 
         // move the sprite with "ai" if not possessed
-        if (!possessed) {
+        if (!possessed && currentState != State.ATTACK) {
             aiMove(dt);
         }
 
@@ -221,13 +221,16 @@ public class Spider extends Entity {
 
     @Override
     public void aiMove(float dt) {
+
+        final float vy = body.getLinearVelocity().y;
+
         moveTimer += dt;
         if (moveTimer >= 1) {
             left = !left;
             moveTimer = 0;
         }
-        if (left) { body.setLinearVelocity(-1.5f,-3); } // move left
-        else { body.setLinearVelocity(1.5f,-3); } // move right
+        if (left) { body.setLinearVelocity(-0.8f,vy); } // move left
+        else { body.setLinearVelocity(0.8f,vy); } // move right
     }
 
     @Override
@@ -240,7 +243,8 @@ public class Spider extends Entity {
             return State.DEAD;
         }
 
-        if (!possessed) { return State.WALK; } // with "ai" movement it will always be walking
+        //if (!possessed) { return State.WALK; } // with "ai" movement it will always be walking
+        System.out.println(currentState);
 
         switch (currentState) {
 
