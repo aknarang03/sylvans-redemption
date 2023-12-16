@@ -30,6 +30,8 @@ public class Bat extends Entity {
     private float attackCooldown = 0;
     private double distanceToSylvan = 0;
 
+    float gravscale;
+
     Sound attackSound;
 
     public Bat(SylvanGame game, Vector2 initPos) {
@@ -79,6 +81,8 @@ public class Bat extends Entity {
         body.createFixture(fixtureDef);
 
         shape.dispose();
+
+        gravscale = body.getGravityScale(); // save the default gravity scale
 
     }
 
@@ -202,7 +206,7 @@ public class Bat extends Entity {
             leftHit = false;
         }
 
-        if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 1 && correctDir) { // CAN ATTACK
+        if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 0.3 && correctDir) { // CAN ATTACK
             System.out.println("bat in attack range");
             currentState = State.ATTACK;
             stateTimer = 0;
@@ -258,8 +262,13 @@ public class Bat extends Entity {
 
         setRegion(frame);
 
-        if (!possessed && currentState != State.ATTACK) {
-            aiMove(dt);
+        if (!possessed) {
+            body.setGravityScale(0f);
+            if (currentState != State.ATTACK) {
+                aiMove(dt);
+            }
+        } else {
+            body.setGravityScale(gravscale);
         }
 
         attackCooldown -= dt;
