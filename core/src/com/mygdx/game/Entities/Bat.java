@@ -37,7 +37,7 @@ public class Bat extends Entity {
     Sound attackSound;
 
     public Bat(SylvanGame game, Vector2 initPos) {
-        super(game,true,0.36f,0.33f);
+        super(game,true,0.44f,0.44f);
         initialPosition = initPos;
         ability = "Fly";
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bat_death.mp3"));
@@ -187,7 +187,7 @@ public class Bat extends Entity {
         animations.put("die",die);
 
         setBounds(0,0, attackFrames.get(0).getRegionWidth() / SylvanGame.PPM, attackFrames.get(0).getRegionHeight() / SylvanGame.PPM);
-        setScale(0.7f);
+        setScale(1f);
         setRegion(attackFrames.get(0));
 
     }

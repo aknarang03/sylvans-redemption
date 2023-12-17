@@ -563,11 +563,11 @@ public class Level implements Screen {
             enemy.draw(game.batch);
             if (distances.get(iter) <= 1.5) {
                 enemy.possessIndicator.draw(game.batch);
-                enemy.setColor(Color.CYAN);
-            } else {
-                enemy.setColor(Color.WHITE);
-
+                //enemy.setColor(Color.CYAN);
             }
+            //else {
+                //enemy.setColor(Color.WHITE);
+            //}
             iter++;
         }
 
