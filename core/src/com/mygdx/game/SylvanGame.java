@@ -59,8 +59,8 @@ public class SylvanGame extends Game {
 		initSounds();
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		//createLevel0();
-		createLevel1();
+		createLevel0();
+		//createLevel1();
 		mainMenu = new MainMenu(this);
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);

@@ -29,7 +29,7 @@ public class Rock extends Entity {
     boolean playReturn;
 
     public Rock(SylvanGame game, Vector2 initPos) {
-        super(game,true, 0.36f,0.37f);
+        super(game,true, 0.25f,0.2f);
         initialPosition = initPos;
         ability = "Movable platform";
         posTime = 5;
@@ -49,7 +49,7 @@ public class Rock extends Entity {
 
         // set up fixture
         shape = new PolygonShape();
-        shape.setAsBox(getWidth() / 3.2f, getHeight() / 5.1f);
+        shape.setAsBox(getWidth() / 6.5f, getHeight() / 10f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
@@ -82,7 +82,7 @@ public class Rock extends Entity {
         animations.put("idle", rockidle);
         animations.put("rise", rockrise);
 
-        setScale(0.8f);
+        setScale(0.5f);
         setBounds(0, 0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
         setRegion(idleFrames.get(0));
 
