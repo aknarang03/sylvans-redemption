@@ -179,6 +179,9 @@ public class Spider extends Entity {
         }
 
         switch (currentState) {
+            case DEAD:
+                frame = (animations.get("fall").getKeyFrame(stateTimer, true));
+                break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                 if (playWalk && possessed) {
@@ -209,7 +212,7 @@ public class Spider extends Entity {
         setRegion(frame);
 
         // move the sprite with "ai" if not possessed
-        if (!possessed && currentState != State.ATTACK) {
+        if (!possessed && currentState != State.ATTACK && !dead) {
             aiMove(dt);
         }
 

@@ -397,7 +397,7 @@ public class Level implements Screen {
         }
         int counter = 0;
         for (Entity enemy : enemies) {
-            if (enemy.dead) {
+            if (enemy.dead && enemy.stateTimer >= 0.45) {
                 world.destroyBody(enemy.body);
                 enemies.removeIndex(counter);
                 System.out.println("enemy died");
@@ -499,7 +499,7 @@ public class Level implements Screen {
         }
         changeCurrentInhabitedEntity(sylvan);
         sylvan.body.setLinearVelocity(0, 0);
-        sylvan.body.setTransform(pos.x, pos.y + 0.2f, 0);
+        sylvan.body.setTransform(pos.x, pos.y + 0.5f, 0);
         sylvan.body.applyForceToCenter(0, 0.45f, true);
         possessTimer = 0;
         cooldown = 1;

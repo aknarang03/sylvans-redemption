@@ -21,8 +21,10 @@ public class Bat extends Entity {
 
     private Animation attack;
     private Animation fly;
+    private Animation die;
     private Array<TextureAtlas.AtlasRegion> attackFrames;
     private Array<TextureAtlas.AtlasRegion> flyFrames;
+    private Array<TextureAtlas.AtlasRegion> dieFrames;
 
     private float moveTimer = 0; // for "ai" move
     private float flapTimer = 0;
@@ -174,12 +176,15 @@ public class Bat extends Entity {
 
         attackFrames = atlas.findRegions("BatAttack");
         flyFrames = atlas.findRegions("BatMovement");
+        dieFrames = atlas.findRegions("BatDeath");
 
         attack = new Animation<TextureRegion>(1/9f, attackFrames);
         fly = new Animation<TextureRegion>(1/9f, flyFrames);
+        die = new Animation<TextureRegion>(1/9f,dieFrames);
 
         animations.put("attack",attack);
         animations.put("fly",fly);
+        animations.put("die",die);
 
         setBounds(0,0, attackFrames.get(0).getRegionWidth() / SylvanGame.PPM, attackFrames.get(0).getRegionHeight() / SylvanGame.PPM);
         setScale(0.7f);
@@ -237,6 +242,10 @@ public class Bat extends Entity {
 
         switch (currentState) { // animations
 
+            case DEAD:
+                frame = (animations.get("die").getKeyFrame(stateTimer,true));
+                break;
+
             case ATTACK:
                 frame = (animations.get("attack").getKeyFrame(stateTimer,true));
                 break;
@@ -264,7 +273,7 @@ public class Bat extends Entity {
 
         if (!possessed) {
             body.setGravityScale(0f);
-            if (currentState != State.ATTACK) {
+            if (currentState != State.ATTACK && !dead) {
                 aiMove(dt);
             }
         } else {

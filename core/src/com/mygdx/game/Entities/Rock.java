@@ -29,7 +29,7 @@ public class Rock extends Entity {
     boolean playReturn;
 
     public Rock(SylvanGame game, Vector2 initPos) {
-        super(game,true, 0.25f,0.2f);
+        super(game,true, 0.25f,0.22f);
         initialPosition = initPos;
         ability = "Movable platform";
         posTime = 5;
