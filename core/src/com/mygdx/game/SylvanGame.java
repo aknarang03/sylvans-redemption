@@ -179,39 +179,6 @@ public class SylvanGame extends Game {
 		currentLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens, id, forestMusic);
 	}
 
-	/*
-	public void createLevels() {
-		// for now this is where every level is created
-		// perhaps will save them in an array / map or something so that it's easier to switch levels
-		int numEnemies;
-		int numTokens;
-
-		// PROTOTYPE LEVEL
-
-		numEnemies = 3;
-		numTokens = 2;
-
-		Bat bat = new Bat(this,new Vector2(5,1));
-		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
-		Rock rock = new Rock(this,new Vector2(1,1));
-
-		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
-		prototypeEnemies.add(bat,spider,rock);
-
-		Token token1 = new Token(this,new Vector2(6,4));
-		Token token2 = new Token(this,new Vector2(5,4));
-
-		Array<Token> prototypeTokens = new Array<Token>();
-		prototypeTokens.add(token1, token2);
-
-		String prototypeMapFilename = "PrototypeLevelMap.tmx";
-
-		prototypeLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens);
-
-		levels.add(prototypeLevel);
-	}
-	 */
-
 	public void setCurrentLevel(Level level) {
 		if (currentLevel != null) {
 			currentLevel.dispose();

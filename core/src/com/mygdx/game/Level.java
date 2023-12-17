@@ -451,6 +451,7 @@ public class Level implements Screen {
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLIER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLIER, sylvan.getWidth(), sylvan.getHeight());
         for (Entity enemy : enemies) {
             enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
+            enemy.possessIndicator.setBounds(enemy.body.getPosition().x - 0.26f,enemy.body.getPosition().y + (enemy.getHeight() / 4),0.5f,0.5f);
         }
 
         indicator.setBounds(currentInhabitedEntity.body.getPosition().x - 0.26f, currentInhabitedEntity.body.getPosition().y + (currentInhabitedEntity.getHeight() / 4), 0.5f, 0.5f);
@@ -561,6 +562,7 @@ public class Level implements Screen {
         for (Entity enemy : enemies) {
             enemy.draw(game.batch);
             if (distances.get(iter) <= 1.5) {
+                enemy.possessIndicator.draw(game.batch);
                 enemy.setColor(Color.CYAN);
             } else {
                 enemy.setColor(Color.WHITE);

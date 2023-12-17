@@ -1,6 +1,8 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -43,6 +45,8 @@ public abstract class Entity extends Sprite {
     protected float stateTimer; // this doesn't do anything yet but will be used to ensure animations play before something happens eg. possess animation before possess
     protected boolean possessed;
 
+    public Sprite possessIndicator;
+
     protected boolean dead;
     public Sound deathSound;
 
@@ -56,6 +60,13 @@ public abstract class Entity extends Sprite {
         WIDTH_MULTIPLIER = wm;
         HEIGHT_MULTIPLIER = hm;
         dead = false;
+        createIndicator();
+    }
+
+    public void createIndicator() {
+        possessIndicator = new Sprite();
+        Texture possessIndicatorImg = new Texture(Gdx.files.internal("possess_indicator.png"));
+        possessIndicator.setRegion(possessIndicatorImg);
     }
 
     public abstract void initBody(); // init the Entity body variables
