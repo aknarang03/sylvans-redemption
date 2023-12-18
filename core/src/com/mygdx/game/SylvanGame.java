@@ -62,8 +62,9 @@ public class SylvanGame extends Game {
 		initSounds();
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		createLevel0();
+		//createLevel0();
 		//createLevel1();
+		createLevel2();
 		mainMenu = new MainMenu(this);
 		levelWin = new LevelWinScreen(this);
 		gameOver = new GameOverScreen(this);
@@ -115,7 +116,7 @@ public class SylvanGame extends Game {
 				createLevel1();
 				break;
 			case 1:
-				//createLevel2();
+				createLevel2();
 				break;
 		}
 		pickLevel(currentLevel);
@@ -129,6 +130,9 @@ public class SylvanGame extends Game {
 				break;
 			case 1:
 				createLevel1();
+				break;
+			case 2:
+				createLevel2();
 				break;
 		}
 		pickLevel(currentLevel);
@@ -168,7 +172,6 @@ public class SylvanGame extends Game {
 	}
 
 	public void createLevel1() {
-		// PROTOTYPE LEVEL
 
 		final int numEnemies = 5;
 		final int numTokens = 4;
@@ -181,21 +184,52 @@ public class SylvanGame extends Game {
 		Bat bat3 = new Bat(this,new Vector2(20f,4));
 		//Rock rock = new Rock(this,new Vector2(1,1));
 
-		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
-		prototypeEnemies.add(bat1,spider1,bat2,spider2);
-		prototypeEnemies.add(bat3);
+		Array<Entity> lvl1enemies = new Array<Entity>(numEnemies);
+		lvl1enemies.add(bat1,spider1,bat2,spider2);
+		lvl1enemies.add(bat3);
 
 		Token token1 = new Token(this,new Vector2(2,7));
 		Token token2 = new Token(this,new Vector2(13.25f,8.9f));
 		Token token3 = new Token(this,new Vector2(22.1f,1.1f));
 		Token token4 = new Token(this,new Vector2(21f,6.3f));
 
-		Array<Token> prototypeTokens = new Array<Token>();
-		prototypeTokens.add(token1,token2,token3,token4);
+		Array<Token> lvl1tokens = new Array<Token>();
+		lvl1tokens.add(token1,token2,token3,token4);
 
-		String prototypeMapFilename = "SRLvl1.tmx";
+		String mapFilename = "SRLvl1.tmx";
 
-		currentLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens, id, forestMusic);
+		currentLevel = new Level(this, lvl1enemies, lvl1tokens, mapFilename, numTokens, id, forestMusic);
+	}
+
+	public void createLevel2() {
+
+		final int numEnemies = 5;
+		final int numTokens = 4;
+		final int id = 2;
+
+		Bat bat1 = new Bat(this,new Vector2(4,6.5f));
+		Spider spider1 = new Spider(this,new Vector2(4,1));
+		Bat bat2 = new Bat(this,new Vector2(16.6f,2));
+		Spider spider2 = new Spider(this,new Vector2(19.8f,1));
+		Bat bat3 = new Bat(this,new Vector2(20f,4));
+		Rock rock1 = new Rock(this,new Vector2(1,1));
+
+		Array<Entity> lvl2enemies = new Array<Entity>(numEnemies);
+		lvl2enemies.add(bat1,spider1,bat2,spider2);
+		lvl2enemies.add(bat3,rock1);
+
+		Token token1 = new Token(this,new Vector2(2,7));
+		Token token2 = new Token(this,new Vector2(13.25f,8.9f));
+		Token token3 = new Token(this,new Vector2(22.1f,1.1f));
+		Token token4 = new Token(this,new Vector2(21f,6.3f));
+
+		Array<Token> lvl2tokens = new Array<Token>();
+		lvl2tokens.add(token1,token2,token3,token4);
+
+		String mapFilename = "Level2Map..tmx";
+
+		currentLevel = new Level(this, lvl2enemies, lvl2tokens, mapFilename, numTokens, id, caveMusic);
+
 	}
 
 	public void setCurrentLevel(Level level) {

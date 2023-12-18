@@ -225,6 +225,8 @@ public class Spider extends Entity {
     @Override
     public void aiMove(float dt) {
 
+        //game.currentLevel.sounds.get("skitter").stop();
+
         final float vy = body.getLinearVelocity().y;
 
         moveTimer += dt;
