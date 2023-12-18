@@ -392,8 +392,8 @@ public class Level implements Screen {
 
 
     public void checkDie() {
-        if (sylvan.dead) {
-            //world.destroyBody(sylvan.body);
+        if (sylvan.dead && sylvan.stateTimer >= 1) {
+            sylvan.shouldDraw = false;
         }
         int counter = 0;
         for (Entity enemy : enemies) {
@@ -551,7 +551,7 @@ public class Level implements Screen {
         game.batch.begin(); // BATCH BEGIN
 
         if (sylvan.possessed) { // only draw sylvan if possessed
-            sylvan.draw(game.batch);
+            if (sylvan.shouldDraw) {sylvan.draw(game.batch);}
             if (redTimer <= 0.5) {
                 sylvan.setColor(new Color( 1, 0.5f,0.5f,1));
             } else {

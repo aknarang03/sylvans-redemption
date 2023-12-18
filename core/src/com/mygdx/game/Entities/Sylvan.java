@@ -39,6 +39,7 @@ public class Sylvan extends Entity {
 
     boolean playGlide;
     boolean playWalk;
+    public boolean shouldDraw;
 
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
@@ -49,6 +50,7 @@ public class Sylvan extends Entity {
         playWalk = true;
         ability = "Glide";
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/sylvan_death.mp3"));
+        shouldDraw = true;
     }
 
     public void initBody() {
@@ -190,6 +192,9 @@ public class Sylvan extends Entity {
         }
 
         switch (currentState) {
+            case DEAD:
+                frame = (animations.get("glidepossess").getKeyFrame(stateTimer,true));
+                break;
             case POSSESS:
                 if (vy == 0) {
                     frame = (animations.get("standpossess").getKeyFrame(stateTimer, true)); // NOTE: figure out whether to play glide or stand

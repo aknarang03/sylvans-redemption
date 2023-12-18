@@ -14,11 +14,15 @@ public class StoryScreen implements Screen {
     private SylvanGame game;
     private OrthographicCamera camera;
 
+    Texture malgrimImg;
+
     public StoryScreen(SylvanGame game) {
 
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        malgrimImg = new Texture(Gdx.files.internal("malgrim.png"));
 
     }
 
@@ -44,6 +48,8 @@ public class StoryScreen implements Screen {
         game.font.draw(game.batch, "Thankfully, as a soul, Sylvan can possess the overlord's",0,190);
         game.font.draw(game.batch, "adversaries to navigate the Abyss more easily.",0,170);
         game.font.draw(game.batch, "Help Sylvan become whole again and remember his past.",0,150);
+
+        game.batch.draw(malgrimImg,340,0);
 
         game.batch.end();
 
