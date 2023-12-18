@@ -63,8 +63,8 @@ public class SylvanGame extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		//createLevel0();
-		//createLevel1();
-		createLevel2();
+		createLevel1();
+		//createLevel2();
 		mainMenu = new MainMenu(this);
 		levelWin = new LevelWinScreen(this);
 		gameOver = new GameOverScreen(this);
@@ -110,6 +110,7 @@ public class SylvanGame extends Game {
 	}
 
 	public void nextLevel(int currentLevelID) {
+		currentLevel.music.stop();
 		currentLevel.dispose();
 		switch (currentLevelID) {
 			case 0:
@@ -139,11 +140,11 @@ public class SylvanGame extends Game {
 	}
 
 	public void restartGame() {
+		currentLevel.music.stop();
 		currentLevel.dispose();
 		setScreen(mainMenu);
 		mainMenuMusic.play();
-		createLevel0();
-		currentLevel.music.stop();
+		createLevel1();
 	}
 
 	public void createLevel0() {
