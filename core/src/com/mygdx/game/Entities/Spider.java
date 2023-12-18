@@ -171,9 +171,7 @@ public class Spider extends Entity {
         }
         currentState = newState;
 
-        System.out.println(currentState);
-
-        if (currentState != State.WALK || !possessed) {
+        if (currentState != State.WALK) {
             game.currentLevel.sounds.get("skitter").stop();
             playWalk = true;
         }
@@ -185,7 +183,7 @@ public class Spider extends Entity {
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                 if (playWalk && possessed) {
-                    game.currentLevel.sounds.get("skitter").loop(0.6f);
+                    game.currentLevel.sounds.get("skitter").loop(1f);
                     playWalk = false;
                 }
                 break;
@@ -194,10 +192,10 @@ public class Spider extends Entity {
                 break;
             case JUMP:
                 frame = (animations.get("jump").getKeyFrame(timeElapsed, false));
-                if (stateTimer < 0.01) { game.currentLevel.sounds.get("jump").play(0.5f); }
+                if (stateTimer < 0.01) { game.currentLevel.sounds.get("jump").play(0.6f); }
                 break;
             case LAND:
-                if (stateTimer < 0.01) { game.currentLevel.sounds.get("land").play(0.1f); }
+                if (stateTimer < 0.01) { game.currentLevel.sounds.get("land").play(0.4f); }
             case IDLE:
             default:
                 frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
@@ -248,9 +246,11 @@ public class Spider extends Entity {
             return State.DEAD;
         }
 
-        //if (!possessed) { return State.WALK; } // with "ai" movement it will always be walking
-
         switch (currentState) {
+
+            case DEAD: {
+                return State.DEAD;
+            }
 
             case IDLE: {
                 if (vy > 0) { return State.JUMP; }

@@ -34,7 +34,7 @@ public class SylvanGame extends Game {
 
 	// initial screen width and height upon run
 	public static final int SCREEN_WIDTH = 400;
-	public static final int SCREEN_HEIGHT = 208;
+	public static final int SCREEN_HEIGHT = 300;
 
 	// collision groups (currently not using)
 	public static final short PLAYER_GROUP = 1;
@@ -53,6 +53,9 @@ public class SylvanGame extends Game {
 	public MainMenu mainMenu;
 	public ControlsMenu controlsMenu;
 	public GameOverScreen gameOver;
+	public LevelWinScreen levelWin;
+	public HowToPlayScreen howToPlay;
+	public StoryScreen story;
 
 	@Override
 	public void create () {
@@ -62,8 +65,11 @@ public class SylvanGame extends Game {
 		createLevel0();
 		//createLevel1();
 		mainMenu = new MainMenu(this);
+		levelWin = new LevelWinScreen(this);
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);
+		howToPlay = new HowToPlayScreen(this);
+		story = new StoryScreen(this);
 		setScreen(mainMenu);
 		mainMenuMusic.play();
 	}
@@ -100,6 +106,19 @@ public class SylvanGame extends Game {
 		mainMenuMusic.stop();
 		setCurrentLevel(level);
 		level.createEntities();
+	}
+
+	public void nextLevel(int currentLevelID) {
+		currentLevel.dispose();
+		switch (currentLevelID) {
+			case 0:
+				createLevel1();
+				break;
+			case 1:
+				//createLevel2();
+				break;
+		}
+		pickLevel(currentLevel);
 	}
 
 	public void restartLevel(int id) {

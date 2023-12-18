@@ -185,6 +185,7 @@ public class Sylvan extends Entity {
             playWalk = true;
         }
         if (!possessed) {
+            game.currentLevel.sounds.get("walk").stop();
             game.currentLevel.sounds.get("glide").stop();
         }
 
@@ -199,13 +200,13 @@ public class Sylvan extends Entity {
             case JUMP:
                 frame = (animations.get("jump").getKeyFrame(stateTimer, true));
                 if (stateTimer < 0.01) {
-                    game.currentLevel.sounds.get("jump").play(0.5f);
+                    game.currentLevel.sounds.get("jump").play(0.6f);
                 }
                 break;
             case FALL:
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
                 if (stateTimer >= 1 && playGlide && possessed) { // need to check possessed here because when unpossessed he is always falling outside screen
-                    game.currentLevel.sounds.get("glide").play(0.5f);
+                    game.currentLevel.sounds.get("glide").play(0.65f);
                     playGlide = false;
                 }
                 break;
@@ -221,7 +222,7 @@ public class Sylvan extends Entity {
                 playGlide = true;
                 game.currentLevel.sounds.get("glide").stop();
                 if (stateTimer < 0.01) {
-                    game.currentLevel.sounds.get("land").play(0.1f);
+                    game.currentLevel.sounds.get("land").play(0.4f);
                 }
                 break;
             default:
@@ -316,7 +317,7 @@ public class Sylvan extends Entity {
 
         //setColor(Color.RED)
 
-        game.currentLevel.sounds.get("hit").play(0.2f);
+        game.currentLevel.sounds.get("hit").play(0.4f);
 
         if (health <= 0) {
             die();
@@ -328,7 +329,7 @@ public class Sylvan extends Entity {
 
         flashRed = true;
 
-        game.currentLevel.sounds.get("hit").play(1);
+        game.currentLevel.sounds.get("hit").play(0.4f);
 
         final float FORCELEFT = -0.8f;
         final float FORCERIGHT = 0.3f;

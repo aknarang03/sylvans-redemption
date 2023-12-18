@@ -47,12 +47,12 @@ public class InfoDisplay {
 
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/1.5f);
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/1.2f);
         viewport = new FitViewport(camera.viewportWidth, camera.viewportHeight, camera);
         stage = new Stage(viewport,game.batch);
 
         table = new Table();
-        table.setPosition(0,125);
+        table.setPosition(0,160);
         //table.left().top();
         table.defaults().left().top();
         table.setFillParent(true);

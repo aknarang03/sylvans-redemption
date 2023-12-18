@@ -36,6 +36,8 @@ public class MainMenu implements Screen {
 
     Sprite arrow;
 
+    boolean gameStarted;
+
     // MAKE START GAME AND CONTROLS SELECTABLE TEXT
 
     // for some reason, when I make one main menu to use, it messes up the width and height. but if I send in a new one, it doesn't until the second time.
@@ -93,7 +95,7 @@ public class MainMenu implements Screen {
     }
 
     public void createBg() {
-        Texture menuImg = new Texture(Gdx.files.internal("badlogic.jpg"));
+        Texture menuImg = new Texture(Gdx.files.internal("background.png"));
         menuSprite = new Sprite(menuImg);
         menuSprite.setSize(game.SCREEN_WIDTH,game.SCREEN_HEIGHT);
         menuSprite.setPosition(0,0);
@@ -130,7 +132,7 @@ public class MainMenu implements Screen {
         } else {
             startGameText.setStyle(labelFont);
             controlsText.setStyle(selectedFont);
-            game.batch.draw(arrow,controlsX+70,controlsY-25);
+            game.batch.draw(arrow,controlsX+50,controlsY-25);
         }
 
         if (input == Control.UP || input == Control.DOWN) {
@@ -144,12 +146,18 @@ public class MainMenu implements Screen {
         game.batch.end();
 
         if (processInput() == Control.SELECT) {
+            game.uiSounds.get("select").play(1f);
             if (pointingTo == PointingTo.StartGame) {
-                game.uiSounds.get("start game overlay").play(1f);
-                game.uiSounds.get("start game").play(1f);
-                game.pickLevel(game.currentLevel);
+                if (!gameStarted) {
+                    //game.setScreen(game.howToPlay);
+                    game.setScreen(game.story);
+                } else {
+                    game.pickLevel(game.currentLevel);
+                    game.uiSounds.get("start game overlay").play(1f);
+                    game.uiSounds.get("start game").play(1f);
+                }
+                gameStarted = true;
             } else {
-                game.uiSounds.get("select").play(1f);
                 // GO TO CONTROLS SCREEN
                 game.setScreen(game.controlsMenu);
             }

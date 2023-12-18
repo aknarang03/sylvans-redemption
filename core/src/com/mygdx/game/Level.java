@@ -429,6 +429,7 @@ public class Level implements Screen {
             if (playCompleted) {
                 game.uiSounds.get("completed level").play(1f);
                 playCompleted = false;
+                game.setScreen(game.levelWin);
             }
             // SET SCREEN TO LEVEL COMPLETED SCREEN
             // DESTROY THIS LEVEL
@@ -518,9 +519,11 @@ public class Level implements Screen {
         processPause();
         if (!pause) {
             // resume any possibly paused long sounds
-            sounds.get("walk").resume();
-            sounds.get("glide").resume();
-            music.setVolume(0.5f);
+            if (sylvan.possessed) {
+                sounds.get("walk").resume();
+                sounds.get("glide").resume();
+            }
+            music.setVolume(0.38f);
             update(delta);
         } else {
             // pause any possible long sounds
@@ -584,10 +587,10 @@ public class Level implements Screen {
         game.batch.setProjectionMatrix(infoDisplay.stage.getCamera().combined);
         infoDisplay.stage.draw();
         game.batch.begin();
-        game.batch.draw(infoDisplay.tokenTexture,0,295);
+        game.batch.draw(infoDisplay.tokenTexture,0,370);
         int drawX = 60;
         for (int i = 0; i < sylvan.health; i++) {
-            game.batch.draw(infoDisplay.heartTexture,drawX,295);
+            game.batch.draw(infoDisplay.heartTexture,drawX,370);
             drawX += 20;
         }
         game.batch.end();
