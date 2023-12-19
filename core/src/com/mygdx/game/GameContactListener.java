@@ -33,10 +33,10 @@ public class GameContactListener implements ContactListener {
             boolean up = (vely > 0);
             boolean down = (vely < 0);
 
-            final float FORCEUP = 1f;
-            final float FORCEDOWN = -1;
-            final float FORCERIGHT = 0.8f;
-            final float FORCELEFT = -0.8f;
+            final float FORCEUP = 0.7f;
+            final float FORCEDOWN = -0.7f;
+            final float FORCERIGHT = 0.5f;
+            final float FORCELEFT = -0.5f;
 
             if (left && up) {
                 player.getBody().applyForceToCenter(FORCERIGHT,FORCEDOWN,true);
