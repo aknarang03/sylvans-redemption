@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="90" height="43" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="47">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="90" height="43" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="55">
  <tileset firstgid="1" source="PrototypeTiles.tsx"/>
  <tileset firstgid="626" source="bgtile.tsx"/>
  <imagelayer id="21" name="fillin" offsetx="-704" offsety="-1202">
@@ -103,18 +103,18 @@
 </data>
  </layer>
  <objectgroup id="4" name="Ground Objects">
-  <object id="2" x="0" y="624" width="336" height="16"/>
+  <object id="2" x="0" y="624" width="346" height="16"/>
   <object id="4" x="360" y="432" width="67.3333" height="16"/>
   <object id="5" x="490.667" y="384" width="57.3333" height="16"/>
   <object id="7" x="374" y="320" width="68" height="16"/>
-  <object id="8" x="0" y="256" width="326.667" height="64"/>
-  <object id="12" x="570.667" y="128" width="332.667" height="64"/>
+  <object id="8" x="0" y="256" width="318.667" height="64"/>
+  <object id="12" x="580.667" y="128" width="312.667" height="64"/>
   <object id="13" x="951.333" y="240" width="67.3333" height="16"/>
   <object id="14" x="855.333" y="304" width="64.6667" height="16"/>
   <object id="15" x="952" y="368" width="67.3333" height="16"/>
   <object id="16" x="855.333" y="432" width="64" height="16"/>
   <object id="17" x="950.667" y="496" width="68.6667" height="16"/>
-  <object id="25" x="848" y="624" width="592" height="32"/>
+  <object id="25" x="838" y="624" width="602" height="32"/>
   <object id="29" x="1296" y="304" width="80" height="1.5"/>
   <object id="30" x="1200" y="496" width="32" height="3"/>
   <object id="31" x="1312" y="480" width="32" height="2.5"/>
@@ -130,6 +130,9 @@
   <object id="19" x="1200" y="501" width="32" height="123"/>
   <object id="20" x="1312" y="484" width="32" height="140"/>
   <object id="44" x="1301.33" y="308.5" width="69.3333" height="59.5"/>
+  <object id="47" x="895" y="129" width="8" height="64"/>
+  <object id="49" x="568" y="127" width="12" height="66"/>
+  <object id="54" x="321" y="255" width="6" height="64"/>
  </objectgroup>
  <layer id="3" name="Tile Layer 2" width="90" height="43">
   <data encoding="csv">
@@ -179,6 +182,6 @@
 </data>
  </layer>
  <objectgroup id="17" name="Damage Objects">
-  <object id="26" x="336" y="624" width="512" height="32"/>
+  <object id="26" x="346" y="624" width="490" height="32"/>
  </objectgroup>
 </map>

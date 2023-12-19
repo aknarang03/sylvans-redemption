@@ -16,6 +16,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public class GameOverScreen implements Screen {
 
     enum PointingTo {RestartLevel, RestartGame};

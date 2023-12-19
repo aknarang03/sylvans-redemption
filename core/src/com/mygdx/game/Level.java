@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -24,14 +22,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.Entities.Bat;
 import com.mygdx.game.Entities.Sylvan;
 import com.mygdx.game.Entities.Token;
 
 import java.util.HashMap;
+
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
 
 public class Level implements Screen {
 
@@ -114,6 +116,7 @@ public class Level implements Screen {
     Sound enemyAttackSound;
 
     private boolean pause;
+    private boolean render;
 
     InfoDisplay infoDisplay;
 
@@ -254,7 +257,7 @@ public class Level implements Screen {
         }
         int count = 0;
         for (Token token : tokens) {
-            token.initSprite();
+            token.initImg();
             token.initBody();
             token.setBounds(token.body.getPosition().x - token.getWidth() * token.MULTIPLYER, token.body.getPosition().y - token.getHeight() * token.MULTIPLYER, token.getWidth(), token.getHeight());
             token.body.setUserData("token" + count);
@@ -271,7 +274,7 @@ public class Level implements Screen {
 
         // use wall object layer to put wall bodies
         for (MapObject mapObject : map.getLayers().get("Wall Objects").getObjects().getByType(RectangleMapObject.class)) {
-            System.out.println("got object");
+            //System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
@@ -287,7 +290,7 @@ public class Level implements Screen {
 
         // uses the ground object layer in tmx file to draw the boxes in the correct places
         for (MapObject mapObject : map.getLayers().get("Ground Objects").getObjects().getByType(RectangleMapObject.class)) {
-            System.out.println("got object");
+            //System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
@@ -301,7 +304,7 @@ public class Level implements Screen {
         }
 
         for (MapObject mapObject : map.getLayers().get("Damage Objects").getObjects().getByType(RectangleMapObject.class)) {
-            System.out.println("got object");
+            //System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
@@ -393,12 +396,12 @@ public class Level implements Screen {
 
 
     public void checkDie() {
-        if (sylvan.dead && sylvan.stateTimer >= 1) {
+        if (sylvan.dead && sylvan.stateTimer >= 0.5) {
             sylvan.shouldDraw = false;
         }
         int counter = 0;
         for (Entity enemy : enemies) {
-            if (enemy.dead && enemy.stateTimer >= 0.45) {
+            if (enemy.dead && enemy.stateTimer >= 0.5) {
                 world.destroyBody(enemy.body);
                 enemies.removeIndex(counter);
                 System.out.println("enemy died");
@@ -730,8 +733,18 @@ public class Level implements Screen {
     }
 
     @Override
-    public void dispose() {
-    } // IMPLEMENT
+    public void dispose() { // not working
+        System.out.println("dispose");
+        /*
+        renderer.dispose();
+        map.dispose();
+        //debugRenderer.dispose();
+        music.dispose();
+        infoDisplay.dispose();
+        world.dispose();
+        // dispose sounds?
+         */
+    }
 
     @Override
     public void pause() {

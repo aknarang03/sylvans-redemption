@@ -1,4 +1,5 @@
 package com.mygdx.game.Entities;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,11 +13,15 @@ import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public class Sylvan extends Entity {
 
-    public boolean flashRed = false;
-
-    // sprite variables
+    // ANIMATION VARS
     private Animation idle;
     private Animation walk;
     private Animation jump;
@@ -32,24 +37,24 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> glidepossessFrames;
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
-    public int health;
-
-    // timers
+    // TIMERS
     public double knockbackTimer;
 
-    boolean playGlide;
-    boolean playWalk;
-    public boolean shouldDraw;
+    // BOOLS
+    boolean playGlide; // whether to play glide sound or not
+    boolean playWalk; // whether to play walk sound or not
+    public boolean shouldDraw; // whether to draw Sylvan or not
+    public boolean flashRed = false; // whether to flash red (from damage) or not
 
+    public int health; // keep track of HP
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
-        super(game,false, 0.36f,0.39f);
+        super(game,false, 0.36f,0.39f,"Glide");
         initialPosition = initPos;
         health = 3;
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/sylvan_death.mp3"));
         playGlide = true;
         playWalk = true;
-        ability = "Glide";
-        deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/sylvan_death.mp3"));
         shouldDraw = true;
     }
 
@@ -116,18 +121,18 @@ public class Sylvan extends Entity {
     }
 
     @Override
-    public void move(Control control) {
+    public void move(Control control) { // takes in keyboard input
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
-
+        // can't move if he was recently knocked back
         if (knockbackTimer >= 0) {
             return;
         }
 
-
-        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD) { // prevent from changing state with states where the timer matters
+        // prevent from changing state with states where the timer matters
+        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD) {
             return;
         }
 
@@ -149,46 +154,38 @@ public class Sylvan extends Entity {
                 left = false;
                 break;
             case POSSESS:
-                game.currentLevel.getPossessTarget();
+                game.currentLevel.getPossessTarget(); // try to get target if possess button pressed
                 break;
             default:
                 break;
         }
+
     }
 
     @Override
     public void update(float timeElapsed, float dt) {
 
+        //System.out.println("x: " + body.getPosition().x + "y: " + body.getPosition().y); // POSITION
+
         TextureRegion frame;
 
-        System.out.println("x: " + body.getPosition().x + "y: " + body.getPosition().y);
-
         final State newState = getState(); // to use in stateTimer check
-
-        /*
-        if (currentState == State.WALK || currentState == State.LAND) {
-            playStand = true;
-        } else {
-            playStand = false;
-        }
-         */
-
         if (currentState == newState) { // state has not changed
             stateTimer += dt;
-        } else {
+        } else { // state has changed
             stateTimer = 0;
         }
+        currentState = newState;
 
-        currentState = newState; // set currentState to new state
-
-        final float vx = body.getLinearVelocity().x;
+        //final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
         if (possessed && currentState != State.WALK) {
             game.currentLevel.sounds.get("walk").stop();
-            playWalk = true;
+            playWalk = true; // can now play walk sound again after stopped walking
+            // this prevents overlapping the sound
         }
-        if (!possessed) {
+        if (!possessed) { // stop any possible looping sounds if not possessed
             game.currentLevel.sounds.get("walk").stop();
             game.currentLevel.sounds.get("glide").stop();
         }
@@ -199,7 +196,7 @@ public class Sylvan extends Entity {
                 break;
             case POSSESS:
                 if (vy == 0) {
-                    frame = (animations.get("standpossess").getKeyFrame(stateTimer, true)); // NOTE: figure out whether to play glide or stand
+                    frame = (animations.get("standpossess").getKeyFrame(stateTimer, true));
                 } else {
                     frame = (animations.get("glidepossess").getKeyFrame(stateTimer, true));
                 }
@@ -214,7 +211,7 @@ public class Sylvan extends Entity {
                 frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
                 if (stateTimer >= 1 && playGlide && possessed) { // need to check possessed here because when unpossessed he is always falling outside screen
                     game.currentLevel.sounds.get("glide").play(0.65f);
-                    playGlide = false;
+                    playGlide = false; // prevent glide sound from overlapping
                 }
                 break;
             case WALK:
@@ -226,7 +223,7 @@ public class Sylvan extends Entity {
                 break;
             case LAND:
                 frame = (animations.get("land").getKeyFrame(timeElapsed, false));
-                playGlide = true;
+                playGlide = true; // glide sound can now play again next time he glides
                 game.currentLevel.sounds.get("glide").stop();
                 if (stateTimer < 0.01) {
                     game.currentLevel.sounds.get("land").play(0.4f);
@@ -245,11 +242,9 @@ public class Sylvan extends Entity {
         setRegion(frame);
     }
 
-
-
     public void resetState() {
         currentState = State.IDLE;
-    }
+    } // used in Level possess()
 
     @Override
     public State getState() {
@@ -267,14 +262,6 @@ public class Sylvan extends Entity {
             case POSSESS: {
                 return State.POSSESS;
             }
-
-            /*
-            case HIT: {
-                if (stateTimer <= 0.5f) { return State.HIT; }
-                else if (vy < 0) {return State.FALL; }
-                else { return State.IDLE; }
-            }
-             */
 
             case IDLE: {
                 if (vy > 0) { return State.JUMP; } // jump pressed
@@ -294,7 +281,6 @@ public class Sylvan extends Entity {
                 return State.JUMP; // jump has not reached max point
             }
 
-            // is it an issue that I'm checking exactly 0?
             case FALL: {
                 if (vy == 0) { return State.LAND; } // no longer falling
                 return State.FALL; // still falling
@@ -304,7 +290,6 @@ public class Sylvan extends Entity {
                 if (stateTimer <= 0.1) {return State.LAND; }
                 return State.IDLE; // state is idle after landing
             }
-            // NOTE: later, check state timer in here and wait to return idle so that animation can play
 
             default: { return State.IDLE; }
 
@@ -312,43 +297,40 @@ public class Sylvan extends Entity {
 
     }
 
-    public void hitEnemy() {
+    public void hitEnemy() { // called when Sylvan runs into an enemy
 
-        flashRed = true;
-
-        knockbackTimer = 0.5f;
-
+        flashRed = true; // allows Sylvan to flash red when rendered
+        knockbackTimer = 0.5f; // reset knockback timer
         health--;
-
-        System.out.println("health:" + health);
-
-        //setColor(Color.RED)
-
         game.currentLevel.sounds.get("hit").play(0.4f);
 
+        // Sylvan dies if health reaches 0
         if (health <= 0) {
             die();
         }
 
     }
 
-    public void getAttacked(boolean leftHit) {
+    public void getAttacked(boolean leftHit) { // called when Sylvan is attacked by an enemy
 
-        flashRed = true;
+        flashRed = true; // allows Sylvan to flash red when rendered
 
         game.currentLevel.sounds.get("hit").play(0.4f);
 
         final float FORCELEFT = -0.25f;
         final float FORCERIGHT = 0.25f;
+        final float FORCEUP = 0.3f;
 
+        // apply certain forces depending on whether the hit was from the left or from the right
         if (leftHit) {
-            body.applyForceToCenter(FORCERIGHT,0.3f,true);
+            body.applyForceToCenter(FORCERIGHT,FORCEUP,true);
         } else {
-            body.applyForceToCenter(FORCELEFT,0.3f,true);
+            body.applyForceToCenter(FORCELEFT,FORCEUP,true);
         }
 
         health--;
 
+        // Sylvan dies if health reaches 0
         if (health <= 0) {
             die();
         }

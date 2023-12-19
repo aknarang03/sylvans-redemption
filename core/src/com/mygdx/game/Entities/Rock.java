@@ -1,4 +1,5 @@
 package com.mygdx.game.Entities;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,26 +13,33 @@ import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
+// Movable Platform Entity
+
 public class Rock extends Entity {
 
-    // sprite variables
+    // ANIMATION VARS
     private Animation rockreturn;
     private Animation rockwalk;
     private Animation rockidle;
     private Animation rockrise;
-
     private Array<TextureAtlas.AtlasRegion> returnFrames;
     private Array<TextureAtlas.AtlasRegion> walkFrames;
     private Array<TextureAtlas.AtlasRegion> idleFrames;
     private Array<TextureAtlas.AtlasRegion> riseFrames;
 
-    boolean playWalk;
-    boolean playReturn;
+    // BOOLS
+    boolean playWalk; // can walk sound play or not
+    boolean playReturn; // can return animation play or not
 
     public Rock(SylvanGame game, Vector2 initPos) {
-        super(game,true, 0.25f,0.25f);
+        super(game,true, 0.25f,0.25f,"Movable platform");
         initialPosition = initPos;
-        ability = "Movable platform";
         posTime = 10;
     }
 
@@ -55,7 +63,6 @@ public class Rock extends Entity {
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
         fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
-
         body.createFixture(fixtureDef);
 
         shape.dispose();
@@ -63,7 +70,7 @@ public class Rock extends Entity {
     }
 
     @Override
-    public void initSprite() {
+    public void initSprite() { // set up the Rock animations and sprite
 
         atlas = new TextureAtlas(Gdx.files.internal("rock/rock.atlas"));
 
@@ -89,12 +96,12 @@ public class Rock extends Entity {
     }
 
     @Override
-    public void move(Control control) {
+    public void move(Control control) { // used to move while Rock is possessed
 
-        final float vx = body.getLinearVelocity().x;
-        final float vy = body.getLinearVelocity().y;
+        //final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y; // still need to get vy in case rock is falling
 
-        switch (control) { // no UP control for rock
+        switch (control) { // no UP control for rock; can only move left or right
             case LEFT:
                 body.setLinearVelocity(-0.8f, vy);
                 left = true;
@@ -114,26 +121,26 @@ public class Rock extends Entity {
     @Override
     public void update(float timeElapsed, float dt) {
 
-        detectTouch();
-
         TextureRegion frame;
-        final State newState = getState(); // to use in stateTimer check
 
+        detectTouch(); // detect whether Rock has been clicked
+
+        final State newState = getState(); // to use in stateTimer check
         // NOTE: currently not useful
         if (currentState == newState) { // state has not changed
             stateTimer += dt;
         } else {
             stateTimer = 0;
         }
+        currentState = newState;
 
-        currentState = newState; // set currentState to new state
-
+        // see if walk sound should play or not
         if (possessed && currentState != State.WALK) {
             game.currentLevel.sounds.get("walk").stop();
-            playWalk = true;
+            playWalk = true; // enables playing the walk sound
         }
 
-        switch (currentState) { // NOTE: this is currently incorrect
+        switch (currentState) {
             case FALL:
                 frame = (animations.get("return").getKeyFrame(timeElapsed, false));
                 break;
@@ -142,11 +149,11 @@ public class Rock extends Entity {
                     frame = animations.get("rise").getKeyFrame(stateTimer,false);
                 } else {
                     frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
-                    if (playWalk && possessed) {
+                    if (playWalk) {
                         game.currentLevel.sounds.get("walk").loop(0.6f);
                         playWalk = false;
                     }
-                    playReturn = true;
+                    playReturn = true; // can play return animation if Rock is no longer idling
                 }
                 break;
             case LAND:
@@ -155,13 +162,13 @@ public class Rock extends Entity {
                     game.currentLevel.sounds.get("land").play(0.1f);
                 }
                 break;
-            default:
-                if (stateTimer < 0.1 && playReturn) {
+            default: // IDLE
+                if (stateTimer < 0.1 && playReturn) { // return anim can play if Rock was just walking
                     frame = animations.get("return").getKeyFrame(stateTimer,false);
                     game.currentLevel.sounds.get("land").play(0.1f);
                     playReturn = false;
                 } else {
-                    frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
+                    frame = (animations.get("idle").getKeyFrame(timeElapsed, false)); // if didn't just stop walking, just play idle
                 }
                 break;
         }
@@ -198,7 +205,6 @@ public class Rock extends Entity {
                 return State.WALK; // still walking
             }
 
-            // is it an issue that I'm checking exactly 0?
             case FALL: {
                 if (vy == 0) { return State.LAND; } // no longer falling
                 return State.FALL; // still falling
@@ -215,6 +221,6 @@ public class Rock extends Entity {
     }
 
     @Override
-    public void aiMove(float dt) {} // this will never be called on rock
+    public void aiMove(float dt) {} // this will never be called on rock as it doesn't move on its own
 
 }

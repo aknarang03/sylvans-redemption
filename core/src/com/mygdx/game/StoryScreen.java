@@ -9,6 +9,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public class StoryScreen implements Screen {
 
     private SylvanGame game;

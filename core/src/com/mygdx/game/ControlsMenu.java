@@ -8,6 +8,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public class ControlsMenu implements Screen {
 
     private SylvanGame game;

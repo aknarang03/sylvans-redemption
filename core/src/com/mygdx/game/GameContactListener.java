@@ -6,6 +6,12 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public class GameContactListener implements ContactListener {
 
     Level level;

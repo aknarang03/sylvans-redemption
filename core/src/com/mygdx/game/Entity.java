@@ -15,80 +15,99 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import java.util.HashMap;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public abstract class Entity extends Sprite {
 
-    // used to set sprite position inside box properly
+    // SETUP VARS
+    protected SylvanGame game; // need game reference to get world to draw body, etc
+    protected World world;
+
+    // SPRITE VARS
+    protected HashMap<String, Animation<TextureRegion>> animations = new HashMap(); // stores animations
+    protected TextureAtlas atlas;
+    public Sprite possessIndicator; // every Entity gets this and it's drawn if they are able to be possessed
+
+    // used to set sprite position inside box properly:
     public float WIDTH_MULTIPLIER;
     public float HEIGHT_MULTIPLIER;
 
-    // for enemies when they aren't possessed
-    public abstract void aiMove(float dt);
-
-    // states for movement / animations
-    protected enum State {IDLE, WALK, JUMP, FALL, LAND, POSSESS, ATTACK, DEAD}; // these may change
+    // STATE VARS
+    protected enum State {IDLE, WALK, JUMP, FALL, LAND, POSSESS, ATTACK, DEAD}; // states for movement / animations
     public State currentState;
-    public String ability; // ability string to show in HUD
 
-    // vars for sprite
-    protected HashMap<String, Animation<TextureRegion>> animations = new HashMap();
-    protected TextureAtlas atlas;
-
-    // vars for body
-    protected SylvanGame game; // need game reference to get world to draw body, etc
-    protected Vector2 initialPosition; // where the Entity will spawn when level is started
+    // BODY VARS
     protected BodyDef bodyDef;
     protected Body body;
     protected PolygonShape shape;
     protected FixtureDef fixtureDef;
-    protected World world; // reference to the world
-    protected boolean left;
-    protected float stateTimer; // this doesn't do anything yet but will be used to ensure animations play before something happens eg. possess animation before possess
-    protected boolean possessed;
 
-    public Sprite possessIndicator;
 
-    protected boolean dead;
+    // BOOLS
+    protected boolean left; // direction Entity is facing
+    protected boolean possessed; // whether Entity is possessed or not
+    protected boolean dead; // whether Entity is dead or not
+
+    // TIMERS
+    protected float stateTimer; // how long Entity has been in current state
+    public float posTime; // how long Entity can be possessed for
+
+    // OTHER
     public Sound deathSound;
+    public String ability; // ability string to show in HUD
+    protected Vector2 initialPosition; // where the Entity will spawn when level is started
 
-    public float posTime;
+    public Entity(SylvanGame game, boolean left, float wm, float hm, String ability) {
 
-    public Entity(SylvanGame game, boolean left, float wm, float hm) { // called for each entity
         this.game = game;
-        stateTimer = 0;
-        currentState = State.IDLE;
         this.left = left;
         WIDTH_MULTIPLIER = wm;
         HEIGHT_MULTIPLIER = hm;
+        this.ability = ability;
+
+        stateTimer = 0;
+        currentState = State.IDLE;
         dead = false;
         createIndicator();
+
     }
 
-    public void createIndicator() {
+    public void createIndicator() { // create the possess indicator sprite
         possessIndicator = new Sprite();
         Texture possessIndicatorImg = new Texture(Gdx.files.internal("possess_indicator.png"));
         possessIndicator.setRegion(possessIndicatorImg);
     }
 
-    public void detectTouch() {
-        if (Gdx.input.isTouched()) {
+    public void detectTouch() { // detect whether Entity is clicked
+        if (Gdx.input.isTouched()) { // detect any touch
             Vector2 touch = game.currentLevel.viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-            if (getBoundingRectangle().contains(touch)) {
-                game.currentLevel.getTargetFromClick(this);
+            if (getBoundingRectangle().contains(touch)) { // if the touch is inside an Entity's bounding rectangle
+                game.currentLevel.getTargetFromClick(this); // get possess target
             }
         }
     }
 
-    public abstract void initBody(); // init the Entity body variables
-    public abstract void initSprite(); // set up Entity animations
-    public Body getBody() {
-        return body;
-    }
-    public abstract void move(Control control); // differs based on entity since they can each move differently
-    public abstract void update(float time, float dt); // update frame etc
-    public abstract State getState(); // return state based on what entity is doing
-    public void die() {
+    public void die() { // kill Entity
         dead = true;
         deathSound.play(1);
     }
+
+    // implementations of the below vary based on the Entity
+
+    public abstract void initBody(); // init the Entity body variables
+    public abstract void initSprite(); // set up Entity animations
+
+    public abstract void update(float time, float dt); // update frame etc
+
+    public abstract void aiMove(float dt); // for Entities to move when they aren't possessed
+    public abstract void move(Control control); // for Entities to move when they are possessed
+
+    // GETTERS
+    public Body getBody() { return body; }
+    public abstract State getState(); // return state based on what entity is doing
 
 }

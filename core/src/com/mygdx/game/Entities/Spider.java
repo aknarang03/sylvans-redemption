@@ -1,4 +1,5 @@
 package com.mygdx.game.Entities;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -13,32 +14,38 @@ import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 // Climbing Enemy
 
 public class Spider extends Entity {
 
-    private float attackCooldown = 0;
-    private double distanceToSylvan = 0;
-
+    // ANIMATION VARS
     private Animation jump;
     private Animation fall;
     private Animation walk;
     private Animation idle;
-
     private Array<TextureAtlas.AtlasRegion> jumpFrames;
     private Array<TextureAtlas.AtlasRegion> fallFrames;
     private Array<TextureAtlas.AtlasRegion> walkFrames;
     private Array<TextureAtlas.AtlasRegion> idleFrames;
 
+    // TIMER VARS
     private float moveTimer = 0; // for "ai" movement
-    boolean playWalk;
+    private float attackCooldown = 0;
+
+    private double distanceToSylvan = 0; // used for checking attack
+    boolean playWalk; // used for whether walk sound should play or not
 
     Sound attackSound;
 
     public Spider(SylvanGame game, Vector2 initPos) {
-        super(game,true,0.7f,0.33f);
+        super(game,true,0.7f,0.33f,"Climb");
         initialPosition = initPos;
-        ability = "Climb";
         playWalk = true;
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/spider_death.mp3"));
         attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy attack.mp3"));
@@ -51,6 +58,7 @@ public class Spider extends Entity {
         world = game.currentLevel.getWorld();
         System.out.println("init body");
 
+        // set up body
         bodyDef = new BodyDef();
         bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -58,6 +66,7 @@ public class Spider extends Entity {
         body.setUserData("spider");
         body.setFixedRotation(true);
 
+        // set up fixture
         shape = new PolygonShape();
         shape.setAsBox(getWidth()/4f,getHeight()/4f);
         fixtureDef = new FixtureDef();
@@ -65,15 +74,13 @@ public class Spider extends Entity {
         fixtureDef.density = 0.009f;
         fixtureDef.friction = 0.5f;
         fixtureDef.restitution = 0.1f;
-
         body.createFixture(fixtureDef);
-
         shape.dispose();
 
     }
 
     @Override
-    public void move(Control control) {
+    public void move(Control control) { // movement while possessed
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
@@ -100,13 +107,12 @@ public class Spider extends Entity {
 
     }
 
-    public void checkAttack() {
+    public void checkAttack() { // called every frame to check whether Spider should attack
 
         boolean correctDir = false;
         boolean leftHit = false;
 
         Vector2 sylvanPos = game.currentLevel.sylvan.getBody().getPosition();
-
         distanceToSylvan = game.currentLevel.getDistance(sylvanPos,body.getPosition());
 
         if ((sylvanPos.x > body.getPosition().x && !left)) {
@@ -119,6 +125,7 @@ public class Spider extends Entity {
             leftHit = false;
         }
 
+        // if Spider is close enough to Sylvan and the y is similar enough, Spider can attack
         if (distanceToSylvan <= 1.7 && Math.abs(sylvanPos.y-body.getPosition().y) <= 0.3 && correctDir) { // CAN ATTACK
             System.out.println("spider in attack range");
             stateTimer = 0;
@@ -161,15 +168,15 @@ public class Spider extends Entity {
     @Override
     public void update(float timeElapsed, float dt) {
 
-        detectTouch();
-
         TextureRegion frame;
+
+        detectTouch(); // detect whether Spider has been clicked
 
         final State newState = getState();
         if (currentState == newState) { // state has not changed
-            stateTimer = stateTimer + dt;
+            stateTimer = stateTimer + dt; // so increase the state timer
         } else {
-            stateTimer = 0;
+            stateTimer = 0; // state has changed so reset the timer
         }
         currentState = newState;
 
@@ -229,13 +236,10 @@ public class Spider extends Entity {
 
     @Override
     public void aiMove(float dt) {
-
-        //game.currentLevel.sounds.get("skitter").stop();
-
         final float vy = body.getLinearVelocity().y;
-
         moveTimer += dt;
         if (moveTimer >= 1) {
+            // flip after certain amount of time
             left = !left;
             moveTimer = 0;
         }
@@ -245,6 +249,8 @@ public class Spider extends Entity {
 
     @Override
     public State getState() { // nearly the same as sylvan's
+
+        // see Sylvan class for explanation
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
@@ -280,7 +286,6 @@ public class Spider extends Entity {
 
             case FALL: {
                 if (vy == 0) { return State.LAND; }
-                //else if (vy > 0) { return State.JUMP; } // allows climb (along with some code in move)
                 return State.FALL;
             }
 

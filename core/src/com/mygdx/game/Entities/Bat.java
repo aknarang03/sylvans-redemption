@@ -1,4 +1,5 @@
 package com.mygdx.game.Entities;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -13,12 +14,17 @@ import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
-import java.util.Random;
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
 
 // Flying Enemy
 
 public class Bat extends Entity {
 
+    // ANIMATION VARS
     private Animation attack;
     private Animation fly;
     private Animation die;
@@ -26,52 +32,55 @@ public class Bat extends Entity {
     private Array<TextureAtlas.AtlasRegion> flyFrames;
     private Array<TextureAtlas.AtlasRegion> dieFrames;
 
+    // TIMERS
     private float moveTimer = 0; // for "ai" move
-    private float flapTimer = 0;
+    private float flapTimer = 0; // for playing flap sound
+    private float attackCooldown = 0; // to ensure attacks don't happen back to back
 
-    private float attackCooldown = 0;
-    private double distanceToSylvan = 0;
-
-    float gravscale;
-
-    Sound attackSound;
+    private double distanceToSylvan = 0; // for attack checks
+    float gravscale; // gravity scale to switch to when possessed
+    Sound attackSound; // sound to play while attacking
 
     public Bat(SylvanGame game, Vector2 initPos) {
-        super(game,true,0.44f,0.44f);
+        super(game,true,0.44f,0.44f,"Fly");
         initialPosition = initPos;
-        ability = "Fly";
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bat_death.mp3"));
         attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bat_attack.mp3"));
         posTime = 10;
     }
 
     @Override
-    public void aiMove(float dt) {
+    public void aiMove(float dt) { // used to move Bat while not possessed
+
         // swap which way it's moving after move timer goes off
         moveTimer += dt;
         if (moveTimer >= 3) {
             left = !left;
             moveTimer = 0;
         }
+
         if (left) {
             body.setLinearVelocity(-1,0); // move left
         } else {
             body.setLinearVelocity(1,0); // move right
         }
+
     }
 
     @Override
-    public void initBody() {
+    public void initBody() { // set up the Bat body
 
         world = game.currentLevel.getWorld();
 
+        // set up body
         bodyDef = new BodyDef();
         bodyDef.position.set(initialPosition.x,initialPosition.y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
-        body.setUserData("bat"); // this may not work when there's a bunch of bats
+        body.setUserData("bat");
         body.setFixedRotation(true);
 
+        // set up fixture
         shape = new PolygonShape();
         shape.setAsBox(getWidth()/2.5f,getHeight()/2.5f);
         fixtureDef = new FixtureDef();
@@ -89,7 +98,9 @@ public class Bat extends Entity {
     }
 
     @Override
-    public State getState() {
+    public State getState() { // state machine
+
+        // see Sylvan class for explanation
 
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
@@ -144,8 +155,9 @@ public class Bat extends Entity {
     }
 
     @Override
-    public void move(Control control) {
+    public void move(Control control) { // used to move while Bat is possessed
 
+        // get current velocity to use below so that Bat can move diagonally
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
@@ -170,7 +182,7 @@ public class Bat extends Entity {
     }
 
     @Override
-    public void initSprite() {
+    public void initSprite() { // set up the Bat animations and sprite
 
         atlas = new TextureAtlas(Gdx.files.internal("bat/bat.atlas"));
 
@@ -192,15 +204,15 @@ public class Bat extends Entity {
 
     }
 
-    public void checkAttack() {
+    public void checkAttack() { // called every frame to check if Bat should attack Sylvan
 
         boolean correctDir = false;
         boolean leftHit = false;
 
         Vector2 sylvanPos = game.currentLevel.sylvan.getBody().getPosition();
-
         distanceToSylvan = game.currentLevel.getDistance(sylvanPos,body.getPosition());
 
+        // determine how attack should happen
         if ((sylvanPos.x > body.getPosition().x && !left)) {
             // sylvan is to the right of bat and bat is facing right
             correctDir = true;
@@ -211,7 +223,8 @@ public class Bat extends Entity {
             leftHit = false;
         }
 
-        if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 0.3 && correctDir) { // CAN ATTACK
+        // if Bat is close enough to Sylvan and the y is similar enough, Bat can attack
+        if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 0.3 && correctDir) {
             System.out.println("bat in attack range");
             currentState = State.ATTACK;
             stateTimer = 0;
@@ -219,17 +232,17 @@ public class Bat extends Entity {
             game.currentLevel.sylvan.getAttacked(leftHit);
             attackCooldown = 5;
         }
+
     }
 
     @Override
     public void update(float timeElapsed, float dt) {
 
-        detectTouch();
-
         TextureRegion frame;
+        detectTouch(); // see if Bat was clicked
+        flapTimer+=dt; // increase timer for whether to play flap sound
 
-        flapTimer+=dt;
-
+        // set the current state
         final State newState = getState();
         if (currentState == newState) { // state has not changed
             stateTimer = stateTimer + dt;
@@ -238,11 +251,12 @@ public class Bat extends Entity {
         }
         currentState = newState;
 
+        // check attack if it makes sense to attack
         if (!possessed && attackCooldown <= 0) {
             checkAttack();
         }
 
-        switch (currentState) { // animations
+        switch (currentState) { // update animation / sounds
 
             case DEAD:
                 frame = (animations.get("die").getKeyFrame(stateTimer,true));
@@ -254,8 +268,7 @@ public class Bat extends Entity {
 
             case JUMP:
                 frame = (animations.get("fly").getKeyFrame(timeElapsed, true));
-                if (flapTimer >= 0.8) {
-                //if (animations.get("fly").getKeyFrameIndex(timeElapsed) == 1){
+                if (flapTimer >= 0.8) { // play flap sound if enough time has passed
                     game.currentLevel.sounds.get("flap").play(0.5f);
                     flapTimer = 0;
                 }
@@ -274,12 +287,12 @@ public class Bat extends Entity {
         setRegion(frame);
 
         if (!possessed) {
-            body.setGravityScale(0f);
+            body.setGravityScale(0f); // Bat should stay in the air if not possessed
             if (currentState != State.ATTACK && !dead) {
-                aiMove(dt);
+                aiMove(dt); // move around automatically if not possessed, not attacking, and not dead
             }
         } else {
-            body.setGravityScale(gravscale);
+            body.setGravityScale(gravscale); // change Bat's gravity back to normal so it can fly around
         }
 
         attackCooldown -= dt;

@@ -15,6 +15,12 @@ import com.mygdx.game.Entities.Token;
 
 import java.util.HashMap;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public class SylvanGame extends Game {
 
 	public HashMap<String, Sound> uiSounds = new HashMap();
@@ -240,9 +246,11 @@ public class SylvanGame extends Game {
 	}
 
 	public void setCurrentLevel(Level level) {
+		/*
 		if (currentLevel != null) {
 			currentLevel.dispose();
 		}
+		 */
 		this.currentLevel = level;
 		this.setScreen(level);
 		currentLevel.music.setVolume(0.5f);
