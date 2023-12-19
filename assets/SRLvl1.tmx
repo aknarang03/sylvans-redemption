@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="90" height="43" tilewidth="16" tileheight="16" infinite="0" nextlayerid="20" nextobjectid="47">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="90" height="43" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="47">
  <tileset firstgid="1" source="PrototypeTiles.tsx"/>
  <tileset firstgid="626" source="bgtile.tsx"/>
+ <imagelayer id="21" name="fillin" offsetx="-704" offsety="-1202">
+  <image source="purple fillin.jpg" width="5000" height="2570"/>
+ </imagelayer>
+ <imagelayer id="6" name="Background" offsetx="0" offsety="192">
+  <image source="big forest background.png" width="1440" height="480"/>
+ </imagelayer>
  <layer id="18" name="Tile Layer 3" width="90" height="43">
   <data encoding="csv">
 626,627,626,627,628,629,633,633,626,627,628,629,633,626,627,628,629,626,627,628,629,629,629,629,626,627,628,629,633,633,633,633,633,626,630,630,630,634,634,626,630,630,634,634,626,627,628,629,633,633,629,630,631,626,627,628,629,637,637,633,629,626,627,626,627,628,626,627,628,626,627,628,629,637,641,626,627,628,626,627,628,626,627,628,629,633,626,627,628,629,
@@ -49,9 +55,6 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <imagelayer id="6" name="Background" offsetx="0" offsety="192">
-  <image source="big forest background.png" width="1440" height="480"/>
- </imagelayer>
  <layer id="1" name="Tile Layer 1" width="90" height="43">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
