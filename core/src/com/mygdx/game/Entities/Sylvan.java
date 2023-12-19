@@ -305,7 +305,7 @@ public class Sylvan extends Entity {
         game.currentLevel.sounds.get("hit").play(0.4f);
 
         // Sylvan dies if health reaches 0
-        if (health <= 0) {
+        if (health <= 0 && !dead) {
             die();
         }
 
@@ -331,7 +331,7 @@ public class Sylvan extends Entity {
         health--;
 
         // Sylvan dies if health reaches 0
-        if (health <= 0) {
+        if (health <= 0 && !dead) {
             die();
         }
 

@@ -82,9 +82,6 @@ public class InfoDisplay implements Disposable {
     }
 
     public void getInfo() { // get info from the level for updating the labels
-
-        System.out.println("viewport width: " + camera.viewportWidth + " viewport height: " + camera.viewportHeight);
-
         possessTimer = game.currentLevel.possessTimer;
         collectedTokens = game.currentLevel.numTokensCollected;
         totalTokens = game.currentLevel.TOKEN_COUNT;

@@ -53,8 +53,8 @@ public class Level implements Screen {
     private Entity targetEntity; // Entity to possess
 
     // RENDERERS
-    private Box2DDebugRenderer debugRenderer;
-    Matrix4 debugMatrix; // matrix for debug renderer
+    //private Box2DDebugRenderer debugRenderer;
+    //Matrix4 debugMatrix; // matrix for debug renderer
     ShapeRenderer shapeRenderer; // for the line that's drawn between sylvan and enemy and the pause box
     private OrthogonalTiledMapRenderer mapRenderer;
 
@@ -136,8 +136,8 @@ public class Level implements Screen {
 
         // init renderers
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / SylvanGame.PPM);
-        debugRenderer = new Box2DDebugRenderer();
         shapeRenderer = new ShapeRenderer();
+        //debugRenderer = new Box2DDebugRenderer();
 
         // set up world
         Vector2 gravity = new Vector2(0, -10);
@@ -458,7 +458,7 @@ public class Level implements Screen {
         sylvan.knockbackTimer -= delta; // decrement knockback dmg cooldown
         possessCooldown -= delta; // decrement possess cooldown
 
-        if (shouldPossess()) {
+        if (shouldPossess() && !sylvan.dead) {
             possess();
         }
 
@@ -481,8 +481,9 @@ public class Level implements Screen {
             enemy.update(timeElapsed, delta);
         }
 
-        camera.update();
+        if (!sylvan.dead) {camera.update();
         mapRenderer.setView(camera); // has to be called anytime camera updates
+        }
 
         infoDisplay.updateLabels(); // update what displays in top left of screen based on any new data
 
@@ -549,8 +550,8 @@ public class Level implements Screen {
         camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0); // set camera pos to player
 
         // render debug boxes
-        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(), viewport.getScreenHeight(), 0);
-        debugRenderer.render(world, camera.combined);
+        //debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(), viewport.getScreenHeight(), 0);
+        //debugRenderer.render(world, camera.combined);
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
@@ -719,15 +720,16 @@ public class Level implements Screen {
     @Override
     public void dispose() { // not working
         System.out.println("dispose");
-        /*
-        renderer.dispose();
+
         map.dispose();
-        //debugRenderer.dispose();
-        music.dispose();
-        infoDisplay.dispose();
+        mapRenderer.dispose();
         world.dispose();
+        //debugRenderer.dispose();
+        infoDisplay.dispose();
+        music.dispose();
+
         // dispose sounds?
-         */
+
     }
 
     @Override

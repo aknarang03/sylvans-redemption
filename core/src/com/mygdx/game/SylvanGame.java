@@ -37,22 +37,18 @@ public class SylvanGame extends Game {
 	Music caveMusic;
 	Music mainMenuMusic;
 
-	public BitmapFont font;
+	public SpriteBatch batch;
+	public BitmapFont font; // font to draw text throughout project
 
 	public static final float PPM = 64; // Pixels Per Meter
 
-	// initial screen width and height upon run
+	// initial screen width and height
 	public static final int SCREEN_WIDTH = 400;
 	public static final int SCREEN_HEIGHT = 300;
 
-
-	public SpriteBatch batch;
-
 	public Level currentLevel; // keep track of current level
 
-	// Levels
-	//public Level level;
-
+	// screens
 	public MainMenu mainMenu;
 	public ControlsMenu controlsMenu;
 	public GameOverScreen gameOver;
@@ -63,15 +59,18 @@ public class SylvanGame extends Game {
 
 	@Override
 	public void create () {
-		initSounds();
+
+		initSounds(); // set up sounds map
+
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		//createLevel0();
-		createLevel1();
-		//createLevel2();
-		initScreens();
-		setScreen(mainMenu);
+
+		createLevel1(); // creates level 1 and sets it to current level
+		initScreens(); // creates any screens that only need to be created once
+
+		setScreen(mainMenu); // begin at main menu
 		mainMenuMusic.play();
+
 	}
 
 	public void initScreens() {
@@ -85,10 +84,6 @@ public class SylvanGame extends Game {
 	}
 
 	public void initSounds() {
-
-		// I should change it to just fully declare Sounds in here since I'm adding them to the map anyway
-		// would reduce the amt of variables above
-		// do that for the level sounds too
 
 		startGameSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start.mp3"));
 		startGameOverlaySound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start_overlay.mp3"));
@@ -111,15 +106,29 @@ public class SylvanGame extends Game {
 
 	}
 
-	public void pickLevel(Level level) { // change currentLevel
+	public void pickLevel(Level level) {
 		currentLevel.music.stop();
 		mainMenuMusic.stop();
-		setCurrentLevel(level);
-		level.createEntities();
+		setScreenToLevel(level); // change currentLevel to passed in level
+		level.createEntities(); // set up level
+	}
+
+	public void setScreenToLevel(Level level) {
+		/*
+		if (currentLevel != null) {
+			currentLevel.dispose();
+		}
+		 */
+		this.setScreen(level); // set screen to passed in level
+		// init music
+		currentLevel.music.setVolume(0.5f);
+		currentLevel.music.setLooping(true);
+		currentLevel.music.play();
 	}
 
 	public void nextLevel(int currentLevelID) {
-		currentLevel.music.stop();
+		//Level prevLevel = currentLevel;
+		//prevLevel.music.stop();
 		currentLevel.dispose();
 		switch (currentLevelID) {
 			case 0:
@@ -130,14 +139,19 @@ public class SylvanGame extends Game {
 				break;
 		}
 		pickLevel(currentLevel);
+		//prevLevel.dispose();
 	}
 
 	public void restartLevel(int id) {
+		//Level prevLevel = currentLevel;
 		currentLevel.dispose();
+		//currentLevel = null;
 		switch (id) {
+			/*
 			case 0:
 				createLevel0();
 				break;
+			 */
 			case 1:
 				createLevel1();
 				break;
@@ -149,36 +163,14 @@ public class SylvanGame extends Game {
 	}
 
 	public void restartGame() {
-		currentLevel.music.stop();
+		//Level prevLevel = currentLevel;
+		//prevLevel.music.stop();
+		//prevLevel.dispose();
 		currentLevel.dispose();
 		setScreen(mainMenu);
 		mainMenuMusic.play();
 		createLevel1();
-	}
-
-	public void createLevel0() {
-		// PROTOTYPE LEVEL
-
-		final int numEnemies = 3;
-		final int numTokens = 2;
-		final int id = 0;
-
-		Bat bat = new Bat(this,new Vector2(5,3));
-		Spider spider = new Spider(this,new Vector2(2.4f,2.5f));
-		Rock rock = new Rock(this,new Vector2(1,1));
-
-		Array<Entity> prototypeEnemies = new Array<Entity>(numEnemies);
-		prototypeEnemies.add(bat,spider,rock);
-
-		Token token1 = new Token(this,new Vector2(6,4));
-		Token token2 = new Token(this,new Vector2(5,4));
-
-		Array<Token> prototypeTokens = new Array<Token>();
-		prototypeTokens.add(token1, token2);
-
-		String prototypeMapFilename = "PrototypeLevelMap.tmx";
-
-		currentLevel = new Level(this, prototypeEnemies, prototypeTokens, prototypeMapFilename, numTokens, id, forestMusic);
+		//prevLevel.dispose();
 	}
 
 	public void createLevel1() {
@@ -240,19 +232,6 @@ public class SylvanGame extends Game {
 
 		currentLevel = new Level(this, lvl2enemies, lvl2tokens, mapFilename, numTokens, id, caveMusic);
 
-	}
-
-	public void setCurrentLevel(Level level) {
-		/*
-		if (currentLevel != null) {
-			currentLevel.dispose();
-		}
-		 */
-		this.currentLevel = level;
-		this.setScreen(level);
-		currentLevel.music.setVolume(0.5f);
-		currentLevel.music.setLooping(true);
-		currentLevel.music.play();
 	}
 
 	@Override
