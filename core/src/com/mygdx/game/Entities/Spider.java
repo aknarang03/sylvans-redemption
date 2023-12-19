@@ -173,9 +173,12 @@ public class Spider extends Entity {
         }
         currentState = newState;
 
-        if (currentState != State.WALK) {
+        if (possessed && currentState != State.WALK) {
             game.currentLevel.sounds.get("skitter").stop();
             playWalk = true;
+        }
+        if (!possessed) {
+            game.currentLevel.sounds.get("skitter").stop();
         }
 
         switch (currentState) {
@@ -184,7 +187,7 @@ public class Spider extends Entity {
                 break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
-                if (playWalk && possessed) {
+                if (playWalk) {
                     game.currentLevel.sounds.get("skitter").loop(1f);
                     playWalk = false;
                 }
