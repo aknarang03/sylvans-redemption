@@ -106,6 +106,9 @@ public class SylvanGame extends Game {
 
 	}
 
+	// SEE IF COMMENTING OUT MUSIC DOES NOTHING
+	// combine pick level and set screen to level
+
 	public void pickLevel(Level level) {
 		currentLevel.music.stop();
 		mainMenuMusic.stop();
@@ -114,11 +117,6 @@ public class SylvanGame extends Game {
 	}
 
 	public void setScreenToLevel(Level level) {
-		/*
-		if (currentLevel != null) {
-			currentLevel.dispose();
-		}
-		 */
 		this.setScreen(level); // set screen to passed in level
 		// init music
 		currentLevel.music.setVolume(0.5f);
@@ -127,8 +125,7 @@ public class SylvanGame extends Game {
 	}
 
 	public void nextLevel(int currentLevelID) {
-		//Level prevLevel = currentLevel;
-		//prevLevel.music.stop();
+		// current level becomes next level based on current id
 		currentLevel.dispose();
 		switch (currentLevelID) {
 			case 0:
@@ -138,20 +135,12 @@ public class SylvanGame extends Game {
 				createLevel2();
 				break;
 		}
-		pickLevel(currentLevel);
-		//prevLevel.dispose();
+		pickLevel(currentLevel); //
 	}
 
 	public void restartLevel(int id) {
-		//Level prevLevel = currentLevel;
 		currentLevel.dispose();
-		//currentLevel = null;
 		switch (id) {
-			/*
-			case 0:
-				createLevel0();
-				break;
-			 */
 			case 1:
 				createLevel1();
 				break;
@@ -163,14 +152,10 @@ public class SylvanGame extends Game {
 	}
 
 	public void restartGame() {
-		//Level prevLevel = currentLevel;
-		//prevLevel.music.stop();
-		//prevLevel.dispose();
 		currentLevel.dispose();
 		setScreen(mainMenu);
 		mainMenuMusic.play();
 		createLevel1();
-		//prevLevel.dispose();
 	}
 
 	public void createLevel1() {
@@ -238,9 +223,8 @@ public class SylvanGame extends Game {
 	public void render () { super.render(); } // calls current screen's (Level's) render method
 	
 	@Override
-	public void dispose () { // IMPLEMENT
+	public void dispose () {
 		batch.dispose();
-		// dispose of textures too?
 	}
 
 }

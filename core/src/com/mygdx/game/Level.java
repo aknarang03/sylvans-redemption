@@ -724,11 +724,12 @@ public class Level implements Screen {
         map.dispose();
         mapRenderer.dispose();
         world.dispose();
-        //debugRenderer.dispose();
         infoDisplay.dispose();
         music.dispose();
 
-        // dispose sounds?
+        for (String sound : sounds.keySet()) {
+            sounds.get(sound).dispose();
+        }
 
     }
 

@@ -42,6 +42,7 @@ public class Spider extends Entity {
     boolean playWalk; // used for whether walk sound should play or not
 
     Sound attackSound;
+    Sound walkSound;
 
     public Spider(SylvanGame game, Vector2 initPos) {
         super(game,true,0.7f,0.33f,"Climb");
@@ -49,6 +50,7 @@ public class Spider extends Entity {
         playWalk = true;
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/spider_death.mp3"));
         attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy attack.mp3"));
+        walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/skitter.mp3"));
         posTime = 5;
     }
 
@@ -181,11 +183,11 @@ public class Spider extends Entity {
         currentState = newState;
 
         if (possessed && currentState != State.WALK) {
-            game.currentLevel.sounds.get("skitter").stop();
+            walkSound.stop();
             playWalk = true;
         }
         if (!possessed) {
-            game.currentLevel.sounds.get("skitter").stop();
+            walkSound.stop();
         }
 
         switch (currentState) {
@@ -195,7 +197,7 @@ public class Spider extends Entity {
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                 if (playWalk) {
-                    game.currentLevel.sounds.get("skitter").loop(1f);
+                    walkSound.loop(1f);
                     playWalk = false;
                 }
                 break;
@@ -256,7 +258,6 @@ public class Spider extends Entity {
         final float vy = body.getLinearVelocity().y;
 
         if (dead) {
-            game.currentLevel.sounds.get("skitter").stop();
             return State.DEAD;
         }
 
