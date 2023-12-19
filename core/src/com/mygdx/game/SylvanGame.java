@@ -56,6 +56,7 @@ public class SylvanGame extends Game {
 	public LevelWinScreen levelWin;
 	public HowToPlayScreen howToPlay;
 	public StoryScreen story;
+	public GameCompleteScreen gameComplete;
 
 	@Override
 	public void create () {
@@ -65,14 +66,19 @@ public class SylvanGame extends Game {
 		//createLevel0();
 		createLevel1();
 		//createLevel2();
+		initScreens();
+		setScreen(mainMenu);
+		mainMenuMusic.play();
+	}
+
+	public void initScreens() {
 		mainMenu = new MainMenu(this);
 		levelWin = new LevelWinScreen(this);
 		gameOver = new GameOverScreen(this);
 		controlsMenu = new ControlsMenu(this);
 		howToPlay = new HowToPlayScreen(this);
 		story = new StoryScreen(this);
-		setScreen(mainMenu);
-		mainMenuMusic.play();
+		gameComplete = new GameCompleteScreen(this);
 	}
 
 	public void initSounds() {
@@ -183,7 +189,6 @@ public class SylvanGame extends Game {
 		Bat bat2 = new Bat(this,new Vector2(16.6f,2));
 		Spider spider2 = new Spider(this,new Vector2(19.8f,1));
 		Bat bat3 = new Bat(this,new Vector2(20f,4));
-		//Rock rock = new Rock(this,new Vector2(1,1));
 
 		Array<Entity> lvl1enemies = new Array<Entity>(numEnemies);
 		lvl1enemies.add(bat1,spider1,bat2,spider2);
@@ -204,25 +209,26 @@ public class SylvanGame extends Game {
 
 	public void createLevel2() {
 
-		final int numEnemies = 5;
+		final int numEnemies = 7;
 		final int numTokens = 4;
 		final int id = 2;
 
-		Bat bat1 = new Bat(this,new Vector2(4,6.5f));
-		Spider spider1 = new Spider(this,new Vector2(4,1));
-		Bat bat2 = new Bat(this,new Vector2(16.6f,2));
-		Spider spider2 = new Spider(this,new Vector2(19.8f,1));
-		Bat bat3 = new Bat(this,new Vector2(20f,4));
-		Rock rock1 = new Rock(this,new Vector2(1,1));
+		Spider spider1 = new Spider(this,new Vector2(4,3));
+		Rock rock1 = new Rock(this, new Vector2(6,8));
+		Rock rock2 = new Rock(this, new Vector2(1.5f,8));
+		Spider spider2 = new Spider(this,new Vector2(13.83f,5.6f));
+		Bat bat1 = new Bat(this,new Vector2(19.16f,6.9f));
+		Bat bat2 = new Bat(this,new Vector2(17,2));
+		Rock rock3 = new Rock(this,new Vector2(24.65f,2));
 
 		Array<Entity> lvl2enemies = new Array<Entity>(numEnemies);
-		lvl2enemies.add(bat1,spider1,bat2,spider2);
-		lvl2enemies.add(bat3,rock1);
+		lvl2enemies.add(spider1,rock1,rock2,spider2);
+		lvl2enemies.add(bat1,bat2,rock3);
 
-		Token token1 = new Token(this,new Vector2(2,7));
-		Token token2 = new Token(this,new Vector2(13.25f,8.9f));
-		Token token3 = new Token(this,new Vector2(22.1f,1.1f));
-		Token token4 = new Token(this,new Vector2(21f,6.3f));
+		Token token1 = new Token(this,new Vector2(0.75f,5.9f));
+		Token token2 = new Token(this,new Vector2(15,7.07f));
+		Token token3 = new Token(this,new Vector2(21.03f,8.4f));
+		Token token4 = new Token(this,new Vector2(24.15f,2));
 
 		Array<Token> lvl2tokens = new Array<Token>();
 		lvl2tokens.add(token1,token2,token3,token4);

@@ -29,10 +29,10 @@ public class Rock extends Entity {
     boolean playReturn;
 
     public Rock(SylvanGame game, Vector2 initPos) {
-        super(game,true, 0.25f,0.22f);
+        super(game,true, 0.25f,0.25f);
         initialPosition = initPos;
         ability = "Movable platform";
-        posTime = 5;
+        posTime = 10;
     }
 
     public void initBody() {
@@ -94,12 +94,6 @@ public class Rock extends Entity {
         final float vx = body.getLinearVelocity().x;
         final float vy = body.getLinearVelocity().y;
 
-        /*
-        if ((control == Control.LEFT || control == Control.RIGHT) && currentState==State.WALK && stateTimer <= 0.5){
-            return;
-        }
-         */
-
         switch (control) { // no UP control for rock
             case LEFT:
                 body.setLinearVelocity(-0.8f, vy);
@@ -119,6 +113,8 @@ public class Rock extends Entity {
 
     @Override
     public void update(float timeElapsed, float dt) {
+
+        detectTouch();
 
         TextureRegion frame;
         final State newState = getState(); // to use in stateTimer check

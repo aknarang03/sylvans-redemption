@@ -161,6 +161,8 @@ public class Spider extends Entity {
     @Override
     public void update(float timeElapsed, float dt) {
 
+        detectTouch();
+
         TextureRegion frame;
 
         final State newState = getState();
@@ -245,6 +247,7 @@ public class Spider extends Entity {
         final float vy = body.getLinearVelocity().y;
 
         if (dead) {
+            game.currentLevel.sounds.get("skitter").stop();
             return State.DEAD;
         }
 

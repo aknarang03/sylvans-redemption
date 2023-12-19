@@ -41,7 +41,7 @@ public class ControlsMenu implements Screen {
         game.font.draw(game.batch, "Jump: UP/W",150,250);
         game.font.draw(game.batch, "Left: LEFT/A",150,230);
         game.font.draw(game.batch, "Right: RIGHT/D",150,210);
-        game.font.draw(game.batch, "Possess / Unpossess: RSHIFT/E",100,190);
+        game.font.draw(game.batch, "Possess / Unpossess: Click enemy, RSHIFT/E",30,190);
         game.font.draw(game.batch, "Select: ENTER",150,170);
         game.font.draw(game.batch, "Pause: ESC",150,150);
         game.font.draw(game.batch, "Glide: Hold Jump as Sylvan",100,110);

@@ -224,6 +224,8 @@ public class Bat extends Entity {
     @Override
     public void update(float timeElapsed, float dt) {
 
+        detectTouch();
+
         TextureRegion frame;
 
         flapTimer+=dt;

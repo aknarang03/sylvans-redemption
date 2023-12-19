@@ -77,7 +77,7 @@ public class Level implements Screen {
     // camera vars
     public OrthographicCamera camera;
     public OrthographicCamera textCam;
-    private Viewport viewport;
+    public Viewport viewport;
 
     // visuals / sounds
     public Music music;
@@ -269,20 +269,6 @@ public class Level implements Screen {
         shape = new PolygonShape();
         fixtureDef = new FixtureDef();
 
-        // uses the ground object layer in tmx file to draw the boxes in the correct places
-        for (MapObject mapObject : map.getLayers().get("Ground Objects").getObjects().getByType(RectangleMapObject.class)) {
-            System.out.println("got object");
-            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
-            body = world.createBody(bodyDef);
-            shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
-            fixtureDef.shape = shape;
-            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
-            body.createFixture(fixtureDef);
-            body.setUserData("ground");
-        }
-
         // use wall object layer to put wall bodies
         for (MapObject mapObject : map.getLayers().get("Wall Objects").getObjects().getByType(RectangleMapObject.class)) {
             System.out.println("got object");
@@ -297,6 +283,21 @@ public class Level implements Screen {
             body.createFixture(fixtureDef);
             body.setUserData("wall");
             wallBodies.add(body);
+        }
+
+        // uses the ground object layer in tmx file to draw the boxes in the correct places
+        for (MapObject mapObject : map.getLayers().get("Ground Objects").getObjects().getByType(RectangleMapObject.class)) {
+            System.out.println("got object");
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
+            body = world.createBody(bodyDef);
+            shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
+            fixtureDef.shape = shape;
+            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
+            fixtureDef.friction = 1;
+            body.createFixture(fixtureDef);
+            body.setUserData("ground");
         }
 
         for (MapObject mapObject : map.getLayers().get("Damage Objects").getObjects().getByType(RectangleMapObject.class)) {
@@ -429,7 +430,11 @@ public class Level implements Screen {
             if (playCompleted) {
                 game.uiSounds.get("completed level").play(1f);
                 playCompleted = false;
-                game.setScreen(game.levelWin);
+                if (id < 2) {
+                    game.setScreen(game.levelWin);
+                } else {
+                    game.setScreen(game.gameComplete);
+                }
             }
             // SET SCREEN TO LEVEL COMPLETED SCREEN
             // DESTROY THIS LEVEL
@@ -543,8 +548,8 @@ public class Level implements Screen {
         camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0); // set camera pos to player
 
         // render debug boxes
-        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(), viewport.getScreenHeight(), 0);
-        debugRenderer.render(world, camera.combined);
+        //debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(), viewport.getScreenHeight(), 0);
+        //debugRenderer.render(world, camera.combined);
 
         game.batch.setProjectionMatrix(camera.combined);
 
@@ -646,6 +651,17 @@ public class Level implements Screen {
         targetEntity = null;
         sylvan.resetState(); // set Sylvan's state back to IDLE from POSSESS
         possessSound.play(0.5f);
+    }
+
+    public void getTargetFromClick(Entity target) {
+
+        double distance = getDistance(sylvan.body.getPosition(),target.body.getPosition());
+
+        if (sylvan.possessed && cooldown <= 0 && distance <= 1.5) {
+            sylvan.currentState = Entity.State.POSSESS;
+            sylvan.stateTimer = 0;
+            targetEntity = target;
+        }
     }
 
     public void getPossessTarget() {

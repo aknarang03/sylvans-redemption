@@ -69,6 +69,15 @@ public abstract class Entity extends Sprite {
         possessIndicator.setRegion(possessIndicatorImg);
     }
 
+    public void detectTouch() {
+        if (Gdx.input.isTouched()) {
+            Vector2 touch = game.currentLevel.viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+            if (getBoundingRectangle().contains(touch)) {
+                game.currentLevel.getTargetFromClick(this);
+            }
+        }
+    }
+
     public abstract void initBody(); // init the Entity body variables
     public abstract void initSprite(); // set up Entity animations
     public Body getBody() {

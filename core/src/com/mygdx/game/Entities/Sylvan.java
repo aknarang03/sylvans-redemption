@@ -43,7 +43,7 @@ public class Sylvan extends Entity {
 
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
-        super(game,false, 0.36f,0.33f);
+        super(game,false, 0.36f,0.39f);
         initialPosition = initPos;
         health = 3;
         playGlide = true;
@@ -67,7 +67,7 @@ public class Sylvan extends Entity {
 
         // set up fixture
         shape = new PolygonShape();
-        shape.setAsBox(getWidth() / 3.8f, getHeight() / 3.1f);
+        shape.setAsBox(getWidth() / 6.5f, getHeight() / 3.1f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
@@ -160,6 +160,8 @@ public class Sylvan extends Entity {
     public void update(float timeElapsed, float dt) {
 
         TextureRegion frame;
+
+        System.out.println("x: " + body.getPosition().x + "y: " + body.getPosition().y);
 
         final State newState = getState(); // to use in stateTimer check
 
@@ -336,8 +338,8 @@ public class Sylvan extends Entity {
 
         game.currentLevel.sounds.get("hit").play(0.4f);
 
-        final float FORCELEFT = -0.8f;
-        final float FORCERIGHT = 0.3f;
+        final float FORCELEFT = -0.25f;
+        final float FORCERIGHT = 0.25f;
 
         if (leftHit) {
             body.applyForceToCenter(FORCERIGHT,0.3f,true);
