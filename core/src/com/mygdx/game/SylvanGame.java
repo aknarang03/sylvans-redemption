@@ -23,13 +23,16 @@ Jenna Esposito
 
 public class SylvanGame extends Game {
 
+	// SOUND VARS
 	public HashMap<String, Sound> uiSounds = new HashMap();
-	Sound startGameSound;
-	Sound startGameOverlaySound;
-	Sound completedLevelSound;
-	Sound startLevelSound;
-	Sound pauseSound;
-	Sound selectSound;
+	private Sound startGameSound;
+	private Sound startGameOverlaySound;
+	private Sound completedLevelSound;
+	private Sound startLevelSound;
+	private Sound pauseSound;
+	private Sound selectSound;
+
+	// MUSIC VARS
 	Music forestMusic;
 	Music caveMusic;
 	Music mainMenuMusic;
@@ -42,12 +45,6 @@ public class SylvanGame extends Game {
 	public static final int SCREEN_WIDTH = 400;
 	public static final int SCREEN_HEIGHT = 300;
 
-	// collision groups (currently not using)
-	public static final short PLAYER_GROUP = 1;
-	public static final short ENEMY_GROUP = 2;
-	public static final short GROUND_GROUP = 3;
-	public static final short MOVABLE_GROUP = 4;
-	public static final short TOKEN_GROUP = 5;
 
 	public SpriteBatch batch;
 

@@ -14,7 +14,7 @@ Jenna Esposito
 
 public class GameContactListener implements ContactListener {
 
-    Level level;
+    Level level; // need level to be passed in thru constructor so that it can be acted on from here
 
     GameContactListener(Level level) { // or take Game game?
         this.level = level;
@@ -23,27 +23,31 @@ public class GameContactListener implements ContactListener {
     @Override
     public void beginContact(Contact contact) {
 
-        // figure out which fixture is enemy and which one is player
+        // figure out which fixture is player and which one is not
         Fixture other = (contact.getFixtureA().getBody().getUserData() == level.currentInhabitedEntity.getBody().getUserData()) ? contact.getFixtureB() : contact.getFixtureA();
         Fixture player = (contact.getFixtureA().getBody().getUserData() == level.currentInhabitedEntity.getBody().getUserData()) ? contact.getFixtureA() : contact.getFixtureB();
 
-        // KNOCKBACK
+        // KNOCKBACK (for when Sylvan runs into an enemy)
 
         if (player.getBody().getUserData() == "sylvan" && (other.getBody().getUserData() == "bat" || other.getBody().getUserData() == "spider")) {
+            // if player is Sylvan (so he is not possessing anyone) and the other fixture is a bat or spider
 
             double velx = player.getBody().getLinearVelocity().x;
             double vely = player.getBody().getLinearVelocity().y;
 
+            // get direction(s) that Sylvan was going when he ran into enemy
             boolean left = (velx < 0);
             boolean right = (velx > 0);
             boolean up = (vely > 0);
             boolean down = (vely < 0);
 
-            final float FORCEUP = 0.7f;
-            final float FORCEDOWN = -0.7f;
+            // forces to apply
+            final float FORCEUP = 0.5f;
+            final float FORCEDOWN = -0.5f;
             final float FORCERIGHT = 0.5f;
             final float FORCELEFT = -0.5f;
 
+            // apply the opposite force of whatever direction Sylvan was going in
             if (left && up) {
                 player.getBody().applyForceToCenter(FORCERIGHT,FORCEDOWN,true);
             } else if (right && up) {
@@ -62,21 +66,25 @@ public class GameContactListener implements ContactListener {
                 player.getBody().applyForceToCenter(FORCELEFT,0,true);
             }
 
-            if (level.sylvan.knockbackTimer <= 0 && level.cooldown <= 0) {
+            // Sylvan only takes damage from knockback if both cooldowns are low enough
+            if (level.sylvan.knockbackTimer <= 0 && level.possessCooldown <= 0) {
                 level.sylvan.hitEnemy();
             }
 
-
         }
+
+        // TOKEN COLLECT
 
         else if (other.getBody().getUserData().toString().contains("token")) {
-            // collect token
+            // player can be anyone (so Sylvan can be possessing something) and other fixture has to be the token
+            // token's user data for body contains "token" and a number, so parse out the number to see which one was collected
             String datastring = other.getBody().getUserData().toString();
-            char idxChar = datastring.charAt(5);
-            int idx = Integer.parseInt(String.valueOf(idxChar));
-            level.getToken(idx);
-
+            char idxChar = datastring.charAt(5); // 5th character is the token number
+            int idx = Integer.parseInt(String.valueOf(idxChar)); // turn char of token number into an int
+            level.getToken(idx); // use this int to collect the correct token
         }
+
+        // SYLVAN DEATH IF HE FALLS IN WATER
 
         else if (player.getBody().getUserData() == "sylvan" && other.getBody().getUserData() == "damage") {
             level.sylvan.die();
@@ -86,13 +94,9 @@ public class GameContactListener implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {}
-
-    // JUNK
     @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {
-    }
+    public void preSolve(Contact contact, Manifold oldManifold) {}
     @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
-    }
+    public void postSolve(Contact contact, ContactImpulse impulse) {}
 
 }

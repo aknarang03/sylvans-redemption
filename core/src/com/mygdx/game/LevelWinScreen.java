@@ -6,10 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -43,8 +40,6 @@ public class LevelWinScreen implements Screen {
         table.center();
         table.setFillParent(true);
 
-        Label blank = new Label("",labelFont);
-
         nextLevelText = new Label("Level Completed\nPress Enter to Continue", labelFont);
 
         table.add(nextLevelText).expandX();
@@ -67,7 +62,7 @@ public class LevelWinScreen implements Screen {
 
         game.batch.begin();
 
-        if (input == Control.SELECT) {
+        if (input == Control.SELECT) { // if Enter pressed, player gets sent to the next level
             game.uiSounds.get("select").play(1);
             game.nextLevel(game.currentLevel.id);
         }

@@ -23,6 +23,8 @@ Jenna Esposito
 
 public class MainMenu implements Screen {
 
+    // see GameOverScreen for explanation on PointingTo, arrow, etc
+
     enum PointingTo {StartGame, Controls};
     PointingTo pointingTo;
 
@@ -30,9 +32,7 @@ public class MainMenu implements Screen {
     private Viewport viewport;
     private Stage stage;
 
-    Sprite menuSprite;
-
-    OrthographicCamera camera;
+    Sprite menuSprite; // background
 
     Label startGameText;
     Label controlsText;
@@ -42,18 +42,9 @@ public class MainMenu implements Screen {
 
     Sprite arrow;
 
-    boolean gameStarted;
-
-    // MAKE START GAME AND CONTROLS SELECTABLE TEXT
-
-    // for some reason, when I make one main menu to use, it messes up the width and height. but if I send in a new one, it doesn't until the second time.
+    boolean gameStarted; // tracks whether player has already selected start game before
 
     public MainMenu(SylvanGame game) {
-
-        /*
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, game.SCREEN_WIDTH, game.SCREEN_HEIGHT);
-         */
 
         this.game = game;
 
@@ -100,7 +91,7 @@ public class MainMenu implements Screen {
         arrow.setRegion(indicatorImg);
     }
 
-    public void createBg() {
+    public void createBg() { // draw the background
         Texture menuImg = new Texture(Gdx.files.internal("background.png"));
         menuSprite = new Sprite(menuImg);
         menuSprite.setSize(game.SCREEN_WIDTH,game.SCREEN_HEIGHT);
@@ -113,15 +104,12 @@ public class MainMenu implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.batch.begin();
-        menuSprite.draw(game.batch);
+        menuSprite.draw(game.batch); // draw this first so it's behind everything
         game.batch.end();
 
         stage.draw();
 
         Control input = processInput();
-
-        //camera.update();
-        //game.batch.setProjectionMatrix(camera.combined);
 
         float startX = startGameText.getX();
         float startY = startGameText.getY();
@@ -154,26 +142,22 @@ public class MainMenu implements Screen {
         if (processInput() == Control.SELECT) {
             game.uiSounds.get("select").play(1f);
             if (pointingTo == PointingTo.StartGame) {
-                if (!gameStarted) {
-                    //game.setScreen(game.howToPlay);
-                    game.setScreen(game.story);
-                } else {
-                    game.pickLevel(game.currentLevel);
+                if (!gameStarted) { // if game has never been started before
+                    game.setScreen(game.story); // then start the story screen -> how to play -> level 1
+                    gameStarted = true; // indicate that game has been started before
+                } else { // if player has already seen this progression
+                    game.pickLevel(game.currentLevel); // then simply pick level 1
                     game.uiSounds.get("start game overlay").play(1f);
                     game.uiSounds.get("start game").play(1f);
                 }
-                gameStarted = true;
-            } else {
-                // GO TO CONTROLS SCREEN
+            } else { // player selected controls menu
                 game.setScreen(game.controlsMenu);
             }
-
         }
 
     }
 
-    public Control processInput() { // idk how this will work yet. may make it void
-
+    public Control processInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             return Control.UP;
         }
@@ -187,33 +171,16 @@ public class MainMenu implements Screen {
     }
 
     @Override
-    public void show() {
-
-    }
-
+    public void show() {}
     @Override
-    public void resize(int width, int height) {
-
-    }
-
-
+    public void resize(int width, int height) {}
     @Override
-    public void pause() {
-
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-
-    }
-
+    public void hide() {}
     @Override
-    public void dispose() {
+    public void dispose() {}
 
-    }
 }

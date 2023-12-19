@@ -93,6 +93,8 @@ public abstract class Entity extends Sprite {
 
     public void die() { // kill Entity
         dead = true;
+        currentState = State.DEAD;
+        stateTimer = 0;
         deathSound.play(1);
     }
 

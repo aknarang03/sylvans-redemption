@@ -37,116 +37,105 @@ Jenna Esposito
 
 public class Level implements Screen {
 
-    double redTimer;
+    public int id; // level ID
 
-    boolean playCompleted;
-    boolean playStart;
-
-    public HashMap<String, Sound> sounds = new HashMap();
-
-    // debug renderer vars
-    private Box2DDebugRenderer debugRenderer;
-    Matrix4 debugMatrix;
-
-    //private Hud hud; // make Hud class to show the top left interface as seen in game sketch
-
-    // setup vars
+    // SETUP
     final SylvanGame game;
     private World world;
+    private InfoDisplay infoDisplay; // HUD
     private GameContactListener contactListener;
 
-    // enemy vars
-    private Array<Entity> enemies; // this will hold the enemies for each level to be drawn
+    // ENTITY
+    public Sylvan sylvan; // this level's instance of Sylvan
+    private Vector2 disappearPos; // send sylvan's body here during possession
+    public Entity currentInhabitedEntity; // track which Entity is being controlled by player
+    private Sprite indicator; // indicates currentInhabitedEntity
+    private Entity targetEntity; // Entity to possess
+
+    // RENDERERS
+    private Box2DDebugRenderer debugRenderer;
+    Matrix4 debugMatrix; // matrix for debug renderer
+    ShapeRenderer shapeRenderer; // for the line that's drawn between sylvan and enemy and the pause box
+    private OrthogonalTiledMapRenderer mapRenderer;
+
+    // TIMERS
+    private double redTimer; // timer for Sylvan flashing red
+    private float timeElapsed; // time elapsed since level start
+    public float possessTimer; // how long Sylvan has possessed an enemy
+    public float possessCooldown; // so that Sylvan doesnt possess after unpossess
+
+    // BOOLS
+    private boolean playCompleted; // whether to play level completed sound
+    private boolean playStart; // whether to play level start sound
+    private boolean pause; // whether the level is paused
+
+    // ARRAYS
+    private Array<Entity> enemies; // holds the level's enemies
     public Array<Double> distances; // tracks distances between currentEntity and each enemy
 
-    // token vars
-    public Array<Token> tokens; // holds the tokens for each level to be drawn
-    final int TOKEN_COUNT; // token count to be decided by user
-    public int numTokensCollected; // amount of tokens collected by user
+    // TOKEN
+    public Array<Token> tokens; // holds the level's tokens
+    public final int TOKEN_COUNT; // total number of tokens in the level
+    public int numTokensCollected; // amount of tokens collected by player
 
-    // tiled map vars
+    // TILED MAP
     private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
     private TmxMapLoader mapLoader;
 
-    // body vars
+    // BODY
     private BodyDef bodyDef;
     private PolygonShape shape;
     private FixtureDef fixtureDef;
     private Body body;
     private Array<Body> wallBodies; // need this to access friction of wall bodies to change when player is spider
 
-    // camera vars
+    // CAMERA
     public OrthographicCamera camera;
-    public OrthographicCamera textCam;
+    public OrthographicCamera textCam; // camera for pause overlay
     public Viewport viewport;
 
-    // visuals / sounds
-    public Music music;
-    private Sprite backgroundSprite;
-
-    ShapeRenderer shapeRenderer; // for the line that's drawn between sylvan and enemy
-
-    public Sylvan sylvan;
-
-    Entity currentInhabitedEntity; // track what the player is
-    Entity targetEntity; // entity to possess
-
-    // time vars
-    private float timeElapsed;
-    public float possessTimer; // how long sylvan has possessed an enemy
-    public float cooldown; // so that sylvan doesnt possess after unpossess
-
-    private Vector2 disappearPos; // send sylvan's body here during possession
-
-    private Sprite indicator;
-
-    public int id;
-
     // SOUNDS
-    Sound possessSound;
-    Sound landSound;
-    Sound hitSound;
-    Sound collectSound;
-    Sound jumpSound;
-    Sound glideSound;
-    Sound flapSound;
-    Sound walkSound;
-    Sound skitterSound;
-    Sound enemyAttackSound;
-
-    private boolean pause;
-    private boolean render;
-
-    InfoDisplay infoDisplay;
-
+    public Music music; // level music
+    public HashMap<String, Sound> sounds = new HashMap(); // sound storage
+    private Sound possessSound;
+    private Sound landSound;
+    private Sound hitSound;
+    private Sound collectSound;
+    private Sound jumpSound;
+    private Sound glideSound;
+    private Sound flapSound;
+    private Sound walkSound;
+    private Sound skitterSound;
 
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id, Music music) {
 
-        // init HUD in here
-
-        redTimer = 1;
+        // declare camera after viewport and use viewport width and height??
 
         this.game = game;
         this.id = id;
 
-        infoDisplay = new InfoDisplay(this.game);
+        // INIT TIMERS
+        redTimer = 1;
+        possessCooldown = 0;
+        possessTimer = 0;
 
         // init camera and viewport
         camera = new OrthographicCamera(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM);
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
-        //viewport = new ExtendViewport(SylvanGame.SCREEN_WIDTH / SylvanGame.PPM, SylvanGame.SCREEN_HEIGHT / SylvanGame.PPM, camera);
-        // declare camera after viewport and use viewport width and height??
 
+        // init camera for pause overlay
         float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
         textCam = new OrthographicCamera(1000, 1000 * aspectRatio);
+
+        // init HUD
+        infoDisplay = new InfoDisplay(this.game);
 
         // load the map
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapFilename);
 
         // init renderers
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / SylvanGame.PPM);
+        mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / SylvanGame.PPM);
         debugRenderer = new Box2DDebugRenderer();
         shapeRenderer = new ShapeRenderer();
 
@@ -166,30 +155,24 @@ public class Level implements Screen {
 
         createStructure(); // build level in box2d
 
-        //sylvan = new Sylvan(game, new Vector2(5.5f, 2.5f)); // create Sylvan
         sylvan = new Sylvan(game, new Vector2(1, 1)); // create Sylvan
+        disappearPos = new Vector2(100, 100); // set a position for Sylvan to disappear to to give illusion that he is gone while possessing an enemy
 
-        // possess vars
-        possessTimer = 0;
-        disappearPos = new Vector2(100, 100);
-        cooldown = 0;
-
+        // init vars for token count
         TOKEN_COUNT = tokenCount;
-
         numTokensCollected = 0;
 
-        targetEntity = null;
+        targetEntity = null; // no entity is being targeted for possession at first
 
-        createIndicator();
-        initSounds();
+        createIndicator(); // init indicator sprite
+        initSounds(); // init sounds and put in map
 
+        // init booleans
         playCompleted = true;
         playStart = true;
-
         pause = false;
 
-        this.music = music;
-        //this.music.play();
+        this.music = music; // passed in music is level's music
 
     }
 
@@ -200,7 +183,6 @@ public class Level implements Screen {
     }
 
     public void initSounds() {
-        // maybe move sounds to game instead?
 
         possessSound = Gdx.audio.newSound(Gdx.files.internal("sounds/possess.mp3"));
         landSound = Gdx.audio.newSound(Gdx.files.internal("sounds/land.mp3"));
@@ -211,7 +193,6 @@ public class Level implements Screen {
         flapSound = Gdx.audio.newSound(Gdx.files.internal("sounds/flap.mp3"));
         walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/walk.mp3"));
         skitterSound = Gdx.audio.newSound(Gdx.files.internal("sounds/skitter.mp3"));
-        enemyAttackSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy attack.mp3"));
 
         sounds.put("land", landSound);
         sounds.put("possess", possessSound);
@@ -222,7 +203,6 @@ public class Level implements Screen {
         sounds.put("flap", flapSound);
         sounds.put("walk", walkSound);
         sounds.put("skitter", skitterSound);
-        sounds.put("attack",enemyAttackSound);
 
     }
 
@@ -231,15 +211,18 @@ public class Level implements Screen {
         if (currentInhabitedEntity != null) {
             currentInhabitedEntity.possessed = false;
         } // current entity not possessed anymore
+
         currentInhabitedEntity = entity; // change to the passed in entity
         entity.possessed = true;
 
         // see if walls should have friction (since spider can climb them)
         if (!(currentInhabitedEntity.body.getUserData() == "spider")) {
+            // if player is not a spider, wall friction should be 0 (unclimbable)
             for (Body body : wallBodies) {
                 body.getFixtureList().get(0).setFriction(0);
             }
         } else {
+            // if player is a spider, wall friction should be 1 (climbable)
             for (Body body : wallBodies) {
                 body.getFixtureList().get(0).setFriction(1);
             }
@@ -248,14 +231,16 @@ public class Level implements Screen {
     }
 
     public void createEntities() { // construct each entity
-        // THIS WILL LOOP THRU ENTITIES ARRAY. CURRENT IMPLEMENTATION TEMPORARY
+
         sylvan.initSprite();
         sylvan.initBody();
+
         for (Entity enemy : enemies) {
             enemy.initSprite();
             enemy.initBody();
         }
-        int count = 0;
+
+        int count = 0; // count will be added to each token body's user data for use in the contact listener
         for (Token token : tokens) {
             token.initImg();
             token.initBody();
@@ -263,7 +248,9 @@ public class Level implements Screen {
             token.body.setUserData("token" + count);
             count++;
         }
+
         changeCurrentInhabitedEntity(sylvan); // on level creation, sylvan is inhabited
+
     }
 
     public void createStructure() { // build level in box2d
@@ -272,51 +259,47 @@ public class Level implements Screen {
         shape = new PolygonShape();
         fixtureDef = new FixtureDef();
 
-        // use wall object layer to put wall bodies
+        // wall objects
         for (MapObject mapObject : map.getLayers().get("Wall Objects").getObjects().getByType(RectangleMapObject.class)) {
-            //System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
             body = world.createBody(bodyDef);
             shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
             fixtureDef.shape = shape;
-            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
-            fixtureDef.friction = 0;
+            fixtureDef.friction = 0; // friction for walls starts at 0
             body.createFixture(fixtureDef);
             body.setUserData("wall");
-            wallBodies.add(body);
+            wallBodies.add(body); // add to array so that they can be accessed later and friction can be changed
         }
 
-        // uses the ground object layer in tmx file to draw the boxes in the correct places
+        // ground objects
         for (MapObject mapObject : map.getLayers().get("Ground Objects").getObjects().getByType(RectangleMapObject.class)) {
-            //System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
             body = world.createBody(bodyDef);
             shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
             fixtureDef.shape = shape;
-            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
             fixtureDef.friction = 1;
             body.createFixture(fixtureDef);
             body.setUserData("ground");
         }
 
+        // damage objects (right now, just water)
         for (MapObject mapObject : map.getLayers().get("Damage Objects").getObjects().getByType(RectangleMapObject.class)) {
-            //System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             bodyDef.type = BodyDef.BodyType.StaticBody;
             bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / SylvanGame.PPM, (rectangle.getY() + rectangle.getHeight() / 2) / SylvanGame.PPM);
             body = world.createBody(bodyDef);
             shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
             fixtureDef.shape = shape;
-            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
             fixtureDef.friction = 1;
             body.createFixture(fixtureDef);
             body.setUserData("damage");
         }
 
+        // boundary objects (level bounds)
         for (MapObject mapObject : map.getLayers().get("Boundary Objects").getObjects().getByType(RectangleMapObject.class)) {
             System.out.println("got object");
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
@@ -325,7 +308,6 @@ public class Level implements Screen {
             body = world.createBody(bodyDef);
             shape.setAsBox(rectangle.getWidth() / 2 / SylvanGame.PPM, rectangle.getHeight() / 2 / SylvanGame.PPM);
             fixtureDef.shape = shape;
-            fixtureDef.filter.groupIndex = SylvanGame.GROUND_GROUP;
             fixtureDef.friction = 0;
             body.createFixture(fixtureDef);
             body.setUserData("boundary");
@@ -333,7 +315,7 @@ public class Level implements Screen {
 
     }
 
-    public void processInput() { // pass the input to current entity's move() function
+    public void processInput() { // pass the keyboard input to current entity's move() function
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
             currentInhabitedEntity.move(Control.RIGHT);
@@ -350,7 +332,9 @@ public class Level implements Screen {
 
     }
 
-    public void processPause() { // CHANGE SO THAT IT RECOGNIZES IT AS A PAUSE CONTROL AND A RESTART CONTROL
+    public void processPause() {
+
+        // change whether level is paused based on current pause value on press ESC
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (!pause) {
                 game.uiSounds.get("pause").play(1f);
@@ -359,226 +343,234 @@ public class Level implements Screen {
             }
             pause = !pause;
         }
+
+        // if level is paused and ENTER is pressed, restart the level
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             if (pause) {
                 game.uiSounds.get("select").play(1f);
                 game.restartLevel(id);
             }
         }
+
+        // if level is paused and R is pressed, restart the game
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             if (pause) {
                 game.uiSounds.get("select").play(1f);
                 game.restartGame();
             }
         }
+
     }
 
-    public void checkCollect() {
+    public void checkCollect() { // check whether to collect each token
 
-        int counter = 0;
+        int counter = 0; // used to figure out which token should be removed from tokens array
+
         for (Token token : tokens) {
+
             if (token.shouldCollect) {
                 world.destroyBody(token.body);
-                tokens.removeIndex(counter);
+                tokens.removeIndex(counter); // remove collected token from array
                 numTokensCollected++;
-                System.out.println(numTokensCollected);
                 sounds.get("collect").play(0.2f);
+
+                // set new user data to reflect new indices
+                for (int i = 0; i < tokens.size; i++) {
+                    tokens.get(i).body.setUserData("token" + i);
+                }
+
             }
             counter++;
         }
 
-        // set new user data
-        for (int i = 0; i < tokens.size; i++) {
-            tokens.get(i).body.setUserData("token" + i);
-        }
-
     }
 
+    public void checkDie() { // check if any Entity should die
+        // state timer is checked as well so that death animation can play fully
 
-    public void checkDie() {
-        if (sylvan.dead && sylvan.stateTimer >= 0.5) {
-            sylvan.shouldDraw = false;
+        // check if Sylvan should die
+        if (sylvan.dead && sylvan.stateTimer >= 0.3) {
+            sylvan.shouldDraw = false; // don't draw sylvan if dead
         }
+
         int counter = 0;
         for (Entity enemy : enemies) {
             if (enemy.dead && enemy.stateTimer >= 0.5) {
                 world.destroyBody(enemy.body);
-                enemies.removeIndex(counter);
-                System.out.println("enemy died");
+                enemies.removeIndex(counter); // remove enemy from enemies array upon death
             }
             counter++;
         }
+
     }
 
+    public void checkForScreenChange() {
 
-    public void update(float delta) {
-
-        // USE pause() AND resume() FOR PAUSE MENU
-
-        if (sylvan.flashRed) {
-            redTimer = 0;
-            sylvan.flashRed = false;
-        }
-        redTimer+=delta;
-
-        if (playStart) {
-            game.uiSounds.get("start level").play(1f);
-            playStart = false;
-        }
         if (endLevel()) {
-            // SET SCREEN TO GAME OVER
             game.setScreen(game.gameOver);
         }
+
         if (completeLevel()) {
             if (playCompleted) {
                 game.uiSounds.get("completed level").play(1f);
-                playCompleted = false;
+                playCompleted = false; // completed sound plays once upon level complete
                 if (id < 2) {
                     game.setScreen(game.levelWin);
-                } else {
+                } else { // there are 2 levels so if this is level 2 the game is completed
                     game.setScreen(game.gameComplete);
                 }
             }
-            // SET SCREEN TO LEVEL COMPLETED SCREEN
-            // DESTROY THIS LEVEL
         }
-        /*
-        if (pause) {
-            pauseLevel();
-        }
-         */
 
-        // UPDATE DISTANCES ARRAY IN HERE (or in possess? depends if I implement the highlight when enemy is close enough)
+    }
+
+    public void updateDistancesArray() {
         distances.clear();
         for (Entity enemy : enemies) {
             distances.add(getDistance(sylvan.body.getPosition(), enemy.body.getPosition()));
         }
+    }
 
-        processInput(); // get user input
-
-        // move the sprites to where the bodies are (they have moved from move() or aiMove())
+    public void updatePositions() { // move the sprites to where the bodies are (they have moved from move() or aiMove())
         sylvan.setBounds(sylvan.body.getPosition().x - sylvan.getWidth() * sylvan.WIDTH_MULTIPLIER, sylvan.body.getPosition().y - sylvan.getHeight() * sylvan.HEIGHT_MULTIPLIER, sylvan.getWidth(), sylvan.getHeight());
         for (Entity enemy : enemies) {
             enemy.setBounds(enemy.body.getPosition().x - enemy.getWidth() * enemy.WIDTH_MULTIPLIER, enemy.body.getPosition().y - enemy.getHeight() * enemy.HEIGHT_MULTIPLIER, enemy.getWidth(), enemy.getHeight());
             enemy.possessIndicator.setBounds(enemy.body.getPosition().x - 0.26f,enemy.body.getPosition().y + (enemy.getHeight() / 10),0.5f,0.5f);
         }
-
         indicator.setBounds(currentInhabitedEntity.body.getPosition().x - 0.26f, currentInhabitedEntity.body.getPosition().y + (currentInhabitedEntity.getHeight() / 10), 0.5f, 0.5f);
+    }
 
-        if (!sylvan.possessed) {
-            possessTimer += delta;
-        } // increment possess timer if sylvan is possessing someone
-        sylvan.knockbackTimer -= delta;
+    public void update(float delta) {
+
+        if (playStart) { // if level start sound should play
+            game.uiSounds.get("start level").play(1f);
+            playStart = false;
+        }
+
+        checkForScreenChange(); // see if screen should be switched
+        updateDistancesArray(); // get distances between Sylvan and each enemy
+        processInput(); // get user input
+        updatePositions(); // update positions of sprites
+
+        // UPDATE TIMERS
+        timeElapsed += delta; // update timeElapsed for animations
+        if (!sylvan.possessed) { possessTimer += delta; } // increment possess timer if sylvan is possessing someone
+        sylvan.knockbackTimer -= delta; // decrement knockback dmg cooldown
+        possessCooldown -= delta; // decrement possess cooldown
 
         if (shouldPossess()) {
             possess();
         }
 
-        // NOTE: later I will get currentInhabitedEntity.getTimer (which will be a float) since it'll differ per enemy type
-        if (possessTimer >= currentInhabitedEntity.posTime && !sylvan.possessed) {
+        if (possessTimer >= currentInhabitedEntity.posTime && !sylvan.possessed) { // if time has run out, unpossess
             if ((currentInhabitedEntity.body.getUserData() == "bat" || currentInhabitedEntity.body.getUserData() == "spider") && sylvan.health < 3)  {sylvan.health++;} // Sylvan gets 1 HP back if he possesses enemy for 5 seconds
             unpossess();
         }
 
         world.step(1 / 60f, 6, 2); // physics step
-        if (!world.isLocked()) {
+
+        // checks involving body destroy
+        if (!world.isLocked()) { // needed to avoid error when destroying bodies
             checkCollect();
             checkDie();
         }
 
-        // this function will loop thru all entities to update frame
+        // update Entities using their update functions
         sylvan.update(timeElapsed, delta);
         for (Entity enemy : enemies) {
             enemy.update(timeElapsed, delta);
         }
 
         camera.update();
-        renderer.setView(camera);
+        mapRenderer.setView(camera); // has to be called anytime camera updates
 
-        cooldown -= delta;
-        timeElapsed += delta; // update timeElapsed for animations
+        infoDisplay.updateLabels(); // update what displays in top left of screen based on any new data
 
-        infoDisplay.updateLabels();
+        // if Sylvan flashes red, reset related values
+        if (sylvan.flashRed) {
+            redTimer = 0;
+            sylvan.flashRed = false;
+        }
+        redTimer+=delta;
 
     }
 
     public void unpossess() {
-        Vector2 pos = currentInhabitedEntity.getBody().getPosition();
+
+        Vector2 pos = currentInhabitedEntity.getBody().getPosition(); // save position of current entity
+
+        // enemy dies upon unpossess if it's a Bat or Spider
         if (currentInhabitedEntity.getBody().getUserData() != "rock") {
             currentInhabitedEntity.die();
         }
-        changeCurrentInhabitedEntity(sylvan);
-        sylvan.body.setLinearVelocity(0, 0);
-        sylvan.body.setTransform(pos.x, pos.y + 0.5f, 0);
-        sylvan.body.applyForceToCenter(0, 0.45f, true);
-        possessTimer = 0;
-        cooldown = 1;
-    }
 
-    @Override
-    public void show() {
+        changeCurrentInhabitedEntity(sylvan); // change back to Sylvan
+        sylvan.body.setLinearVelocity(0, 0); // reset his velocity; otherwise next two lines won't work exactly as intended b/c he is not going in with 0 velocity
+        sylvan.body.setTransform(pos.x, pos.y + 0.5f, 0); // set Sylvan's position to the enemy's position plus a bit higher
+        sylvan.body.applyForceToCenter(0, 0.35f, true); // Sylvan jumps a little
+
+        // reset possess-related timers
+        possessTimer = 0;
+        possessCooldown = 1;
 
     }
 
     @Override
     public void render(float delta) { // called in SylvanGame.render()
 
-        // check if user has just pressed pause. if so, do not update level
-        processPause();
+        processPause(); // check if user has pressed pause
+
         if (!pause) {
+
             // resume any possibly paused long sounds
             if (sylvan.possessed) {
                 sounds.get("walk").resume();
                 sounds.get("glide").resume();
+            } else if (currentInhabitedEntity.body.getUserData() == "spider") {
+                sounds.get("skitter").resume();
             }
-            music.setVolume(0.38f);
-            update(delta);
-        } else {
+
+            music.setVolume(0.38f); // change music volume back to normal
+            update(delta); // only update level if level is not paused
+
+        } else { // level is paused
+
             // pause any possible long sounds
             sounds.get("walk").pause();
             sounds.get("glide").pause();
-            music.setVolume(0.2f);
+            sounds.get("skitter").pause();
+
+            music.setVolume(0.2f); // music temporarily
+
         }
 
-        //update(delta); // update screen
-
-        // clear screen
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        renderer.render(); // render level
-
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // clear screen
+        mapRenderer.render(); // render level
         camera.position.set(currentInhabitedEntity.getBody().getPosition().x, currentInhabitedEntity.getBody().getPosition().y, 0); // set camera pos to player
 
         // render debug boxes
-        //debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(), viewport.getScreenHeight(), 0);
-        //debugRenderer.render(world, camera.combined);
+        debugMatrix = game.batch.getProjectionMatrix().cpy().scale(viewport.getScreenWidth(), viewport.getScreenHeight(), 0);
+        debugRenderer.render(world, camera.combined);
 
         game.batch.setProjectionMatrix(camera.combined);
-
-        game.batch.begin(); // BATCH BEGIN
+        game.batch.begin();
 
         if (sylvan.possessed) { // only draw sylvan if possessed
-            if (sylvan.shouldDraw) {sylvan.draw(game.batch);}
-            if (redTimer <= 0.5) {
+            if (sylvan.shouldDraw) {sylvan.draw(game.batch);} // draw Sylvan if alive
+            if (redTimer <= 0.5) { // Sylvan flashes red if he was recently damaged
                 sylvan.setColor(new Color( 1, 0.5f,0.5f,1));
             } else {
-                sylvan.setColor(Color.WHITE);
+                sylvan.setColor(Color.WHITE); // back to regular color
             }
         }
 
-        // draw the prototype enemies
-        // change color if sylvan is close
+        // draw the enemies
         int iter = 0;
         for (Entity enemy : enemies) {
             enemy.draw(game.batch);
             if (distances.get(iter) <= 1.5) {
                 enemy.possessIndicator.draw(game.batch);
-                //enemy.setColor(Color.CYAN);
             }
-            //else {
-                //enemy.setColor(Color.WHITE);
-            //}
             iter++;
         }
 
@@ -587,24 +579,23 @@ public class Level implements Screen {
             token.draw(game.batch);
         }
 
-        indicator.draw(game.batch);
+        indicator.draw(game.batch); // draw the arrow indicator above player
 
-        game.batch.end(); // BATCH END
+        game.batch.end();
 
         // DRAW HUD
         game.batch.setProjectionMatrix(infoDisplay.stage.getCamera().combined);
         infoDisplay.stage.draw();
         game.batch.begin();
-        game.batch.draw(infoDisplay.tokenTexture,0,370);
+        game.batch.draw(infoDisplay.tokenTexture,0,460);
         int drawX = 60;
         for (int i = 0; i < sylvan.health; i++) {
-            game.batch.draw(infoDisplay.heartTexture,drawX,370);
+            game.batch.draw(infoDisplay.heartTexture,drawX,460);
             drawX += 20;
         }
         game.batch.end();
 
-        // DRAW BLUE LINE
-        if (shouldPossess()) {
+        if (shouldPossess()) { // render blue line if Sylvan possesses an enemy
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(Color.CYAN);
@@ -613,15 +604,13 @@ public class Level implements Screen {
             shapeRenderer.end();
         }
 
-        // DRAW PAUSE OVERLAY
-        if (pause) {
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            //Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        if (pause) { // draw pause overlay if level is paused
+            Gdx.gl.glEnable(GL20.GL_BLEND); // allow Color to tint the entire screen
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             Color pauseColor = new Color(0, 0, 0, 0.7f);
             shapeRenderer.setColor(pauseColor);
-            shapeRenderer.rect(0, 0, SylvanGame.SCREEN_WIDTH, SylvanGame.SCREEN_HEIGHT);
+            shapeRenderer.rect(-100, -100, 1000, 1000); // make sure it covers everything
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
             game.batch.begin();
@@ -633,43 +622,29 @@ public class Level implements Screen {
             game.batch.end();
         }
 
-        //timeElapsed += delta; // update timeElapsed for animations
-
     }
 
     public boolean shouldPossess() {
-
         final boolean hasTarget = (targetEntity != null);
         final boolean animationDone = (sylvan.stateTimer >= 0.4f);
-
-        if (hasTarget && animationDone) {
+        if (hasTarget && animationDone) { // Sylvan can possess if his animation has played fully and he has a valid target
             return true;
         }
         return false;
     }
 
-    public void possess() {
-        changeCurrentInhabitedEntity(targetEntity);
-        sylvan.body.setTransform(disappearPos, 0);
-        targetEntity = null;
+    public void possess() { // called when possess goes through
+        changeCurrentInhabitedEntity(targetEntity); // Sylvan possesses the target Entity
+        sylvan.body.setTransform(disappearPos, 0); // Sylvan's body sent off the level
+        targetEntity = null; // reset the target
         sylvan.resetState(); // set Sylvan's state back to IDLE from POSSESS
         possessSound.play(0.5f);
     }
 
-    public void getTargetFromClick(Entity target) {
+    public void getPossessTarget() { // for when player presses possess key
+        // using a key to possess means he possesses the closest enemy within range
 
-        double distance = getDistance(sylvan.body.getPosition(),target.body.getPosition());
-
-        if (sylvan.possessed && cooldown <= 0 && distance <= 1.5) {
-            sylvan.currentState = Entity.State.POSSESS;
-            sylvan.stateTimer = 0;
-            targetEntity = target;
-        }
-    }
-
-    public void getPossessTarget() {
-
-        if (sylvan.possessed && cooldown <= 0) { // if sylvan is currently not possessing anyone
+        if (sylvan.possessed && possessCooldown <= 0) { // if sylvan is currently not possessing anyone and it has been long enough since he last did
 
             // get shortest distance
             double shortest = distances.get(0);
@@ -687,36 +662,45 @@ public class Level implements Screen {
             if (shortest <= 1.5) {
                 sylvan.currentState = Entity.State.POSSESS;
                 sylvan.stateTimer = 0;
-                targetEntity = enemies.get(idx);
+                targetEntity = enemies.get(idx); // if so, set the targetEntity
+                // this changes outcome of the shouldPossess() check
             }
 
         }
 
     }
 
-    public boolean endLevel() {
+    public void getTargetFromClick(Entity target) { // slightly different method for when player clicks to possess enemy
+        // using click means he possesses whichever enemy was clicked if within range
+        // this time the target is passed in so we already know who it is. thus the code is simpler here
+
+        double distance = getDistance(sylvan.body.getPosition(),target.body.getPosition());
+
+        if (sylvan.possessed && possessCooldown <= 0 && distance <= 1.5) {
+            sylvan.currentState = Entity.State.POSSESS;
+            sylvan.stateTimer = 0;
+            targetEntity = target;
+        }
+
+    }
+
+    public boolean endLevel() { // true if Sylvan has died
         if (sylvan.currentState == Entity.State.DEAD && sylvan.stateTimer > 1.5) {
             return true;
         }
         return false;
     }
 
-    public boolean completeLevel() {
+    public boolean completeLevel() { // true if Sylvan has collected every token
         if (numTokensCollected == TOKEN_COUNT) {
             return true;
         }
         return false;
     }
 
-    public void pauseLevel() {
-
-    }
-
-    public void getToken(int idx) {
-        System.out.println("got token " + idx);
-        Token token = tokens.get(idx);
-        token.shouldCollect = true;
-        System.out.println(token.body.getUserData());
+    public void getToken(int idx) { // collect token
+        Token token = tokens.get(idx); // figure out which token was collected based on index passed from contact listener
+        token.shouldCollect = true; // mark token to be collected (body can't be removed here without error from world)
     }
 
     public double getDistance(Vector2 entity1, Vector2 entity2) { // get distance between two entities
@@ -747,14 +731,11 @@ public class Level implements Screen {
     }
 
     @Override
-    public void pause() {
-    }
-
+    public void show() {}
     @Override
-    public void resume() {
-    }
-
+    public void pause() {}
     @Override
-    public void hide() {
-    }
+    public void resume() {}
+    @Override
+    public void hide() {}
 }

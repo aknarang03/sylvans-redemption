@@ -20,8 +20,8 @@ public class StoryScreen implements Screen {
     private SylvanGame game;
     private OrthographicCamera camera;
 
+    // images to display
     Sprite bgSprite;
-
     Texture malgrimImg;
 
     public StoryScreen(SylvanGame game) {
@@ -31,12 +31,7 @@ public class StoryScreen implements Screen {
         camera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         malgrimImg = new Texture(Gdx.files.internal("malgrim.png"));
-        createBg();
-
-    }
-
-    @Override
-    public void show() {
+        createBg(); // init the background sprite
 
     }
 
@@ -60,6 +55,8 @@ public class StoryScreen implements Screen {
 
         game.batch.begin();
 
+        // DRAW THE STORY TEXT
+
         game.font.getData().setScale(0.7f);
         game.font.setColor(Color.WHITE);
         game.font.draw(game.batch,"Story",55,250);
@@ -74,8 +71,7 @@ public class StoryScreen implements Screen {
 
         game.batch.end();
 
-        if (input == Control.SELECT) {
-            // SET SCREEN TO LEVEL
+        if (input == Control.SELECT) { // go to how to play screen
             game.setScreen(game.howToPlay);
             game.uiSounds.get("select").play(1);
         }
@@ -90,27 +86,16 @@ public class StoryScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
+    public void resize(int width, int height) {}
     @Override
-    public void pause() {
-
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-
-    }
-
+    public void show() {}
     @Override
-    public void dispose() {
+    public void hide() {}
+    @Override
+    public void dispose() {}
 
-    }
 }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /*
 Anjali Narang
@@ -23,22 +22,14 @@ public class HowToPlayScreen implements Screen {
     Texture tokenImg;
     Texture possessIndicatorImg;
 
-
     public HowToPlayScreen(SylvanGame game) {
-
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         initIcons();
-
     }
 
-    @Override
-    public void show() {
-
-    }
-
-    public void initIcons() {
+    public void initIcons() { // icons to show next to the text for explanation purposes
         tokenImg = new Texture(Gdx.files.internal("token/soultoken_small.png"));
         possessIndicatorImg = new Texture(Gdx.files.internal("possess_indicator_small.png"));
     }
@@ -51,6 +42,8 @@ public class HowToPlayScreen implements Screen {
 
         game.batch.begin();
 
+        // DRAW HOW TO PLAY TEXT
+
         game.font.getData().setScale(1.3f);
         game.font.setColor(Color.WHITE);
         game.font.draw(game.batch,"How to Play",0,290);
@@ -61,14 +54,14 @@ public class HowToPlayScreen implements Screen {
         game.font.draw(game.batch, "Avoid taking damage from enemy attacks",0,190);
         game.font.draw(game.batch, "Avoid falling in water",0,170);
 
+        // DRAW ICONS
 
         game.batch.draw(tokenImg,145,235);
         game.batch.draw(possessIndicatorImg,225,190);
 
         game.batch.end();
 
-        if (input == Control.SELECT) {
-            // SET SCREEN TO LEVEL
+        if (input == Control.SELECT) { // set screen to level
             game.pickLevel(game.currentLevel);
             game.uiSounds.get("select").play(1);
             game.uiSounds.get("start game overlay").play(1f);
@@ -85,27 +78,16 @@ public class HowToPlayScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
+    public void resize(int width, int height) {}
     @Override
-    public void pause() {
-
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-
-    }
-
+    public void show() {}
     @Override
-    public void dispose() {
+    public void hide() {}
+    @Override
+    public void dispose() {}
 
-    }
 }

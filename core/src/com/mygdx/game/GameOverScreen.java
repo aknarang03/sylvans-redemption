@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -24,18 +23,21 @@ Jenna Esposito
 
 public class GameOverScreen implements Screen {
 
-    enum PointingTo {RestartLevel, RestartGame};
-    PointingTo pointingTo;
+    enum PointingTo {RestartLevel, RestartGame}; // for indicating which label the arrow is pointing to
+    PointingTo pointingTo; // instance of pointingTo enum to use
 
+    // setup
     private SylvanGame game;
     private Viewport viewport;
     private Stage stage;
 
+    // labels
     Label restartLevelText;
     Label restartGameText;
 
-    Label.LabelStyle selectedFont;
-    Label.LabelStyle labelFont;
+    // fonts
+    Label.LabelStyle selectedFont; // font to show if arrow is pointing to label
+    Label.LabelStyle labelFont; // font to show if arrow is not pointing to label
 
     Sprite arrow;
 
@@ -45,6 +47,7 @@ public class GameOverScreen implements Screen {
         viewport = new FitViewport(SylvanGame.SCREEN_WIDTH,SylvanGame.SCREEN_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, this.game.batch);
 
+        // init fonts
         labelFont = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
         selectedFont = new Label.LabelStyle(new BitmapFont(), Color.CYAN);
 
@@ -52,10 +55,10 @@ public class GameOverScreen implements Screen {
         table.center();
         table.setFillParent(true);
 
-        Label blank = new Label("",labelFont);
+        Label blank = new Label("",labelFont); // for adding blank rows for space
 
-        Label gameOverText = new Label("Game Over", labelFont);
-        restartLevelText = new Label("Restart Level", labelFont);
+        Label gameOverText = new Label("Game Over", labelFont); // not selectable, just a title
+        restartLevelText = new Label("Restart Level", labelFont); // selecting this restarts current level
         restartGameText = new Label("Restart Game", labelFont); // selecting this sends player to main menu
 
         table.add(gameOverText).expandX();
@@ -70,7 +73,7 @@ public class GameOverScreen implements Screen {
         stage.addActor(table);
         createArrow();
 
-        pointingTo = PointingTo.RestartLevel;
+        pointingTo = PointingTo.RestartLevel; // arrow starts at Restart Level text
 
     }
 
@@ -80,18 +83,18 @@ public class GameOverScreen implements Screen {
         arrow.setRegion(indicatorImg);
     }
 
-    @Override
-    public void show() {
 
-    }
 
     @Override
     public void render(float delta) {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         stage.draw();
 
         Control input = processInput();
+
+        // get the xs and ys of the texts so that arrow can point to them
 
         float levelX = restartLevelText.getX();
         float levelY = restartLevelText.getY();
@@ -101,6 +104,7 @@ public class GameOverScreen implements Screen {
 
         game.batch.begin();
 
+        // set arrow to be next to whatever text is being pointed to
         if (pointingTo == PointingTo.RestartLevel) {
             restartLevelText.setStyle(selectedFont);
             restartGameText.setStyle(labelFont);
@@ -111,6 +115,7 @@ public class GameOverScreen implements Screen {
             game.batch.draw(arrow,gameX+70,gameY-25);
         }
 
+        // change pointingTo if user does UP or DOWN arrows
         if (input == Control.UP || input == Control.DOWN) {
             if (pointingTo == PointingTo.RestartGame) {
                 pointingTo = PointingTo.RestartLevel;
@@ -119,10 +124,11 @@ public class GameOverScreen implements Screen {
             }
         }
 
+        // select whatever user is pointing to
         if (input == Control.SELECT) {
             game.uiSounds.get("select").play(1);
             if (pointingTo == PointingTo.RestartGame) {
-                game.restartGame(); // why does this make the main menu screen ugly
+                game.restartGame();
             } else {
                 game.restartLevel(game.currentLevel.id);
             }
@@ -132,8 +138,7 @@ public class GameOverScreen implements Screen {
 
     }
 
-    public Control processInput() { // idk how this will work yet. may make it void
-
+    public Control processInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             return Control.UP;
         }
@@ -147,27 +152,16 @@ public class GameOverScreen implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
+    public void show() {}
     @Override
-    public void pause() {
-
-    }
-
+    public void resize(int width, int height) {}
     @Override
-    public void resume() {
-
-    }
-
+    public void pause() {}
     @Override
-    public void hide() {
-
-    }
-
+    public void resume() {}
     @Override
-    public void dispose() {
+    public void hide() {}
+    @Override
+    public void dispose() {}
 
-    }
 }

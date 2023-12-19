@@ -49,7 +49,7 @@ public class Sylvan extends Entity {
     public int health; // keep track of HP
 
     public Sylvan(SylvanGame game, Vector2 initPos) {
-        super(game,false, 0.36f,0.39f,"Glide");
+        super(game,false, 0.36f,0.29f,"Glide");
         initialPosition = initPos;
         health = 3;
         deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/sylvan_death.mp3"));
@@ -72,7 +72,7 @@ public class Sylvan extends Entity {
 
         // set up fixture
         shape = new PolygonShape();
-        shape.setAsBox(getWidth() / 6.5f, getHeight() / 3.1f);
+        shape.setAsBox(getWidth() / 6.5f, getHeight() / 3.7f);
         fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 0.009f;
@@ -311,15 +311,15 @@ public class Sylvan extends Entity {
 
     }
 
-    public void getAttacked(boolean leftHit) { // called when Sylvan is attacked by an enemy
+    public void getAttacked(boolean leftHit) { // called when Sylvan is attacked by Bat
 
         flashRed = true; // allows Sylvan to flash red when rendered
 
         game.currentLevel.sounds.get("hit").play(0.4f);
 
-        final float FORCELEFT = -0.25f;
-        final float FORCERIGHT = 0.25f;
-        final float FORCEUP = 0.3f;
+        final float FORCELEFT = -0.15f;
+        final float FORCERIGHT = 0.15f;
+        final float FORCEUP = 0.25f;
 
         // apply certain forces depending on whether the hit was from the left or from the right
         if (leftHit) {

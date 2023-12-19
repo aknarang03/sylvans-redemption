@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 /*
 Anjali Narang
@@ -20,26 +19,21 @@ public class ControlsMenu implements Screen {
     private OrthographicCamera camera;
 
     public ControlsMenu(SylvanGame game) {
-
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-    }
-
-    @Override
-    public void show() {
-
     }
 
     @Override
     public void render(float delta) {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Control input = processInput();
+
+        Control input = processInput(); // get any inputs
 
         game.batch.begin();
 
+        // DRAW CONTROLS TEXT
         game.font.getData().setScale(1.3f);
         game.font.setColor(Color.WHITE);
         game.font.draw(game.batch,"Controls",165,290);
@@ -57,8 +51,7 @@ public class ControlsMenu implements Screen {
 
         game.batch.end();
 
-        if (input == Control.SELECT) {
-            // GO BACK TO MAIN MENU
+        if (input == Control.SELECT) { // go back to main menu if Enter pressed
             game.setScreen(game.mainMenu);
             game.uiSounds.get("select").play(1);
         }
@@ -73,27 +66,16 @@ public class ControlsMenu implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
+    public void resize(int width, int height) {}
     @Override
-    public void pause() {
-
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-
-    }
-
+    public void show() {}
     @Override
-    public void dispose() {
+    public void hide() {}
+    @Override
+    public void dispose() {}
 
-    }
 }
