@@ -723,7 +723,7 @@ public class Level implements Screen {
 
         map.dispose();
         mapRenderer.dispose();
-        world.dispose();
+        if (!world.isLocked()) {world.dispose();}
         infoDisplay.dispose();
         music.dispose();
 

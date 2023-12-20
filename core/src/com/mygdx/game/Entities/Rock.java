@@ -1,6 +1,7 @@
 package com.mygdx.game.Entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -37,10 +38,13 @@ public class Rock extends Entity {
     boolean playWalk; // can walk sound play or not
     boolean playReturn; // can return animation play or not
 
+    Sound walkSound;
+
     public Rock(SylvanGame game, Vector2 initPos) {
         super(game,true, 0.25f,0.25f,"Movable platform");
         initialPosition = initPos;
         posTime = 10;
+        walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/walk.mp3"));
     }
 
     public void initBody() {
@@ -126,7 +130,6 @@ public class Rock extends Entity {
         detectTouch(); // detect whether Rock has been clicked
 
         final State newState = getState(); // to use in stateTimer check
-        // NOTE: currently not useful
         if (currentState == newState) { // state has not changed
             stateTimer += dt;
         } else {
@@ -136,8 +139,11 @@ public class Rock extends Entity {
 
         // see if walk sound should play or not
         if (possessed && currentState != State.WALK) {
-            game.currentLevel.sounds.get("walk").stop();
+            walkSound.stop();
             playWalk = true; // enables playing the walk sound
+        }
+        if (!possessed) {
+            walkSound.stop();
         }
 
         switch (currentState) {
@@ -150,7 +156,7 @@ public class Rock extends Entity {
                 } else {
                     frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
                     if (playWalk) {
-                        game.currentLevel.sounds.get("walk").loop(0.6f);
+                        walkSound.loop(0.6f);
                         playWalk = false;
                     }
                     playReturn = true; // can play return animation if Rock is no longer idling
