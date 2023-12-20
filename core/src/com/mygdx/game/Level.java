@@ -105,11 +105,10 @@ public class Level implements Screen {
     private Sound glideSound;
     private Sound flapSound;
     private Sound walkSound;
-    private Sound skitterSound;
+
+    int instance;
 
     public Level(final SylvanGame game, Array<Entity> enemies, Array<Token> tokens, String mapFilename, int tokenCount, int id, Music music) {
-
-        // declare camera after viewport and use viewport width and height??
 
         this.game = game;
         this.id = id;
@@ -192,7 +191,6 @@ public class Level implements Screen {
         glideSound = Gdx.audio.newSound(Gdx.files.internal("sounds/glide.mp3"));
         flapSound = Gdx.audio.newSound(Gdx.files.internal("sounds/flap.mp3"));
         walkSound = Gdx.audio.newSound(Gdx.files.internal("sounds/walk.mp3"));
-        skitterSound = Gdx.audio.newSound(Gdx.files.internal("sounds/skitter.mp3"));
 
         sounds.put("land", landSound);
         sounds.put("possess", possessSound);
@@ -202,7 +200,6 @@ public class Level implements Screen {
         sounds.put("glide", glideSound);
         sounds.put("flap", flapSound);
         sounds.put("walk", walkSound);
-        sounds.put("skitter", skitterSound);
 
     }
 
@@ -528,8 +525,8 @@ public class Level implements Screen {
             if (sylvan.possessed) {
                 sounds.get("walk").resume();
                 sounds.get("glide").resume();
-            } else if (currentInhabitedEntity.body.getUserData() == "spider") {
-                sounds.get("skitter").resume();
+            } else if (currentInhabitedEntity.body.getUserData() == "spider" || currentInhabitedEntity.body.getUserData() == "rock") {
+                currentInhabitedEntity.walkSound.resume();
             }
 
             music.setVolume(0.38f); // change music volume back to normal
@@ -540,9 +537,11 @@ public class Level implements Screen {
             // pause any possible long sounds
             sounds.get("walk").pause();
             sounds.get("glide").pause();
-            sounds.get("skitter").pause();
+            if (currentInhabitedEntity.body.getUserData() == "spider"|| currentInhabitedEntity.body.getUserData() == "rock") {
+                currentInhabitedEntity.walkSound.pause();
+            }
 
-            music.setVolume(0.2f); // music temporarily
+            music.setVolume(0.2f); // music temporarily softer
 
         }
 
@@ -695,6 +694,7 @@ public class Level implements Screen {
 
     public boolean completeLevel() { // true if Sylvan has collected every token
         if (numTokensCollected == TOKEN_COUNT) {
+            sounds.get("walk").stop();
             return true;
         }
         return false;
@@ -719,8 +719,12 @@ public class Level implements Screen {
     }
 
     @Override
-    public void dispose() { // causes occasional crashes..
+    public void dispose() { // causes occasional crashes.. so I commented it out
 
+        System.out.println("dispose");
+        music.stop();
+
+        /*
         if (!world.isLocked()) {
             for (Entity enemy : enemies) {
                 enemy.dispose(); // dispose of any enemies that have not been disposed of
@@ -732,8 +736,8 @@ public class Level implements Screen {
             mapRenderer.dispose();
             world.dispose();
             infoDisplay.dispose();
-            music.dispose();
         }
+         */
 
     }
 

@@ -106,9 +106,6 @@ public class SylvanGame extends Game {
 
 	}
 
-	// SEE IF COMMENTING OUT MUSIC DOES NOTHING
-	// combine pick level and set screen to level
-
 	public void pickLevel(Level level) {
 		currentLevel.music.stop();
 		mainMenuMusic.stop();
@@ -135,10 +132,10 @@ public class SylvanGame extends Game {
 				createLevel2();
 				break;
 		}
-		pickLevel(currentLevel); //
+		pickLevel(currentLevel);
 	}
 
-	public void restartLevel(int id) {
+	public void restartLevel(int id) { // restart current level based on id
 		currentLevel.dispose();
 		switch (id) {
 			case 1:
@@ -151,7 +148,7 @@ public class SylvanGame extends Game {
 		pickLevel(currentLevel);
 	}
 
-	public void restartGame() {
+	public void restartGame() { // return to main menu and create level 1
 		currentLevel.dispose();
 		setScreen(mainMenu);
 		mainMenuMusic.play();
@@ -223,8 +220,6 @@ public class SylvanGame extends Game {
 	public void render () { super.render(); } // calls current screen's (Level's) render method
 	
 	@Override
-	public void dispose () {
-		batch.dispose();
-	}
+	public void dispose () {batch.dispose();}
 
 }

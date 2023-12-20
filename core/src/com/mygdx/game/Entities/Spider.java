@@ -57,7 +57,6 @@ public class Spider extends Entity {
     public void initBody() {
 
         world = game.currentLevel.getWorld();
-        System.out.println("init body");
 
         // set up body
         bodyDef = new BodyDef();

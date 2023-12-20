@@ -225,7 +225,6 @@ public class Bat extends Entity {
 
         // if Bat is close enough to Sylvan and the y is similar enough, Bat can attack
         if (distanceToSylvan <= 1.8 && Math.abs(sylvanPos.y-body.getPosition().y) <= 0.3 && correctDir) {
-            System.out.println("bat in attack range");
             currentState = State.ATTACK;
             stateTimer = 0;
             attackSound.play(1);

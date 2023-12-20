@@ -132,7 +132,7 @@ public class Sylvan extends Entity {
         }
 
         // prevent from changing state with states where the timer matters
-        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD) {
+        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD || dead) {
             return;
         }
 
@@ -166,6 +166,7 @@ public class Sylvan extends Entity {
     public void update(float timeElapsed, float dt) {
 
         //System.out.println("x: " + body.getPosition().x + "y: " + body.getPosition().y); // POSITION
+        //System.out.println("sylvan state: " + currentState);
 
         TextureRegion frame;
 
