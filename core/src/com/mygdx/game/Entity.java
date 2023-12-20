@@ -13,6 +13,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Disposable;
+
 import java.util.HashMap;
 
 /*
@@ -21,7 +23,7 @@ Aaila Arif
 Jenna Esposito
  */
 
-public abstract class Entity extends Sprite {
+public abstract class Entity extends Sprite implements Disposable {
 
     // SETUP VARS
     protected SylvanGame game; // need game reference to get world to draw body, etc
@@ -58,6 +60,8 @@ public abstract class Entity extends Sprite {
 
     // OTHER
     public Sound deathSound;
+    public Sound walkSound;
+    public Sound attackSound;
     public String ability; // ability string to show in HUD
     protected Vector2 initialPosition; // where the Entity will spawn when level is started
 
@@ -111,5 +115,14 @@ public abstract class Entity extends Sprite {
     // GETTERS
     public Body getBody() { return body; }
     public abstract State getState(); // return state based on what entity is doing
+
+    @Override
+    public void dispose() {
+        if (!world.isLocked()) {
+            if (walkSound != null) {walkSound.dispose();};
+            if (attackSound != null) {attackSound.dispose();}
+            if (deathSound != null) {deathSound.dispose();}
+        }
+    }
 
 }

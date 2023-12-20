@@ -398,6 +398,7 @@ public class Level implements Screen {
             if (enemy.dead && enemy.stateTimer >= 0.5) {
                 world.destroyBody(enemy.body);
                 enemies.removeIndex(counter); // remove enemy from enemies array upon death
+                enemy.dispose();
             }
             counter++;
         }
@@ -718,17 +719,20 @@ public class Level implements Screen {
     }
 
     @Override
-    public void dispose() { // not working
-        System.out.println("dispose");
+    public void dispose() { // causes occasional crashes..
 
-        map.dispose();
-        mapRenderer.dispose();
-        if (!world.isLocked()) {world.dispose();}
-        infoDisplay.dispose();
-        music.dispose();
-
-        for (String sound : sounds.keySet()) {
-            sounds.get(sound).dispose();
+        if (!world.isLocked()) {
+            for (Entity enemy : enemies) {
+                enemy.dispose(); // dispose of any enemies that have not been disposed of
+            }
+            for (String sound : sounds.keySet()) {
+                sounds.get(sound).dispose();
+            }
+            map.dispose();
+            mapRenderer.dispose();
+            world.dispose();
+            infoDisplay.dispose();
+            music.dispose();
         }
 
     }

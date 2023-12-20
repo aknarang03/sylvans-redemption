@@ -38,8 +38,6 @@ public class Rock extends Entity {
     boolean playWalk; // can walk sound play or not
     boolean playReturn; // can return animation play or not
 
-    Sound walkSound;
-
     public Rock(SylvanGame game, Vector2 initPos) {
         super(game,true, 0.25f,0.25f,"Movable platform");
         initialPosition = initPos;

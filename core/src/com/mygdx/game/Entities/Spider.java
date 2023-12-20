@@ -41,8 +41,7 @@ public class Spider extends Entity {
     private double distanceToSylvan = 0; // used for checking attack
     boolean playWalk; // used for whether walk sound should play or not
 
-    Sound attackSound;
-    Sound walkSound;
+
 
     public Spider(SylvanGame game, Vector2 initPos) {
         super(game,true,0.7f,0.33f,"Climb");
