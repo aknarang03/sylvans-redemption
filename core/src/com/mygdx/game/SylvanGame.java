@@ -2,154 +2,224 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.game.Entities.Sylvan;
+import com.mygdx.game.Entities.Bat;
+import com.mygdx.game.Entities.Rock;
+import com.mygdx.game.Entities.Spider;
+import com.mygdx.game.Entities.Token;
 
-import java.awt.Color;
+import java.util.HashMap;
+
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
 
 public class SylvanGame extends Game {
 
-	public static final float PPM = 64; // Pixels Per Meter
+	// SOUND VARS
+	public HashMap<String, Sound> uiSounds = new HashMap();
+	private Sound startGameSound;
+	private Sound startGameOverlaySound;
+	private Sound completedLevelSound;
+	private Sound startLevelSound;
+	private Sound pauseSound;
+	private Sound selectSound;
 
-	// initial screen width and height upon run
-	public static final int SCREEN_WIDTH = 400;
-	public static final int SCREEN_HEIGHT = 208;
-
-	// collision groups
-	public static final short PLAYER_GROUP = 1;
-	public static final short ENEMY_GROUP = 2;
-	public static final short GROUND_GROUP = 3;
-	public static final short MOVABLE_GROUP = 4;
+	// MUSIC VARS
+	Music forestMusic;
+	Music caveMusic;
+	Music mainMenuMusic;
 
 	public SpriteBatch batch;
+	public BitmapFont font; // font to draw text throughout project
 
-	Level currentLevel; // keep track of current level
-	Entity currentInhabitedEntity; // keep track of who player is possessing
+	public static final float PPM = 64; // Pixels Per Meter
 
-	// Levels
-	Level prototypeLevel;
+	// initial screen width and height
+	public static final int SCREEN_WIDTH = 400;
+	public static final int SCREEN_HEIGHT = 300;
 
-	Sylvan sylvan; // enemies will be in Level, maybe Sylvan should also be?? probably
+	public Level currentLevel; // keep track of current level
+
+	// screens
+	public MainMenu mainMenu;
+	public ControlsMenu controlsMenu;
+	public GameOverScreen gameOver;
+	public LevelWinScreen levelWin;
+	public HowToPlayScreen howToPlay;
+	public StoryScreen story;
+	public GameCompleteScreen gameComplete;
 
 	@Override
 	public void create () {
+
+		initSounds(); // set up sounds map
+
 		batch = new SpriteBatch();
-		// CONSTRUCT LEVELS
-		createLevels();
-		pickLevel(prototypeLevel);
+		font = new BitmapFont();
+
+		createLevel1(); // creates level 1 and sets it to current level
+		initScreens(); // creates any screens that only need to be created once
+
+		setScreen(mainMenu); // begin at main menu
+		mainMenuMusic.play();
+
+	}
+
+	public void initScreens() {
+		mainMenu = new MainMenu(this);
+		levelWin = new LevelWinScreen(this);
+		gameOver = new GameOverScreen(this);
+		controlsMenu = new ControlsMenu(this);
+		howToPlay = new HowToPlayScreen(this);
+		story = new StoryScreen(this);
+		gameComplete = new GameCompleteScreen(this);
+	}
+
+	public void initSounds() {
+
+		startGameSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start.mp3"));
+		startGameOverlaySound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_start_overlay.mp3"));
+		completedLevelSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_level.mp3"));
+		startLevelSound = Gdx.audio.newSound(Gdx.files.internal("sounds/level_start.mp3"));
+		pauseSound = Gdx.audio.newSound(Gdx.files.internal("sounds/pause.mp3"));
+		selectSound = Gdx.audio.newSound(Gdx.files.internal("sounds/select.mp3"));
+
+		uiSounds.put("start game", startGameSound);
+		uiSounds.put("start game overlay", startGameOverlaySound);
+		uiSounds.put("completed level", completedLevelSound);
+		uiSounds.put("start level", startLevelSound);
+		uiSounds.put("pause", pauseSound);
+		uiSounds.put("select", selectSound);
+
+		forestMusic = Gdx.audio.newMusic(Gdx.files.internal("music/forest_music.ogg"));
+		caveMusic = Gdx.audio.newMusic(Gdx.files.internal("music/cave_music.ogg"));
+		mainMenuMusic = Gdx.audio.newMusic(Gdx.files.internal("music/title_screen_music.mp3"));
+		mainMenuMusic.setVolume(0.5f);
+
 	}
 
 	public void pickLevel(Level level) {
-		setCurrentLevel(level);
-		level.createEntityBodies();
+		currentLevel.music.stop();
+		mainMenuMusic.stop();
+		setScreenToLevel(level); // change currentLevel to passed in level
+		level.createEntities(); // set up level
 	}
 
-	public void createLevels() {
-
-		// this seems messy?? but for now this is where every level is created
-		// perhaps will save them in an array so that it's easier to switch levels
-
-		int numEnemies;
-
-		// PROTOTYPE LEVEL
-		numEnemies = 2;
-		Array<Entity> enemies = new Array<Entity>(numEnemies);
-		String prototypeMapFilename = "PrototypeLevelMap.tmx";
-		String backgroundImgFilename = "..."; // PUT A FILE
-		prototypeLevel = new Level(this, enemies,prototypeMapFilename, backgroundImgFilename);
-		createEntities(currentLevel, enemies); // currently the parameters do nothing
-
+	public void setScreenToLevel(Level level) {
+		this.setScreen(level); // set screen to passed in level
+		// init music
+		currentLevel.music.setVolume(0.5f);
+		currentLevel.music.setLooping(true);
+		currentLevel.music.play();
 	}
 
-	// BODIES ARE CREATED IN LEVEL CLASS
-	public void createEntities(Level currentLevel, Array<Entity> enemies) { // this has to be called after the world is created, otherwise it won't work
-		// this should probably somehow be moved to level..
-
-		Vector2 sylvanPos = new Vector2(1,1.7f);
-		sylvan = new Sylvan(this,sylvanPos);
-		sylvan.setPosition(1,1.7f);
-		changeCurrentInhabitedEntity(sylvan); // on level creation
-
-	}
-
-	public void setCurrentLevel(Level level) {
-		this.currentLevel = level;
-		this.setScreen(level);
-	}
-
-	public void changeCurrentInhabitedEntity(Entity entity) {
-		if (currentInhabitedEntity!=null) {currentInhabitedEntity.possessed = false; }
-		currentInhabitedEntity = entity;
-		entity.possessed = true;
-	}
-
-	public Entity getCurrentInhabitedEntity() {
-		// this will be used to set camera to position (since it shouldn't center on Sylvan if player is now ex. a Bat)
-		return currentInhabitedEntity;
-	}
-
-	public SylvanGame getGame() {
-		return this;
-	} // return a reference to itself
-
-	public void processInput() {
-
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			currentInhabitedEntity.move(Control.RIGHT);
-		} if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			currentInhabitedEntity.move(Control.LEFT);
-		} if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-			currentInhabitedEntity.move(Control.UP);
+	public void nextLevel(int currentLevelID) {
+		// current level becomes next level based on current id
+		currentLevel.dispose();
+		switch (currentLevelID) {
+			case 0:
+				createLevel1();
+				break;
+			case 1:
+				createLevel2();
+				break;
 		}
+		pickLevel(currentLevel);
+	}
+
+	public void restartLevel(int id) { // restart current level based on id
+		currentLevel.dispose();
+		switch (id) {
+			case 1:
+				createLevel1();
+				break;
+			case 2:
+				createLevel2();
+				break;
+		}
+		pickLevel(currentLevel);
+	}
+
+	public void restartGame() { // return to main menu and create level 1
+		currentLevel.dispose();
+		setScreen(mainMenu);
+		mainMenuMusic.play();
+		createLevel1();
+	}
+
+	public void createLevel1() {
+
+		final int numEnemies = 5;
+		final int numTokens = 4;
+		final int id = 1;
+
+		Bat bat1 = new Bat(this,new Vector2(4,6.5f));
+		Spider spider1 = new Spider(this,new Vector2(4,1));
+		Bat bat2 = new Bat(this,new Vector2(16.6f,2));
+		Spider spider2 = new Spider(this,new Vector2(19.8f,1));
+		Bat bat3 = new Bat(this,new Vector2(20f,4));
+
+		Array<Entity> lvl1enemies = new Array<Entity>(numEnemies);
+		lvl1enemies.add(bat1,spider1,bat2,spider2);
+		lvl1enemies.add(bat3);
+
+		Token token1 = new Token(this,new Vector2(2,7));
+		Token token2 = new Token(this,new Vector2(13.25f,8.9f));
+		Token token3 = new Token(this,new Vector2(22.1f,1.1f));
+		Token token4 = new Token(this,new Vector2(21f,6.3f));
+
+		Array<Token> lvl1tokens = new Array<Token>();
+		lvl1tokens.add(token1,token2,token3,token4);
+
+		String mapFilename = "SRLvl1.tmx";
+
+		currentLevel = new Level(this, lvl1enemies, lvl1tokens, mapFilename, numTokens, id, forestMusic);
+	}
+
+	public void createLevel2() {
+
+		final int numEnemies = 7;
+		final int numTokens = 4;
+		final int id = 2;
+
+		Spider spider1 = new Spider(this,new Vector2(4,3));
+		Rock rock1 = new Rock(this, new Vector2(6,8));
+		Rock rock2 = new Rock(this, new Vector2(1.5f,8));
+		Spider spider2 = new Spider(this,new Vector2(13.83f,5.6f));
+		Bat bat1 = new Bat(this,new Vector2(19.16f,6.9f));
+		Bat bat2 = new Bat(this,new Vector2(17,2));
+		Rock rock3 = new Rock(this,new Vector2(24.65f,2));
+
+		Array<Entity> lvl2enemies = new Array<Entity>(numEnemies);
+		lvl2enemies.add(spider1,rock1,rock2,spider2);
+		lvl2enemies.add(bat1,bat2,rock3);
+
+		Token token1 = new Token(this,new Vector2(0.75f,5.9f));
+		Token token2 = new Token(this,new Vector2(15,7.07f));
+		Token token3 = new Token(this,new Vector2(21.03f,8.4f));
+		Token token4 = new Token(this,new Vector2(24.15f,2));
+
+		Array<Token> lvl2tokens = new Array<Token>();
+		lvl2tokens.add(token1,token2,token3,token4);
+
+		String mapFilename = "Level2Map..tmx";
+
+		currentLevel = new Level(this, lvl2enemies, lvl2tokens, mapFilename, numTokens, id, caveMusic);
 
 	}
 
 	@Override
-	public void render () {
-
-		float dt = Gdx.graphics.getDeltaTime();
-
-		// me trying to figure out the weird sprite rendering
-		System.out.println("Sprite: " + sylvan.getX());
-		System.out.println("Body: " + sylvan.body.getPosition().x);
-
-		sylvan.setPosition((sylvan.body.getPosition().x * SylvanGame.PPM) - sylvan.getWidth() / 2, (sylvan.body.getPosition().y * SylvanGame.PPM) - sylvan.getHeight() / 2);
-
-		/*Every frame:
-		* Process input (processInput()) -> acts on currentInhabitedEntity
-		* Update entities -> for each entity that isnt inhabited or player, update it
-		* Resolve any collisions -> box2d, maybe call this in level? depends how you structure it
-		* Draw -> self explanatory*/
-
-
-		processInput();
-		currentInhabitedEntity.updateFrame(currentInhabitedEntity.getStateTimer(),dt);
-		currentLevel.camera.update();
-		batch.setProjectionMatrix(currentLevel.camera.combined); // if I uncomment this he completely disappears
-		Gdx.gl.glClearColor(0,0,0,1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		currentInhabitedEntity.draw(batch);
-		batch.end();
-
-
-		// render player movement in here, then call:
-		if (currentLevel!= null) { currentLevel.render(dt); } // does the same as super.render()
-		else { System.out.println("LEVEL NULL");}
-
-		//super.render(); // calls current screen's (Level's) render method // for now doing the above instead since you need to send in dt
-		// (if this doesn't work for some reason, level will handle player movement instead and this will only call super.render())
-
-	}
+	public void render () { super.render(); } // calls current screen's (Level's) render method
 	
 	@Override
-	public void dispose () { // IMPLEMENT
-		batch.dispose();
-		// dispose of textures too?
-	}
+	public void dispose () {batch.dispose();}
+
 }

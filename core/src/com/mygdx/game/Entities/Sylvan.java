@@ -1,18 +1,27 @@
 package com.mygdx.game.Entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Control;
 import com.mygdx.game.Entity;
 import com.mygdx.game.SylvanGame;
 
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
 public class Sylvan extends Entity {
 
+    // ANIMATION VARS
     private Animation idle;
     private Animation walk;
     private Animation jump;
@@ -20,7 +29,6 @@ public class Sylvan extends Entity {
     private Animation land;
     private Animation glidepossess;
     private Animation standpossess;
-
     private Array<TextureAtlas.AtlasRegion> idleFrames;
     private Array<TextureAtlas.AtlasRegion> walkFrames;
     private Array<TextureAtlas.AtlasRegion> jumpFrames;
@@ -29,71 +37,56 @@ public class Sylvan extends Entity {
     private Array<TextureAtlas.AtlasRegion> glidepossessFrames;
     private Array<TextureAtlas.AtlasRegion> standpossessFrames;
 
+    // TIMERS
+    public double knockbackTimer;
+
+    // BOOLS
+    boolean playGlide; // whether to play glide sound or not
+    boolean playWalk; // whether to play walk sound or not
+    public boolean shouldDraw; // whether to draw Sylvan or not
+    public boolean flashRed = false; // whether to flash red (from damage) or not
+
+    public int health; // keep track of HP
+
     public Sylvan(SylvanGame game, Vector2 initPos) {
-        super(game); // set the game
+        super(game,false, 0.36f,0.29f,"Glide");
         initialPosition = initPos;
-        initSprite();
-        System.out.println("width:" + this.getWidth());
+        health = 3;
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("sounds/sylvan_death.mp3"));
+        playGlide = true;
+        playWalk = true;
+        shouldDraw = true;
     }
 
-    @Override
-    public void move(Control control) {
+    public void initBody() {
 
-        currentState = getState();
+        world = game.currentLevel.getWorld();
 
-        float vy = body.getLinearVelocity().y;
+        // set up body
+        bodyDef = new BodyDef();
+        bodyDef.position.set(initialPosition.x,initialPosition.y);
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        body = world.createBody(bodyDef);
+        body.setUserData("sylvan");
+        body.setFixedRotation(true);
 
-        // This also allows wall climbing.. probably have a jump boolean or something
-        if (Math.abs(vy) < .01f) {
-            switch (control) {
-                case LEFT:
-                    body.setLinearVelocity(-1f, 0);
-                    break;
-                case RIGHT:
-                    body.setLinearVelocity(1f, 0);
-                    break;
-                case UP:
-                    body.applyForceToCenter(0f, 1f, true);
-                    break;
-            }
-        }
+        // set up fixture
+        shape = new PolygonShape();
+        shape.setAsBox(getWidth() / 6.5f, getHeight() / 3.7f);
+        fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0.009f;
+        fixtureDef.friction = 0.5f;
+        fixtureDef.restitution = 0.1f; // to prevent sticking to platforms
 
-        /*
-        if (Math.abs(vy) < .01f ) { // not currently jumping
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-                body.setLinearVelocity(1f, 0);
-            } if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-                body.setLinearVelocity(-1f, 0);;
-            } if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-                //if (currentState != State.JUMP && currentState != State.FALL)
-                body.applyForceToCenter(0f, 1f, true);
-            }
-        }
-        */
+        body.createFixture(fixtureDef);
 
-
-
-        /*
-        // this allowed wall climbing; keep code for the climbing enemy.
-        float f = body.getLinearVelocity().y;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-            body.setLinearVelocity(1f, f);
-        } if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-            body.setLinearVelocity(-1f, f);;
-        } if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) {
-            if (currentState != State.JUMP && currentState != State.FALL)
-                body.applyForceToCenter(0f, 1f, true);
-        } //else if (keycode == Input.Keys.SHIFT_RIGHT || keycode == Input.Keys.E) {
-            // THIS WILL HAVE POSSESS CODE / CALL A POSSESS FUNCTION
-        //}
-         */
+        shape.dispose();
 
     }
 
     @Override
     public void initSprite() {
-
-        System.out.println("sprite init");
 
         atlas = new TextureAtlas(Gdx.files.internal("sylvan/sylvan.atlas"));
 
@@ -105,74 +98,247 @@ public class Sylvan extends Entity {
         glidepossessFrames = atlas.findRegions("glidepossess");
         standpossessFrames = atlas.findRegions("standpossess");
 
-        idle = new Animation<TextureRegion>(1/9f, idleFrames);
-        walk = new Animation<TextureRegion>(1/9f, walkFrames);
-        jump = new Animation<TextureRegion>(1/9f, jumpFrames);
-        glide = new Animation<TextureRegion>(1/9f, glideFrames);
-        land = new Animation<TextureRegion>(1/9f, landFrames);
-        glidepossess = new Animation<TextureRegion>(1/9f, glidepossessFrames);
-        standpossess = new Animation<TextureRegion>(1/9f, standpossessFrames);
+        idle = new Animation<TextureRegion>(1 / 9f, idleFrames);
+        walk = new Animation<TextureRegion>(1 / 9f, walkFrames);
+        jump = new Animation<TextureRegion>(1 / 6f, jumpFrames);
+        glide = new Animation<TextureRegion>(1 / 9f, glideFrames);
+        land = new Animation<TextureRegion>(1 / 9f, landFrames);
+        glidepossess = new Animation<TextureRegion>(1 / 4f, glidepossessFrames);
+        standpossess = new Animation<TextureRegion>(1 / 4f, standpossessFrames);
 
-        animations.put("idle",idle);
-        animations.put("walk",walk);
-        animations.put("jump",jump);
-        animations.put("glide",glide);
-        animations.put("land",land);
-        animations.put("glidepossess",glidepossess);
-        animations.put("standpossess",standpossess);
+        animations.put("idle", idle);
+        animations.put("walk", walk);
+        animations.put("jump", jump);
+        animations.put("glide", glide);
+        animations.put("land", land);
+        animations.put("glidepossess", glidepossess);
+        animations.put("standpossess", standpossess);
 
-
-
+        setBounds(0, 0, idleFrames.get(0).getRegionWidth() / SylvanGame.PPM, idleFrames.get(0).getRegionHeight() / SylvanGame.PPM);
+        setScale(0.7f);
         setRegion(idleFrames.get(0));
-        //setScale(1.3f);
-        //setSize(getWidth() / SylvanGame.PPM, getHeight() / SylvanGame.PPM);
-        setBounds(0,0, idleFrames.get(0).getRegionWidth(), idleFrames.get(0).getRegionHeight());
-        //setBounds(0,0, 0.5f, 0.5f);
-        // NOTE: bounds seems to change whether he flickers onto screen or not
 
     }
 
     @Override
-    public void updateFrame(float timeElapsed, float dt) { // this was TextureRegion getFrame()
+    public void move(Control control) { // takes in keyboard input
+
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
+
+        // can't move if he was recently knocked back
+        if (knockbackTimer >= 0) {
+            return;
+        }
+
+        // prevent from changing state with states where the timer matters
+        if (currentState == State.POSSESS || currentState == State.LAND || currentState == State.DEAD || dead) {
+            return;
+        }
+
+        switch (control) {
+            case UP: {
+                if (currentState == State.FALL) { // your vertical velocity is not close to 0 (ie jumping or falling)
+                    body.setLinearVelocity(vx, 0.1f * vy); // glide
+                } else if (currentState != State.JUMP) { // your vertical velocity is close to 0
+                    body.setLinearVelocity(vx, 5f); // jump
+                }
+                break;
+            }
+            case LEFT:
+                body.setLinearVelocity(-1f, vy);
+                left = true;
+                break;
+            case RIGHT:
+                body.setLinearVelocity(1f, vy);
+                left = false;
+                break;
+            case POSSESS:
+                game.currentLevel.getPossessTarget(); // try to get target if possess button pressed
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    @Override
+    public void update(float timeElapsed, float dt) {
+
+        //System.out.println("x: " + body.getPosition().x + "y: " + body.getPosition().y); // POSITION
+        //System.out.println("sylvan state: " + currentState);
 
         TextureRegion frame;
-        previousState = currentState;
-        currentState = getState();
+
+        final State newState = getState(); // to use in stateTimer check
+        if (currentState == newState) { // state has not changed
+            stateTimer += dt;
+        } else { // state has changed
+            stateTimer = 0;
+        }
+        currentState = newState;
+
+        //final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
+
+        if (possessed && currentState != State.WALK) {
+            game.currentLevel.sounds.get("walk").stop();
+            playWalk = true; // can now play walk sound again after stopped walking
+            // this prevents overlapping the sound
+        }
+        if (!possessed) { // stop any possible looping sounds if not possessed
+            game.currentLevel.sounds.get("walk").stop();
+            game.currentLevel.sounds.get("glide").stop();
+        }
 
         switch (currentState) {
-
+            case DEAD:
+                frame = (animations.get("glidepossess").getKeyFrame(stateTimer,true));
+                break;
+            case POSSESS:
+                if (vy == 0) {
+                    frame = (animations.get("standpossess").getKeyFrame(stateTimer, true));
+                } else {
+                    frame = (animations.get("glidepossess").getKeyFrame(stateTimer, true));
+                }
+                break;
             case JUMP:
-                frame = (animations.get("jump").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("jump").getKeyFrame(stateTimer, true));
+                if (stateTimer < 0.01) {
+                    game.currentLevel.sounds.get("jump").play(0.6f);
+                }
                 break;
             case FALL:
-                frame = (animations.get("glide").getKeyFrame(timeElapsed,true));
+                frame = (animations.get("glide").getKeyFrame(timeElapsed, false));
+                if (stateTimer >= 1 && playGlide && possessed) { // need to check possessed here because when unpossessed he is always falling outside screen
+                    game.currentLevel.sounds.get("glide").play(0.65f);
+                    playGlide = false; // prevent glide sound from overlapping
+                }
                 break;
             case WALK:
                 frame = (animations.get("walk").getKeyFrame(timeElapsed, true));
+                if (playWalk) {
+                    game.currentLevel.sounds.get("walk").loop(0.6f);
+                    playWalk = false;
+                }
                 break;
             case LAND:
-                frame = (animations.get("land").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("land").getKeyFrame(timeElapsed, false));
+                playGlide = true; // glide sound can now play again next time he glides
+                game.currentLevel.sounds.get("glide").stop();
+                if (stateTimer < 0.01) {
+                    game.currentLevel.sounds.get("land").play(0.4f);
+                }
                 break;
             default:
-                frame = (animations.get("idle").getKeyFrame(timeElapsed, true));
+                frame = (animations.get("idle").getKeyFrame(timeElapsed, false));
                 break;
-
         }
 
-        // flip frame if it's facing the wrong way
-        // doesn't work
-        if ((body.getLinearVelocity().x < 0 && !frame.isFlipX()) || (body.getLinearVelocity().x > 0 && frame.isFlipX())) {
+        // make sprite face correct way
+        if ((left && !frame.isFlipX()) || (!left && frame.isFlipX())) {
             frame.flip(true, false);
         }
 
-        if (currentState == previousState) { // state has not changed
-            stateTimer = stateTimer + dt;
-        } else {
-            stateTimer = 0;
+        setRegion(frame);
+    }
+
+    public void resetState() {
+        currentState = State.IDLE;
+    } // used in Level possess()
+
+    @Override
+    public State getState() {
+
+        // to be used in checks
+        final float vx = body.getLinearVelocity().x;
+        final float vy = body.getLinearVelocity().y;
+
+        if (dead) {
+            return State.DEAD;
         }
 
-        setRegion(frame);
+        switch (currentState) {
+
+            case POSSESS: {
+                return State.POSSESS;
+            }
+
+            case IDLE: {
+                if (vy > 0) { return State.JUMP; } // jump pressed
+                else if (Math.abs(vx) > .01f) { return State.WALK; } // if left / right pressed
+                return State.IDLE; // nothing pressed
+            }
+
+            case WALK: {
+                if (vy > 0) { return State.JUMP; } // jump pressed
+                else if (Math.abs(vx) <= .01f) { return State.IDLE; } // stopped walking
+                else if (vy < 0) { return State.FALL; } // walked off platform
+                return State.WALK; // still walking
+            }
+
+            case JUMP: {
+                if (vy <= 0) { return State.FALL; } // jump reached max point
+                return State.JUMP; // jump has not reached max point
+            }
+
+            case FALL: {
+                if (vy == 0) { return State.LAND; } // no longer falling
+                return State.FALL; // still falling
+            }
+
+            case LAND: {
+                if (stateTimer <= 0.1) {return State.LAND; }
+                return State.IDLE; // state is idle after landing
+            }
+
+            default: { return State.IDLE; }
+
+        }
 
     }
+
+    public void hitEnemy() { // called when Sylvan runs into an enemy
+
+        flashRed = true; // allows Sylvan to flash red when rendered
+        knockbackTimer = 0.5f; // reset knockback timer
+        health--;
+        game.currentLevel.sounds.get("hit").play(0.4f);
+
+        // Sylvan dies if health reaches 0
+        if (health <= 0 && !dead) {
+            die();
+        }
+
+    }
+
+    public void getAttacked(boolean leftHit) { // called when Sylvan is attacked by Bat
+
+        flashRed = true; // allows Sylvan to flash red when rendered
+
+        game.currentLevel.sounds.get("hit").play(0.4f);
+
+        final float FORCELEFT = -0.15f;
+        final float FORCERIGHT = 0.15f;
+        final float FORCEUP = 0.25f;
+
+        // apply certain forces depending on whether the hit was from the left or from the right
+        if (leftHit) {
+            body.applyForceToCenter(FORCERIGHT,FORCEUP,true);
+        } else {
+            body.applyForceToCenter(FORCELEFT,FORCEUP,true);
+        }
+
+        health--;
+
+        // Sylvan dies if health reaches 0
+        if (health <= 0 && !dead) {
+            die();
+        }
+
+    }
+
+    @Override
+    public void aiMove(float dt) {} // this will never be called on sylvan
 
 }

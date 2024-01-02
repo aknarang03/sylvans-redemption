@@ -1,6 +1,11 @@
 package com.mygdx.game;
 
-public enum Control {
-    UP, DOWN, LEFT, RIGHT, POSSESS
-    // possess acts as unpossess as an enemy
+/*
+Anjali Narang
+Aaila Arif
+Jenna Esposito
+ */
+
+public enum Control { // what key presses can mean
+    UP, DOWN, LEFT, RIGHT, POSSESS, SELECT
 }
