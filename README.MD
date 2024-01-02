@@ -8,12 +8,17 @@ If Sylvan hits an enemy, he will be knocked back.
 # Controls
 
 JUMP: up, w
+
 LEFT: left, a
+
 RIGHT: right, d
+
 POSSESS: right shift, e
 
 # Movements
 
 SYLVAN: glide (hold JUMP while falling)
+
 SPIDER: climb walls (hold JUMP next to a wall)
+
 BAT: fly (hold JUMP)
