@@ -1,4 +1,4 @@
-Sylvan's Redemption Prototype
+![image](https://github.com/aknarang03/sylvans-redemption/assets/91150763/2a471606-ad55-4cd9-b975-9e615e1edf3c) Sylvan's Redemption 
 
 CONTROLS
 
