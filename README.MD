@@ -1,4 +1,4 @@
-# ![image](https://github.com/aknarang03/sylvans-redemption/assets/91150763/2a471606-ad55-4cd9-b975-9e615e1edf3c) Sylvan's Redemption 
+# ![image](https://github.com/aknarang03/sylvans-redemption/assets/91150763/abdb40ba-5ba1-4011-8711-9977cfc2b295) Sylvan's Redemption 
 
 # Description
 Sylvan can possess an enemy for 5 seconds. Use these enemies to get to different parts of the level.
